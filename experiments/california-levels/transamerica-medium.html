@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stone Tower Illustration</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#c7dbe8}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+canvas:active{cursor:grabbing}
+</style>
+<script type="importmap">{"imports":{"three":"./three.module.js"}}</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xc7dbe8);
+
+const camera = new THREE.PerspectiveCamera(38, window.innerWidth/window.innerHeight, 0.1, 600);
+
+let seed = 1234567;
+function rand(){ seed|=0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed>>>15, 1|seed); t = t + Math.imul(t ^ t>>>7, 61|t) ^ t; return ((t ^ t>>>14)>>>0)/4294967296; }
+
+const hemi = new THREE.HemisphereLight(0xdff2ff, 0x8f958a, 0.95);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff2d6, 2.1);
+sun.position.set(55, 85, 35);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-80; sun.shadow.camera.right=80; sun.shadow.camera.top=90; sun.shadow.camera.bottom=-40;
+sun.shadow.camera.near=10; sun.shadow.camera.far=240; sun.shadow.bias=-0.0004;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xbfd9ff, 0.45);
+fill.position.set(-50,40,-40); scene.add(fill);
+
+// Ground
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(320,320), new THREE.MeshStandardMaterial({color:0xa8b0a4,roughness:1}));
+ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+
+const plaza = new THREE.Mesh(new THREE.CylinderGeometry(28,28,0.5,48), new THREE.MeshStandardMaterial({color:0xcac6ba,roughness:0.95}));
+plaza.position.y=0.25; plaza.receiveShadow=true; plaza.castShadow=false; scene.add(plaza);
+
+const roadMat = new THREE.MeshStandardMaterial({color:0x6f777d,roughness:1});
+const road1 = new THREE.Mesh(new THREE.BoxGeometry(320,0.12,10), roadMat); road1.position.set(0,0.56,0); road1.receiveShadow=true; scene.add(road1);
+const road2 = new THREE.Mesh(new THREE.BoxGeometry(10,0.12,320), roadMat); road2.position.set(0,0.57,0); road2.receiveShadow=true; scene.add(road2);
+
+// Materials
+const stone = new THREE.MeshStandardMaterial({color:0xd9d2c2,roughness:0.88,metalness:0.02});
+const stoneDark = new THREE.MeshStandardMaterial({color:0xc8bfa9,roughness:0.92});
+const stoneLight = new THREE.MeshStandardMaterial({color:0xe4ddcc,roughness:0.85});
+
+// Tower shaft - four sided tapered pyramid
+const y0=3.5, y1=72, shaftH=y1-y0;
+const bottomHalf=10.2, topHalf=3.7;
+const bottomR = bottomHalf*Math.SQRT2, topR = topHalf*Math.SQRT2;
+const shaft = new THREE.Mesh(new THREE.CylinderGeometry(topR,bottomR,shaftH,4,1,false), stone);
+shaft.rotation.y=Math.PI/4; shaft.position.y=(y0+y1)/2; shaft.castShadow=true; shaft.receiveShadow=true; scene.add(shaft);
+
+// Horizontal cornice bands following taper
+for(let i=0;i<6;i++){
+  const t=i/5, y=y0+8+t*(shaftH-14), half=bottomHalf+(topHalf-bottomHalf)*t+0.28;
+  const band=new THREE.Mesh(new THREE.CylinderGeometry(half*Math.SQRT2,half*Math.SQRT2,0.55,4,1), stoneDark);
+  band.rotation.y=Math.PI/4; band.position.y=y; band.castShadow=true; band.receiveShadow=true; scene.add(band);
+}
+
+// Spire
+const spireH=16;
+const spire=new THREE.Mesh(new THREE.CylinderGeometry(0.05, topR*0.98, spireH, 4, 1), stoneLight);
+spire.rotation.y=Math.PI/4; spire.position.y=y1+spireH/2-0.3; spire.castShadow=true; scene.add(spire);
+const tip=new THREE.Mesh(new THREE.SphereGeometry(0.55,12,8), stoneDark);
+tip.position.y=y1+spireH+0.2; tip.castShadow=true; scene.add(tip);
+const spireBase=new THREE.Mesh(new THREE.CylinderGeometry(topR*1.02,topR*1.02,1.2,4,1), stoneDark);
+spireBase.rotation.y=Math.PI/4; spireBase.position.y=y1+0.4; spireBase.castShadow=true; scene.add(spireBase);
+
+// Two narrow vertical fins on opposite upper sides
+for(const s of [-1,1]){
+  const fin=new THREE.Mesh(new THREE.BoxGeometry(4.2,24,0.55), stoneLight);
+  fin.position.set(s*6.4, 60, 0); fin.castShadow=true; fin.receiveShadow=true; scene.add(fin);
+  const finCap=new THREE.Mesh(new THREE.BoxGeometry(4.2,1.0,0.7), stoneDark);
+  finCap.position.set(s*6.4, 72.3, 0); finCap.castShadow=true; scene.add(finCap);
+  const finTip=new THREE.Mesh(new THREE.BoxGeometry(1.2,5.5,0.45), stoneLight);
+  finTip.position.set(s*6.4, 76.5, 0); finTip.castShadow=true; scene.add(finTip);
+}
+
+// Windows - instanced planes on all four tapering faces
+const windowGeo=new THREE.PlaneGeometry(0.82,0.72);
+const windowMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.35,metalness:0.25});
+const windowPositions=[];
+for(let face=0;face<4;face++){
+  const ang=face*Math.PI/2;
+  const nx=Math.sin(ang), nz=Math.cos(ang);
+  const sx=nz, sz=-nx;
+  for(let y=y0+3.2; y<y1-1.5; y+=1.32){
+    const t=(y-y0)/shaftH;
+    const half=bottomHalf+(topHalf-bottomHalf)*t;
+    const usable=half-1.05;
+    if(usable<0.6) continue;
+    for(let off=-usable; off<=usable+0.01; off+=1.22){
+      windowPositions.push({x:nx*(half+0.07)+sx*off, y:y, z:nz*(half+0.07)+sz*off, ry:ang});
+    }
+  }
+}
+const windows=new THREE.InstancedMesh(windowGeo, windowMat, windowPositions.length);
+{
+  const dummy=new THREE.Object3D(); const col=new THREE.Color();
+  windowPositions.forEach((p,i)=>{
+    dummy.position.set(p.x,p.y,p.z); dummy.rotation.set(0,p.ry,0); dummy.updateMatrix();
+    windows.setMatrixAt(i,dummy.matrix);
+    const v=0.75+rand()*0.25;
+    col.setRGB(0.08*v+0.03,0.12*v+0.04,0.16*v+0.05);
+    windows.setColorAt(i,col);
+  });
+  windows.instanceMatrix.needsUpdate=true; if(windows.instanceColor) windows.instanceColor.needsUpdate=true;
+}
+windows.receiveShadow=true; scene.add(windows);
+
+// Broad base podium
+const podium=new THREE.Mesh(new THREE.BoxGeometry(36,1.4,36), stoneDark);
+podium.position.y=0.7; podium.castShadow=true; podium.receiveShadow=true; scene.add(podium);
+const steps=new THREE.Mesh(new THREE.BoxGeometry(42,0.7,42), stoneLight);
+steps.position.y=0.35; steps.receiveShadow=true; steps.castShadow=true; scene.add(steps);
+
+// Triangular exposed supports at base corners
+function triangularSupport(){
+  const shape=new THREE.Shape();
+  shape.moveTo(0,0); shape.lineTo(12,0); shape.lineTo(0,14); shape.lineTo(0,0);
+  const geo=new THREE.ExtrudeGeometry(shape,{depth:1.5,bevelEnabled:false});
+  geo.translate(0,0,-0.75);
+  const m=new THREE.Mesh(geo, stoneLight); m.castShadow=true; m.receiveShadow=true; return m;
+}
+const dirs=[[1,1],[1,-1],[-1,1],[-1,-1]];
+for(const [dx,dz] of dirs){
+  const group=new THREE.Group();
+  const tri=triangularSupport();
+  tri.position.set(8.5,1.3,0);
+  group.add(tri);
+  group.rotation.y=Math.atan2(-dz,dx);
+  scene.add(group);
+}
+// Face-centre triangular buttresses (smaller)
+for(let f=0;f<4;f++){
+  const ang=f*Math.PI/2, nx=Math.sin(ang), nz=Math.cos(ang);
+  const s=new THREE.Shape(); s.moveTo(0,0); s.lineTo(8,0); s.lineTo(0,10); s.lineTo(0,0);
+  const g=new THREE.ExtrudeGeometry(s,{depth:1.1,bevelEnabled:false}); g.translate(0,0,-0.55);
+  const m=new THREE.Mesh(g, stone); m.castShadow=true; m.receiveShadow=true;
+  m.position.set(nx*7.5,1.3,nz*7.5); m.rotation.y=ang; scene.add(m);
+}
+
+// Surrounding shorter city blocks
+const blockGeo=new THREE.BoxGeometry(1,1,1);
+const blockMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.95});
+const blocks=[];
+let attempts=0;
+while(blocks.length<72 && attempts<800){
+  attempts++;
+  const x=(rand()*2-1)*78, z=(rand()*2-1)*78;
+  if(Math.hypot(x,z)<32) continue;
+  if(Math.abs(x)<7 || Math.abs(z)<7) continue;
+  if(blocks.some(b=>Math.abs(b.x-x)<10 && Math.abs(b.z-z)<10)) continue;
+  blocks.push({x,z,w:6+rand()*6,d:6+rand()*6,h:3.5+rand()*8.5,r:rand()*0.15-0.075});
+}
+const blockMesh=new THREE.InstancedMesh(blockGeo, blockMat, blocks.length);
+{
+  const dummy=new THREE.Object3D(); const col=new THREE.Color();
+  blocks.forEach((b,i)=>{
+    dummy.position.set(b.x,b.h/2,b.z); dummy.rotation.set(0,b.r,0); dummy.scale.set(b.w,b.h,b.d);
+    dummy.updateMatrix(); blockMesh.setMatrixAt(i,dummy.matrix);
+    const v=0.82+rand()*0.18; col.setRGB(v*0.92,v*0.95,v*0.90); blockMesh.setColorAt(i,col);
+  });
+  blockMesh.instanceMatrix.needsUpdate=true; if(blockMesh.instanceColor) blockMesh.instanceColor.needsUpdate=true;
+}
+blockMesh.castShadow=true; blockMesh.receiveShadow=true; scene.add(blockMesh);
+
+// Small trees
+const treePos=[];
+for(let i=0;i<42;i++){
+  const a=(i/42)*Math.PI*2 + rand()*0.12, r=20+rand()*5;
+  treePos.push([Math.cos(a)*r, Math.sin(a)*r, 0.8+rand()*0.5]);
+}
+for(let i=0;i<36;i++){
+  const x=(rand()*2-1)*70, z=(rand()*2-1)*70;
+  if(Math.hypot(x,z)<30) continue; if(Math.abs(x)<6||Math.abs(z)<6) continue;
+  treePos.push([x,z,0.7+rand()*0.6]);
+}
+const trunkGeo=new THREE.CylinderGeometry(0.14,0.2,1.2,6);
+const trunkMat=new THREE.MeshStandardMaterial({color:0x5d4a36,roughness:1});
+const trunks=new THREE.InstancedMesh(trunkGeo,trunkMat,treePos.length);
+const foliageGeo=new THREE.IcosahedronGeometry(1,1);
+const foliageMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.9,flatShading:true});
+const foliage=new THREE.InstancedMesh(foliageGeo,foliageMat,treePos.length);
+{
+  const dummy=new THREE.Object3D(); const col=new THREE.Color();
+  treePos.forEach((p,i)=>{
+    const s=p[2];
+    dummy.position.set(p[0],0.6*s,p[1]); dummy.scale.set(s,s,s); dummy.rotation.set(0,rand()*Math.PI,0); dummy.updateMatrix(); trunks.setMatrixAt(i,dummy.matrix);
+    dummy.position.set(p[0],1.7*s+0.6,p[1]); dummy.scale.set(1.3*s,1.5*s,1.3*s); dummy.updateMatrix(); foliage.setMatrixAt(i,dummy.matrix);
+    col.setRGB(0.22+rand()*0.12,0.42+rand()*0.15,0.22+rand()*0.08); foliage.setColorAt(i,col);
+  });
+  trunks.instanceMatrix.needsUpdate=true; foliage.instanceMatrix.needsUpdate=true;
+  if(foliage.instanceColor) foliage.instanceColor.needsUpdate=true;
+}
+trunks.castShadow=true; foliage.castShadow=true; foliage.receiveShadow=true; scene.add(trunks); scene.add(foliage);
+
+// Controls - pointer drag orbit and wheel zoom
+let azimuth=0.68, polar=1.12, radius=158;
+const target=new THREE.Vector3(0,32,0);
+function updateCamera(){
+  polar=Math.max(0.35,Math.min(1.45,polar));
+  radius=Math.max(70,Math.min(260,radius));
+  camera.position.set(
+    target.x + radius*Math.sin(polar)*Math.sin(azimuth),
+    target.y + radius*Math.cos(polar),
+    target.z + radius*Math.sin(polar)*Math.cos(azimuth)
+  );
+  camera.lookAt(target);
+}
+function renderFrame(){
+  updateCamera();
+  renderer.render(scene,camera);
+  window.sceneReady=true;
+}
+let dragging=false, lastX=0, lastY=0;
+const el=renderer.domElement;
+el.addEventListener('pointerdown',e=>{dragging=true; lastX=e.clientX; lastY=e.clientY; el.setPointerCapture(e.pointerId);});
+el.addEventListener('pointermove',e=>{
+  if(!dragging) return;
+  azimuth -= (e.clientX-lastX)*0.005;
+  polar -= (e.clientY-lastY)*0.004;
+  lastX=e.clientX; lastY=e.clientY;
+  renderFrame();
+});
+el.addEventListener('pointerup',()=>{dragging=false;});
+el.addEventListener('pointercancel',()=>{dragging=false;});
+el.addEventListener('wheel',e=>{e.preventDefault(); radius*= (1 + Math.sign(e.deltaY)*0.08); renderFrame();},{passive:false});
+
+window.addEventListener('resize',()=>{
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderFrame();
+});
+
+renderFrame();
+</script>
+</body>
+</html>

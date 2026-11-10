@@ -1,0 +1,39 @@
+{
+  "id": "transamerica",
+  "name": "Transamerica Pyramid",
+  "region": "San Francisco",
+  "description": "A very tall pale stone office tower shaped like a slender four-sided pyramid with a pointed spire. Dense horizontal rows of dark windows cover its tapering faces. Two narrow vertical fins project from opposite upper sides. Exposed triangular supports form a broad base, surrounded by much shorter city blocks and small trees.",
+  "slug": "transamerica-medium",
+  "effort": "medium",
+  "prompt": "A very tall pale stone office tower shaped like a slender four-sided pyramid with a pointed spire. Dense horizontal rows of dark windows cover its tapering faces. Two narrow vertical fins project from opposite upper sides. Exposed triangular supports form a broad base, surrounded by much shorter city blocks and small trees.\n\nCreate a polished 3D illustration solely from this visual description. The private location name is deliberately withheld. Return only a complete HTML document without Markdown fences. Use real procedural Three.js geometry, import * as THREE from './three.module.js', and use no other imports or external assets, images, fonts, network calls or text labels. Do not put any landmark name or place name in the HTML title or visible scene. Use deterministic geometry. Render initially at 1200x800, responsive to window resizing, with device pixel ratio at most 1.5. Include native pointer drag orbit and wheel zoom; update projection, size and rendered frame on resize. Frame the whole subject with generous margins around top, sides and base. Use attractive coherent lighting and clear recognizable silhouettes. Render immediately and set window.sceneReady=true after the first rendered frame. Keep geometry efficient; avoid a continuous animation loop. No transparent flat fog planes.",
+  "max_tokens": 32000,
+  "model": "meta/muse-ember",
+  "provider": "Meta",
+  "usage": {
+    "prompt_tokens": 256,
+    "completion_tokens": 7497,
+    "total_tokens": 7753,
+    "cost": 0.0037741,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0037741,
+      "upstream_inference_prompt_cost": 2.56e-05,
+      "upstream_inference_completions_cost": 0.0037485
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 3704,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "bytes": 11930,
+  "generation_id": "gen-1794280329-XzdQ3R7f9QM5B0v4FpkD",
+  "elapsed_seconds": 12.735
+}

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eiffel Tower Miniature Diorama</title>
+<style>
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#ece2cf}
+canvas{display:block;width:100%;height:100%}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.08;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xece2cf);
+
+const camera = new THREE.PerspectiveCamera(38, window.innerWidth/window.innerHeight, 0.1, 100);
+
+const hemi = new THREE.HemisphereLight(0xfff8ea,0xb9a88c,1.15);
+scene.add(hemi);
+const key = new THREE.DirectionalLight(0xfff0d6,2.6);
+key.position.set(8,15,7);
+key.castShadow = true;
+key.shadow.mapSize.set(2048,2048);
+key.shadow.camera.left=-10; key.shadow.camera.right=10; key.shadow.camera.top=11; key.shadow.camera.bottom=-8;
+key.shadow.camera.near=2; key.shadow.camera.far=38; key.shadow.bias=-0.0006;
+scene.add(key);
+const fill = new THREE.DirectionalLight(0xdde8ff,0.65);
+fill.position.set(-9,6,-8);
+scene.add(fill);
+const rim = new THREE.DirectionalLight(0xffe1a8,0.8);
+rim.position.set(-4,9,10);
+scene.add(rim);
+
+const ironMat = new THREE.MeshStandardMaterial({color:0x6d452c,metalness:0.38,roughness:0.42});
+const brassMat = new THREE.MeshStandardMaterial({color:0xc99e56,metalness:0.62,roughness:0.30});
+const deckMat = new THREE.MeshStandardMaterial({color:0x8f6f3f,metalness:0.55,roughness:0.42});
+const stoneMat = new THREE.MeshStandardMaterial({color:0xd7c5a2,metalness:0.0,roughness:0.95});
+const grassMat = new THREE.MeshStandardMaterial({color:0x84945f,metalness:0.0,roughness:1.0});
+const woodMat = new THREE.MeshStandardMaterial({color:0x5b3d2c,metalness:0.05,roughness:0.72});
+const trunkMat = new THREE.MeshStandardMaterial({color:0x5d4230,roughness:0.9});
+const leafMats = [
+  new THREE.MeshStandardMaterial({color:0x5f7d3c,roughness:0.9,flatShading:true}),
+  new THREE.MeshStandardMaterial({color:0x6f8f45,roughness:0.9,flatShading:true}),
+  new THREE.MeshStandardMaterial({color:0x7d9c50,roughness:0.9,flatShading:true})
+];
+
+function mesh(geo,mat,x,y,z,parent){
+  const m=new THREE.Mesh(geo,mat);
+  m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true;
+  (parent||scene).add(m); return m;
+}
+const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+const ironBeams=[], brassBeams=[];
+function addBeam(list,a,b,t){ list.push({a,b,t}); }
+
+// Tower profile
+const profY=[0,3,6,8.8,9.4];
+const sVals=[2.30,1.28,0.72,0.30,0.13];
+const wVals=[0.30,0.20,0.13,0.08,0.045];
+function prof(y,vals){
+  if(y<=0) return vals[0];
+  for(let i=1;i<profY.length;i++){
+    if(y<=profY[i]){ const t=(y-profY[i-1])/(profY[i]-profY[i-1]); return vals[i-1]+(vals[i]-vals[i-1])*t; }
+  }
+  return vals[vals.length-1];
+}
+const levels=[0,0.75,1.5,2.25,3,3.75,4.5,5.25,6,6.7,7.4,8.1,8.8,9.4];
+const legSigns=[[1,1],[1,-1],[-1,-1],[-1,1]];
+const chordOff=[[1,1],[1,-1],[-1,-1],[-1,1]];
+
+// Lattice legs
+for(const [sx,sz] of legSigns){
+  const pts=[];
+  for(const y of levels){
+    const s=prof(y,sVals), w=prof(y,wVals);
+    const row=[];
+    for(const [ox,oz] of chordOff) row.push(V(sx*s+ox*w,y,sz*s+oz*w));
+    pts.push(row);
+    for(let k=0;k<4;k++) addBeam(ironBeams,row[k],row[(k+1)%4],0.034);
+  }
+  for(let i=0;i<levels.length-1;i++){
+    const thick=0.088-i*0.0035;
+    for(let k=0;k<4;k++){
+      addBeam(ironBeams,pts[i][k],pts[i+1][k],Math.max(0.038,thick));
+      let a,b;
+      if(i%2===0){ a=pts[i][k]; b=pts[i+1][(k+1)%4]; } else { a=pts[i][(k+1)%4]; b=pts[i+1][k]; }
+      addBeam(ironBeams,a,b,0.029);
+    }
+  }
+}
+
+// Inter-leg framing and diagonals above the arch
+const centres=levels.map(y=>{ const s=prof(y,sVals); return legSigns.map(([sx,sz])=>V(sx*s,y,sz*s)); });
+const facePairs=[[0,1],[1,2],[2,3],[3,0]];
+levels.forEach((y,i)=>{
+  if(y>=2.25){
+    for(const [a,b] of facePairs) addBeam(ironBeams,centres[i][a],centres[i][b], y<6?0.060:0.042);
+  }
+  if(i<levels.length-1 && y>=2.25){
+    for(const [a,b] of facePairs) addBeam(ironBeams,centres[i][a],centres[i+1][b],0.037);
+  }
+});
+
+// Wide arches on all four faces
+const archFaces=[{axis:'x',sign:1},{axis:'x',sign:-1},{axis:'z',sign:1},{axis:'z',sign:-1}];
+function archPoint(face,off,t){
+  const s0=2.30, u=-s0+2*s0*t, v=1.86*Math.sin(Math.PI*t);
+  return face.axis==='x' ? V(face.sign*s0+off,v,u) : V(u,v,face.sign*s0+off);
+}
+for(const face of archFaces){
+  for(const off of [-0.24,0.24]){
+    for(let i=0;i<18;i++) addBeam(brassBeams,archPoint(face,off,i/18),archPoint(face,off,(i+1)/18),0.095);
+  }
+  for(const t of [0.22,0.5,0.78]) addBeam(brassBeams,archPoint(face,-0.24,t),archPoint(face,0.24,t),0.048);
+}
+
+// Observation platforms
+function platform(y,half){
+  mesh(new THREE.BoxGeometry(half*2,0.16,half*2),deckMat,0,y-0.09,0);
+  mesh(new THREE.BoxGeometry(half*2+0.10,0.07,half*2+0.10),brassMat,0,y-0.20,0);
+  const sBelow=prof(y-0.65,sVals), sNow=prof(y,sVals);
+  for(const [sx,sz] of legSigns){
+    addBeam(ironBeams,V(sx*sBelow,y-0.68,sz*sBelow),V(sx*half*0.98,y-0.18,sz*sBelow),0.062);
+    addBeam(ironBeams,V(sx*sBelow,y-0.68,sz*sBelow),V(sx*sBelow,y-0.18,sz*half*0.98),0.062);
+    addBeam(ironBeams,V(sx*sNow,y-0.04,sz*sNow),V(sx*half*0.95,y-0.17,sz*half*0.95),0.058);
+  }
+  const rh=y<4?0.30:0.24, off=half-0.07;
+  const corners=[V(-off,y+rh,-off),V(off,y+rh,-off),V(off,y+rh,off),V(-off,y+rh,off)];
+  const cornersM=[V(-off,y+rh*0.55,-off),V(off,y+rh*0.55,-off),V(off,y+rh*0.55,off),V(-off,y+rh*0.55,off)];
+  for(let k=0;k<4;k++){
+    addBeam(brassBeams,corners[k],corners[(k+1)%4],0.045);
+    addBeam(brassBeams,cornersM[k],cornersM[(k+1)%4],0.028);
+  }
+  const steps=Math.ceil((2*off)/0.38);
+  for(let side=0;side<4;side++){
+    for(let i=0;i<=steps;i++){
+      const t=-off+(2*off*i/steps); let x,z;
+      if(side===0){x=t;z=-off;} else if(side===1){x=off;z=t;} else if(side===2){x=t;z=off;} else {x=-off;z=t;}
+      addBeam(brassBeams,V(x,y,z),V(x,y+rh,z),0.027);
+    }
+  }
+}
+platform(3.0,1.65);
+platform(6.0,1.02);
+
+// Spire collar, beacon and antenna
+const collar=mesh(new THREE.TorusGeometry(0.36,0.035,8,28),brassMat,0,8.1,0);
+collar.rotation.x=Math.PI/2;
+mesh(new THREE.CylinderGeometry(0.34,0.38,0.09,24),deckMat,0,8.86,0);
+mesh(new THREE.SphereGeometry(0.115,16,12),brassMat,0,9.56,0);
+mesh(new THREE.CylinderGeometry(0.022,0.022,0.52,8),ironMat,0,9.82,0);
+mesh(new THREE.ConeGeometry(0.055,0.38,12),brassMat,0,10.12,0);
+
+// Instanced beams
+function makeInstanced(list,mat){
+  const geo=new THREE.BoxGeometry(1,1,1);
+  const inst=new THREE.InstancedMesh(geo,mat,list.length);
+  const dummy=new THREE.Object3D(), up=V(0,1,0), dir=new THREE.Vector3();
+  for(let i=0;i<list.length;i++){
+    const {a,b,t}=list[i];
+    dir.subVectors(b,a); const len=dir.length();
+    dummy.position.copy(a).add(b).multiplyScalar(0.5);
+    dummy.quaternion.setFromUnitVectors(up,dir.normalize());
+    dummy.scale.set(t,len,t); dummy.updateMatrix();
+    inst.setMatrixAt(i,dummy.matrix);
+  }
+  inst.castShadow=true; inst.receiveShadow=true; scene.add(inst);
+}
+makeInstanced(ironBeams,ironMat);
+makeInstanced(brassBeams,brassMat);
+
+// Circular landscaped base
+mesh(new THREE.CylinderGeometry(6.4,6.65,0.5,72),woodMat,0,-0.25,0);
+mesh(new THREE.CylinderGeometry(6.45,6.45,0.08,72),brassMat,0,-0.02,0);
+mesh(new THREE.CylinderGeometry(6.0,6.15,0.14,72),grassMat,0,-0.02,0);
+mesh(new THREE.CylinderGeometry(3.05,3.05,0.07,64),stoneMat,0,0.055,0);
+mesh(new THREE.BoxGeometry(11.4,0.03,0.68),stoneMat,0,0.055,0);
+mesh(new THREE.BoxGeometry(0.68,0.03,11.4),stoneMat,0,0.055,0);
+const ring=mesh(new THREE.RingGeometry(4.28,4.86,64),stoneMat,0,0.058,0);
+ring.rotation.x=-Math.PI/2; ring.material=stoneMat;
+
+// Studio floor / shadow catcher
+const floor=mesh(new THREE.CircleGeometry(15,48),new THREE.MeshStandardMaterial({color:0xe0d3b8,roughness:1}),0,-0.51,0);
+floor.rotation.x=-Math.PI/2; floor.castShadow=false;
+
+// Trees, shrubs, lamps and benches
+const trunkGeo=new THREE.CylinderGeometry(0.035,0.05,0.34,8);
+const leafGeo=new THREE.IcosahedronGeometry(0.31,0);
+const leafGeo2=new THREE.IcosahedronGeometry(0.22,0);
+const treeData=[[28,5.02,1.0],[58,4.45,0.85],[122,5.02,0.95],[152,4.45,0.8],[208,5.02,0.9],[238,4.45,1.0],[302,5.02,0.85],[332,4.45,0.95],[78,5.25,0.75],[102,5.25,0.8],[258,5.25,0.78],[282,5.25,0.72]];
+treeData.forEach(([deg,r,sc],idx)=>{
+  const a=deg*Math.PI/180, x=Math.cos(a)*r, z=Math.sin(a)*r, mat=leafMats[idx%3];
+  mesh(trunkGeo,trunkMat,x,0.20*sc,z);
+  const f=mesh(leafGeo,mat,x,0.58*sc,z); f.scale.setScalar(sc);
+  const f2=mesh(leafGeo2,mat,x+0.08*sc,0.82*sc,z-0.05*sc); f2.scale.setScalar(sc);
+});
+const shrubGeo=new THREE.SphereGeometry(0.17,10,8);
+for(const deg of [15,75,105,165,195,255,285,345]){
+  const a=deg*Math.PI/180, r=deg%90<40?3.65:3.85;
+  const s=mesh(shrubGeo,leafMats[deg%3],Math.cos(a)*r,0.10,Math.sin(a)*r);
+  s.scale.set(1,0.62,1); s.castShadow=true;
+}
+const lampPost=new THREE.CylinderGeometry(0.024,0.03,0.52,8);
+const lampBulb=new THREE.SphereGeometry(0.072,12,10);
+for(const deg of [45,135,225,315]){
+  const a=deg*Math.PI/180, x=Math.cos(a)*3.85, z=Math.sin(a)*3.85;
+  mesh(lampPost,ironMat,x,0.30,z);
+  mesh(lampBulb,brassMat,x,0.60,z);
+}
+function bench(deg){
+  const a=deg*Math.PI/180, r=2.62, g=new THREE.Group();
+  g.position.set(Math.cos(a)*r,0.09,Math.sin(a)*r); g.rotation.y=-a+Math.PI/2; scene.add(g);
+  mesh(new THREE.BoxGeometry(0.52,0.05,0.20),woodMat,0,0.18,0,g);
+  mesh(new THREE.BoxGeometry(0.52,0.20,0.04),woodMat,0,0.33,-0.09,g);
+  mesh(new THREE.BoxGeometry(0.04,0.16,0.18),ironMat,-0.19,0.08,0,g);
+  mesh(new THREE.BoxGeometry(0.04,0.16,0.18),ironMat,0.19,0.08,0,g);
+}
+bench(45); bench(225);
+
+// Native orbit and zoom controls
+let theta=0.65, phi=1.25, radius=20.5;
+const target=V(0,4.4,0);
+function updateCamera(){
+  const sp=Math.sin(phi);
+  camera.position.set(target.x+radius*sp*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*sp*Math.cos(theta));
+  camera.lookAt(target);
+  renderer.render(scene,camera);
+}
+let dragging=false,lastX=0,lastY=0;
+renderer.domElement.addEventListener('pointerdown',e=>{
+  dragging=true; lastX=e.clientX; lastY=e.clientY;
+  renderer.domElement.setPointerCapture(e.pointerId);
+});
+renderer.domElement.addEventListener('pointermove',e=>{
+  if(!dragging) return;
+  const dx=e.clientX-lastX, dy=e.clientY-lastY; lastX=e.clientX; lastY=e.clientY;
+  theta-=dx*0.005;
+  phi=Math.max(0.25,Math.min(1.45,phi-dy*0.005));
+  updateCamera();
+});
+const endDrag=()=>{dragging=false;};
+renderer.domElement.addEventListener('pointerup',endDrag);
+renderer.domElement.addEventListener('pointercancel',endDrag);
+renderer.domElement.addEventListener('wheel',e=>{
+  e.preventDefault();
+  radius=Math.max(10,Math.min(32,radius+e.deltaY*0.02));
+  updateCamera();
+},{passive:false});
+
+window.addEventListener('resize',()=>{
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.render(scene,camera);
+});
+
+updateCamera();
+window.sceneReady=true;
+</script>
+</body>
+</html>

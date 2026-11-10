@@ -1,0 +1,490 @@
+[
+  {
+    "slug": "golden-gate-high",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "golden-gate-low",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "golden-gate-max",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "golden-gate-medium",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "golden-gate-minimal",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "golden-gate-xhigh",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "griffith-high",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "griffith-low",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "griffith-max",
+    "errors": [],
+    "blockedRequests": [],
+    "failure": "page.waitForFunction: Timeout 30000ms exceeded."
+  },
+  {
+    "slug": "griffith-medium",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "griffith-minimal",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "griffith-xhigh",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "half-dome-high",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "half-dome-low",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "half-dome-max",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "half-dome-medium",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "half-dome-minimal",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "half-dome-xhigh",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "painted-ladies-high",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "painted-ladies-low",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "painted-ladies-max",
+    "errors": [],
+    "blockedRequests": [],
+    "failure": "page.waitForFunction: Timeout 30000ms exceeded."
+  },
+  {
+    "slug": "painted-ladies-medium",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "painted-ladies-minimal",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "painted-ladies-xhigh",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "santa-monica-high",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "santa-monica-low",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "santa-monica-max",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "santa-monica-medium",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "santa-monica-minimal",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "santa-monica-xhigh",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "transamerica-high",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "transamerica-low",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "transamerica-max",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "transamerica-medium",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "transamerica-minimal",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "transamerica-xhigh",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  }
+]

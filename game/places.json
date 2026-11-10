@@ -1,0 +1,330 @@
+[
+  {
+    "id": "golden-gate",
+    "name": "Golden Gate Bridge",
+    "region": "San Francisco",
+    "description": "A long vermilion suspension bridge crossing a wide ocean strait. Two tall rectangular steel towers have large openings and cross-braces. A straight road deck hangs from two sweeping main cables and many thin vertical hangers. Rocky green headlands sit at the ends, with cool blue water below and a little coastal haze.",
+    "country": "USA",
+    "pool": "California",
+    "difficulty": 1,
+    "aliases": [
+      "Golden Gate",
+      "Golden Gate Bridge"
+    ]
+  },
+  {
+    "id": "painted-ladies",
+    "name": "Painted Ladies",
+    "region": "San Francisco",
+    "description": "A row of seven narrow ornate Victorian houses on a sloping city street. Each house has a different pastel color, steep gabled roof, tall bay windows, front steps and elaborate white wood trim. A grassy hillside is in the foreground. A distant cluster of modern high-rise buildings rises behind the rooftops.",
+    "country": "USA",
+    "pool": "California",
+    "difficulty": 2,
+    "aliases": [
+      "Painted Ladies",
+      "Seven Sisters"
+    ]
+  },
+  {
+    "id": "transamerica",
+    "name": "Transamerica Pyramid",
+    "region": "San Francisco",
+    "description": "A very tall pale stone office tower shaped like a slender four-sided pyramid with a pointed spire. Dense horizontal rows of dark windows cover its tapering faces. Two narrow vertical fins project from opposite upper sides. Exposed triangular supports form a broad base, surrounded by much shorter city blocks and small trees.",
+    "country": "USA",
+    "pool": "California",
+    "difficulty": 3,
+    "aliases": [
+      "Transamerica Pyramid",
+      "Transamerica Building"
+    ]
+  },
+  {
+    "id": "griffith",
+    "name": "Griffith Observatory",
+    "region": "Los Angeles",
+    "description": "A symmetrical pale cream observatory on a green-brown hill above a city. It has one large central dark copper dome and two smaller matching domes on the left and right wings. A broad terrace, balustrades and wide steps face the viewer. The building has low geometric walls and a small obelisk-like monument on the front lawn.",
+    "country": "USA",
+    "pool": "California",
+    "difficulty": 2,
+    "aliases": [
+      "Griffith Observatory"
+    ]
+  },
+  {
+    "id": "half-dome",
+    "name": "Half Dome",
+    "region": "Yosemite",
+    "description": "A monumental pale granite mountain shaped like a dome sliced vertically in half. One face is a huge sheer smooth cliff, while the back is a rounded sloping shoulder. Dark vertical weathering streaks mark the rock. Smaller granite ridges and a forest of tiny evergreen trees surround it, beneath clear blue mountain sky.",
+    "country": "USA",
+    "pool": "California",
+    "difficulty": 3,
+    "aliases": [
+      "Half Dome"
+    ]
+  },
+  {
+    "id": "santa-monica",
+    "name": "Santa Monica Pier",
+    "region": "Santa Monica",
+    "description": "A wooden amusement pier extending from a broad sandy beach into the blue ocean. A large colorful Ferris wheel rises above the pier near a compact roller coaster with bright yellow track and blue supports. Include simple low buildings, railings, timber support piles, foamy waves, and a few palm trees near the shore. There are no written signs.",
+    "country": "USA",
+    "pool": "California",
+    "difficulty": 1,
+    "aliases": [
+      "Santa Monica Pier",
+      "Pacific Park"
+    ]
+  },
+  {
+    "id": "sutro-tower",
+    "name": "Sutro Tower",
+    "region": "San Francisco",
+    "country": "USA",
+    "pool": "California",
+    "difficulty": 4,
+    "aliases": [
+      "Sutro"
+    ],
+    "description": "A tall red-and-white steel broadcasting tower on a green hill. Three slender legs widen into an open triangular base and support several horizontal truss platforms. Long narrow antennas stand above the top deck. Small city buildings spread below under pale coastal haze."
+  },
+  {
+    "id": "point-reyes",
+    "name": "Point Reyes Lighthouse",
+    "region": "Point Reyes",
+    "country": "USA",
+    "pool": "California",
+    "difficulty": 4,
+    "aliases": [
+      "Point Reyes Light"
+    ],
+    "description": "A small white lighthouse with a red lantern roof stands low on a rugged ocean headland. A long steep straight staircase descends from high brown-green cliffs to the compact lighthouse platform. Foamy blue Pacific water surrounds the rocks. Frame the whole stairway and the lantern."
+  },
+  {
+    "id": "oslo-opera",
+    "name": "Oslo Opera House",
+    "region": "Oslo",
+    "country": "Norway",
+    "pool": "Norway",
+    "difficulty": 1,
+    "aliases": [
+      "Operaen",
+      "Operahuset i Oslo",
+      "Norwegian National Opera and Ballet"
+    ],
+    "description": "A low modern waterfront building with broad white sloping roof planes that people can walk up from the water edge. Angular marble surfaces rise like an iceberg around a central box of tall blue-green glass windows. Calm blue harbor water reflects the geometric white building."
+  },
+  {
+    "id": "bryggen",
+    "name": "Bryggen",
+    "region": "Bergen",
+    "country": "Norway",
+    "pool": "Norway",
+    "difficulty": 1,
+    "aliases": [
+      "Bryggen Bergen",
+      "Tyskebryggen",
+      "Hanseatic Wharf"
+    ],
+    "description": "A closely packed row of tall narrow timber merchant houses faces a harbor quay. Their steep triangular gables form a repeated jagged roofline. Facades alternate ochre, cream, brown and muted red, with rows of small windows. Dark tiled roofs and green mountain slopes rise behind the waterfront."
+  },
+  {
+    "id": "holmenkollen",
+    "name": "Holmenkollen Ski Jump",
+    "region": "Oslo",
+    "country": "Norway",
+    "pool": "Norway",
+    "difficulty": 2,
+    "aliases": [
+      "Holmenkollen",
+      "Holmenkollbakken"
+    ],
+    "description": "A very tall modern steel ski-jump tower arcs forward above a long steep landing slope. Its upper structure is a broad perforated silver wedge, with the narrow curved ramp projecting down from its tip. Forested hills surround the monumental jump. Show the entire tower and the landing track."
+  },
+  {
+    "id": "trolltunga",
+    "name": "Trolltunga",
+    "region": "Hardanger",
+    "country": "Norway",
+    "pool": "Norway",
+    "difficulty": 2,
+    "aliases": [
+      "Troll Tongue",
+      "Trolls Tongue"
+    ],
+    "description": "A narrow flat rock ledge juts horizontally out from a high gray mountain cliff. Far below is a long deep-blue lake between layered rugged mountain walls. The ledge has a broad root and a thin exposed rounded tip. A tiny person standing on the tip gives a clear sense of scale."
+  },
+  {
+    "id": "borgund",
+    "name": "Borgund Stave Church",
+    "region": "Laerdal",
+    "country": "Norway",
+    "pool": "Norway",
+    "difficulty": 3,
+    "aliases": [
+      "Borgund",
+      "Borgund stavkirke",
+      "Borgund stavkyrkje"
+    ],
+    "description": "A small dark tarred wooden medieval church has many overlapping steep shingle roofs stacked in tiers. A central tower rises above lower galleries. Carved dragon heads curl from the roof ridges. The church stands on short grass with forested valley slopes beyond. Use rich dark-brown timber and clear roof silhouettes."
+  },
+  {
+    "id": "nidaros",
+    "name": "Nidaros Cathedral",
+    "region": "Trondheim",
+    "country": "Norway",
+    "pool": "Norway",
+    "difficulty": 3,
+    "aliases": [
+      "Nidarosdomen",
+      "Nidaros Domkirke"
+    ],
+    "description": "A large gray Gothic cathedral with a richly carved broad western facade. Two square towers flank a central rose window and several tiers of pointed arches and small statues. A tall pointed central spire rises behind the front. A stone plaza and low green trees surround the building."
+  },
+  {
+    "id": "stegastein",
+    "name": "Stegastein Viewpoint",
+    "region": "Aurland",
+    "country": "Norway",
+    "pool": "Norway",
+    "difficulty": 4,
+    "aliases": [
+      "Stegastein",
+      "Stegasteinen"
+    ],
+    "description": "A narrow wooden observation platform projects straight from a steep wooded mountainside over a very deep blue fjord. The timber walkway ends in a tall curved upturned wooden lip with transparent glass at its edge. Rugged green mountains descend sharply to the water on both sides. Show the cantilevered platform clearly."
+  },
+  {
+    "id": "storseisundet",
+    "name": "Storseisundet Bridge",
+    "region": "Averoy",
+    "country": "Norway",
+    "pool": "Norway",
+    "difficulty": 4,
+    "aliases": [
+      "Storseisundbrua",
+      "Storseisundet bru",
+      "Atlantic Ocean Road",
+      "Atlanterhavsveien",
+      "Atlanterhavsvegen"
+    ],
+    "description": "A slender gray concrete road bridge sweeps upward in a dramatic curved hump over cold open seawater. The roadway bends sideways as it climbs, supported by a few angled concrete piers. Low bare rocky islands and short green grass surround it, with small waves and an overcast Nordic sky."
+  },
+  {
+    "id": "boudhanath",
+    "name": "Boudhanath Stupa",
+    "region": "Kathmandu",
+    "country": "Nepal",
+    "pool": "Nepal",
+    "difficulty": 1,
+    "aliases": [
+      "Boudha",
+      "Boudhanath",
+      "Bauddhanath",
+      "Bodhnath",
+      "Boudhanath Stupa",
+      "बौद्धनाथ"
+    ],
+    "description": "An immense smooth white hemispherical stupa sits on several broad circular white terraces. Above the dome is a square golden tower with stylized painted eyes on its four sides, topped by a tall gold stepped spire. Radiating strings of colorful prayer flags connect the spire to the surrounding plaza. Low buildings form a ring beyond."
+  },
+  {
+    "id": "swayambhunath",
+    "name": "Swayambhunath",
+    "region": "Kathmandu",
+    "country": "Nepal",
+    "pool": "Nepal",
+    "difficulty": 1,
+    "aliases": [
+      "Swayambhu",
+      "Swayambhunath Stupa",
+      "Monkey Temple",
+      "स्वयम्भूनाथ"
+    ],
+    "description": "A white domed Buddhist stupa crowns a green hill reached by a steep stone stairway. A gilded square tower with painted eyes supports a tapering golden spire. Colorful prayer flags span out to small shrines and roofs, and a few small monkeys sit near the stone steps. A wide city plain is visible far below."
+  },
+  {
+    "id": "pashupatinath",
+    "name": "Pashupatinath Temple",
+    "region": "Kathmandu",
+    "country": "Nepal",
+    "pool": "Nepal",
+    "difficulty": 2,
+    "aliases": [
+      "Pashupatinath",
+      "Pashupati Temple",
+      "पशुपतिनाथ"
+    ],
+    "description": "A sacred temple complex beside a narrow river, centered on a square two-tier pagoda with gleaming golden roofs and carved dark timber. Stone steps and terraces descend to the river. Rows of small pale stone shrines line the opposite bank. Show the pagoda, river and stair terraces without people or written signs."
+  },
+  {
+    "id": "nyatapola",
+    "name": "Nyatapola Temple",
+    "region": "Bhaktapur",
+    "country": "Nepal",
+    "pool": "Nepal",
+    "difficulty": 2,
+    "aliases": [
+      "Nyatapola",
+      "Nyatapol",
+      "Nyatpola",
+      "Five Storied Temple",
+      "न्यातपोल"
+    ],
+    "description": "A tall five-roofed brick-and-timber pagoda rises on a high stepped brick platform in an open old city square. Each dark tiled roof gets smaller toward the top, with elegantly flared corners. A steep central stone staircase climbs the platform, flanked by pairs of large stone guardian figures on successive terraces."
+  },
+  {
+    "id": "janaki",
+    "name": "Janaki Mandir",
+    "region": "Janakpur",
+    "country": "Nepal",
+    "pool": "Nepal",
+    "difficulty": 3,
+    "aliases": [
+      "Janaki Temple",
+      "Janaki Mandir Janakpur",
+      "जानकी मन्दिर"
+    ],
+    "description": "A broad ornate white palace-like temple has a symmetrical facade with many scalloped arches, balconies and small domed pavilions. Pale pastel turquoise, pink and gold details accent the white walls. A high central entrance opens onto a large paved courtyard. Show the layered domes and decorative arch patterns clearly."
+  },
+  {
+    "id": "rani-pokhari",
+    "name": "Rani Pokhari",
+    "region": "Kathmandu",
+    "country": "Nepal",
+    "pool": "Nepal",
+    "difficulty": 3,
+    "aliases": [
+      "Ranipokhari",
+      "Rani Pokhari Pond",
+      "रानी पोखरी"
+    ],
+    "description": "A large rectangular still pond surrounds a tiny white temple on a central island. A narrow straight stone causeway reaches the island from one edge. The temple has tiered dark roofs with a golden finial and stands on a low white plinth. Reflections of the temple and surrounding city buildings appear in green-blue water."
+  },
+  {
+    "id": "rani-mahal",
+    "name": "Rani Mahal",
+    "region": "Palpa",
+    "country": "Nepal",
+    "pool": "Nepal",
+    "difficulty": 4,
+    "aliases": [
+      "Ranimahal",
+      "Rani Mahal Palpa",
+      "रानी महल"
+    ],
+    "description": "A pale blue-and-white neoclassical palace stands on a stone terrace immediately beside a curving turquoise river. It has a symmetrical main block, rows of arched openings and white columns, with smaller side pavilions and pale roofs. Steep densely forested green hills rise directly behind it. The river bends around the terrace."
+  },
+  {
+    "id": "changu-narayan",
+    "name": "Changu Narayan Temple",
+    "region": "Bhaktapur",
+    "country": "Nepal",
+    "pool": "Nepal",
+    "difficulty": 4,
+    "aliases": [
+      "Changunarayan",
+      "Changu Narayan",
+      "चाँगुनारायण"
+    ],
+    "description": "An elaborate two-tier pagoda temple of red brick and dark carved wood stands in a compact stone-paved hilltop courtyard. Wide copper-colored roof tiers flare upward at their corners. Richly carved struts support the eaves, with stone guardian figures and a kneeling winged figure near the entrance. Traditional houses enclose the courtyard."
+  }
+]

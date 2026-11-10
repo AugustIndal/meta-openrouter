@@ -1,0 +1,828 @@
+{
+  "requested_effort": "xhigh",
+  "max_tokens": 32000,
+  "max_concurrency": 5,
+  "wall_seconds": 177.383,
+  "results": [
+    {
+      "slug": "01-golden-gate",
+      "name": "Golden Gate Bridge",
+      "approach": "Geometry-first",
+      "format": "canvas",
+      "prompt": "Build the Golden Gate Bridge with accurate structural hierarchy: two International Orange open-frame towers, a continuous road deck, paired sagging main cables and evenly spaced vertical hangers attached at both ends. Use a wide three-quarter viewpoint, cool ocean, distant hills and warm afternoon sun. Prioritize structural correctness over decoration.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Build the Golden Gate Bridge with accurate structural hierarchy: two International Orange open-frame towers, a continuous road deck, paired sagging main cables and evenly spaced vertical hangers attached at both ends. Use a wide three-quarter viewpoint, cool ocean, distant hills and warm afternoon sun. Prioritize structural correctness over decoration.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 254,
+        "completion_tokens": 32218,
+        "total_tokens": 32472,
+        "cost": 0.0161344,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0161344,
+          "upstream_inference_prompt_cost": 2.54e-05,
+          "upstream_inference_completions_cost": 0.016109
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 31998,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "length",
+      "bytes": 0,
+      "generation_id": "gen-1794280400-aaoIB2DbYP3aHRz5dDx5",
+      "file": "01-golden-gate-canvas.html",
+      "elapsed_seconds": 70.168
+    },
+    {
+      "slug": "01-golden-gate",
+      "name": "Golden Gate Bridge",
+      "approach": "Geometry-first",
+      "format": "svg",
+      "prompt": "Build the Golden Gate Bridge with accurate structural hierarchy: two International Orange open-frame towers, a continuous road deck, paired sagging main cables and evenly spaced vertical hangers attached at both ends. Use a wide three-quarter viewpoint, cool ocean, distant hills and warm afternoon sun. Prioritize structural correctness over decoration.\n\nReturn only one complete standalone SVG document without Markdown fences. Use xmlns=\"http://www.w3.org/2000/svg\", width=\"1200\", height=\"800\", viewBox=\"0 0 1200 800\". Build the entire artwork with native SVG paths, shapes, gradients, masks and filters. No scripts or embedded HTML. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Build the Golden Gate Bridge with accurate structural hierarchy: two International Orange open-frame towers, a continuous road deck, paired sagging main cables and evenly spaced vertical hangers attached at both ends. Use a wide three-quarter viewpoint, cool ocean, distant hills and warm afternoon sun. Prioritize structural correctness over decoration.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 264,
+        "completion_tokens": 18789,
+        "total_tokens": 19053,
+        "cost": 0.0094209,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0094209,
+          "upstream_inference_prompt_cost": 2.64e-05,
+          "upstream_inference_completions_cost": 0.0093945
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 13823,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 11911,
+      "generation_id": "gen-1794280400-JmSpecfN8fZMLxImACc5",
+      "file": "01-golden-gate-svg.svg",
+      "elapsed_seconds": 34.642
+    },
+    {
+      "slug": "02-eiffel",
+      "name": "Eiffel Tower",
+      "approach": "Miniature diorama",
+      "format": "canvas",
+      "prompt": "Create a collectible miniature diorama of the Eiffel Tower on a circular landscaped base. Emphasize four splayed lattice legs, the wide arch at the base, two observation platforms and a tapering open lattice spire. Tiny paths and trees establish scale. Refined warm brass and iron materials, soft studio lighting, lovely three-quarter composition.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Create a collectible miniature diorama of the Eiffel Tower on a circular landscaped base. Emphasize four splayed lattice legs, the wide arch at the base, two observation platforms and a tapering open lattice spire. Tiny paths and trees establish scale. Refined warm brass and iron materials, soft studio lighting, lovely three-quarter composition.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 263,
+        "completion_tokens": 29854,
+        "total_tokens": 30117,
+        "cost": 0.0149533,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0149533,
+          "upstream_inference_prompt_cost": 2.63e-05,
+          "upstream_inference_completions_cost": 0.014927
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 23593,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 14224,
+      "generation_id": "gen-1794280400-d3DvC4gLL420zqvdLZMP",
+      "file": "02-eiffel-canvas.html",
+      "elapsed_seconds": 54.095
+    },
+    {
+      "slug": "02-eiffel",
+      "name": "Eiffel Tower",
+      "approach": "Miniature diorama",
+      "format": "svg",
+      "prompt": "Create a collectible miniature diorama of the Eiffel Tower on a circular landscaped base. Emphasize four splayed lattice legs, the wide arch at the base, two observation platforms and a tapering open lattice spire. Tiny paths and trees establish scale. Refined warm brass and iron materials, soft studio lighting, lovely three-quarter composition.\n\nReturn only one complete standalone SVG document without Markdown fences. Use xmlns=\"http://www.w3.org/2000/svg\", width=\"1200\", height=\"800\", viewBox=\"0 0 1200 800\". Build the entire artwork with native SVG paths, shapes, gradients, masks and filters. No scripts or embedded HTML. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Create a collectible miniature diorama of the Eiffel Tower on a circular landscaped base. Emphasize four splayed lattice legs, the wide arch at the base, two observation platforms and a tapering open lattice spire. Tiny paths and trees establish scale. Refined warm brass and iron materials, soft studio lighting, lovely three-quarter composition.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 273,
+        "completion_tokens": 18506,
+        "total_tokens": 18779,
+        "cost": 0.0092803,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0092803,
+          "upstream_inference_prompt_cost": 2.73e-05,
+          "upstream_inference_completions_cost": 0.009253
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 12670,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 14495,
+      "generation_id": "gen-1794280400-aDMDaEz2mBy8JdAYVmuU",
+      "file": "02-eiffel-svg.svg",
+      "elapsed_seconds": 34.106
+    },
+    {
+      "slug": "03-taj-mahal",
+      "name": "Taj Mahal",
+      "approach": "Symmetry and reflection",
+      "format": "canvas",
+      "prompt": "Render the Taj Mahal as a serene architectural scene: central ivory onion dome with finial above a symmetrical building with a tall central pointed portal, smaller domed kiosks and four slender corner minarets. A long foreground reflecting pool and flanking formal gardens guide the eye to the facade. Symmetry, soft dawn light, pale pink sky, polished proportions.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Render the Taj Mahal as a serene architectural scene: central ivory onion dome with finial above a symmetrical building with a tall central pointed portal, smaller domed kiosks and four slender corner minarets. A long foreground reflecting pool and flanking formal gardens guide the eye to the facade. Symmetry, soft dawn light, pale pink sky, polished proportions.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 265,
+        "completion_tokens": 12598,
+        "total_tokens": 12863,
+        "cost": 0.0063255,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0063255,
+          "upstream_inference_prompt_cost": 2.65e-05,
+          "upstream_inference_completions_cost": 0.006299
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 7205,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 12971,
+      "generation_id": "gen-1794280400-wVUBddzlNsarB0LVTSzd",
+      "file": "03-taj-mahal-canvas.html",
+      "elapsed_seconds": 23.314
+    },
+    {
+      "slug": "03-taj-mahal",
+      "name": "Taj Mahal",
+      "approach": "Symmetry and reflection",
+      "format": "svg",
+      "prompt": "Render the Taj Mahal as a serene architectural scene: central ivory onion dome with finial above a symmetrical building with a tall central pointed portal, smaller domed kiosks and four slender corner minarets. A long foreground reflecting pool and flanking formal gardens guide the eye to the facade. Symmetry, soft dawn light, pale pink sky, polished proportions.\n\nReturn only one complete standalone SVG document without Markdown fences. Use xmlns=\"http://www.w3.org/2000/svg\", width=\"1200\", height=\"800\", viewBox=\"0 0 1200 800\". Build the entire artwork with native SVG paths, shapes, gradients, masks and filters. No scripts or embedded HTML. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Render the Taj Mahal as a serene architectural scene: central ivory onion dome with finial above a symmetrical building with a tall central pointed portal, smaller domed kiosks and four slender corner minarets. A long foreground reflecting pool and flanking formal gardens guide the eye to the facade. Symmetry, soft dawn light, pale pink sky, polished proportions.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 275,
+        "completion_tokens": 14786,
+        "total_tokens": 15061,
+        "cost": 0.0074205,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0074205,
+          "upstream_inference_prompt_cost": 2.75e-05,
+          "upstream_inference_completions_cost": 0.007393
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 8999,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 13856,
+      "generation_id": "gen-1794280424-y5ZEhEy5UNgAENESHTw6",
+      "file": "03-taj-mahal-svg.svg",
+      "elapsed_seconds": 26.348
+    },
+    {
+      "slug": "04-colosseum",
+      "name": "Colosseum",
+      "approach": "Architectural cutaway",
+      "format": "canvas",
+      "prompt": "Build a recognizable Colosseum as a detailed architectural cutaway: elliptical amphitheater, three stacked rings of repeated open arches, a partially broken upper wall and visible stepped seating surrounding the exposed arena. Warm travertine stone, sparse Roman ground context, elevated three-quarter view. Make openings genuine empty spaces between columns and arch segments.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Build a recognizable Colosseum as a detailed architectural cutaway: elliptical amphitheater, three stacked rings of repeated open arches, a partially broken upper wall and visible stepped seating surrounding the exposed arena. Warm travertine stone, sparse Roman ground context, elevated three-quarter view. Make openings genuine empty spaces between columns and arch segments.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 260,
+        "completion_tokens": 23848,
+        "total_tokens": 24108,
+        "cost": 0.01195,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.01195,
+          "upstream_inference_prompt_cost": 2.6e-05,
+          "upstream_inference_completions_cost": 0.011924
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 18392,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 12802,
+      "generation_id": "gen-1794280435-d7fPjKD78AeNUCHVqcCB",
+      "file": "04-colosseum-canvas.html",
+      "elapsed_seconds": 47.976
+    },
+    {
+      "slug": "04-colosseum",
+      "name": "Colosseum",
+      "approach": "Architectural cutaway",
+      "format": "svg",
+      "prompt": "Build a recognizable Colosseum as a detailed architectural cutaway: elliptical amphitheater, three stacked rings of repeated open arches, a partially broken upper wall and visible stepped seating surrounding the exposed arena. Warm travertine stone, sparse Roman ground context, elevated three-quarter view. Make openings genuine empty spaces between columns and arch segments.\n\nReturn only one complete standalone SVG document without Markdown fences. Use xmlns=\"http://www.w3.org/2000/svg\", width=\"1200\", height=\"800\", viewBox=\"0 0 1200 800\". Build the entire artwork with native SVG paths, shapes, gradients, masks and filters. No scripts or embedded HTML. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Build a recognizable Colosseum as a detailed architectural cutaway: elliptical amphitheater, three stacked rings of repeated open arches, a partially broken upper wall and visible stepped seating surrounding the exposed arena. Warm travertine stone, sparse Roman ground context, elevated three-quarter view. Make openings genuine empty spaces between columns and arch segments.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 270,
+        "completion_tokens": 32181,
+        "total_tokens": 32451,
+        "cost": 0.0161175,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0161175,
+          "upstream_inference_prompt_cost": 2.7e-05,
+          "upstream_inference_completions_cost": 0.0160905
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 26466,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "length",
+      "bytes": 14398,
+      "generation_id": "gen-1794280435-EYf8mnloooJKCSsQ4CUV",
+      "file": "04-colosseum-svg.svg",
+      "elapsed_seconds": 64.118
+    },
+    {
+      "slug": "05-liberty",
+      "name": "Statue of Liberty",
+      "approach": "Faceted low-poly",
+      "format": "canvas",
+      "prompt": "Create a refined low-poly Statue of Liberty: oxidized copper robed standing figure on a stepped stone pedestal, seven-point crown, right arm raised high with a gold flame torch, left arm holding a tablet. Build a readable human silhouette with deliberate geometry, distinguish arms and head, include the star-shaped island foundation and blue harbor. Strong side lighting.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Create a refined low-poly Statue of Liberty: oxidized copper robed standing figure on a stepped stone pedestal, seven-point crown, right arm raised high with a gold flame torch, left arm holding a tablet. Build a readable human silhouette with deliberate geometry, distinguish arms and head, include the star-shaped island foundation and blue harbor. Strong side lighting.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 263,
+        "completion_tokens": 12591,
+        "total_tokens": 12854,
+        "cost": 0.0063218,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0063218,
+          "upstream_inference_prompt_cost": 2.63e-05,
+          "upstream_inference_completions_cost": 0.0062955
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 7390,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 12240,
+      "generation_id": "gen-1794280450-kuYejybID9PXcADPZpdO",
+      "file": "05-liberty-canvas.html",
+      "elapsed_seconds": 30.33
+    },
+    {
+      "slug": "05-liberty",
+      "name": "Statue of Liberty",
+      "approach": "Faceted low-poly",
+      "format": "svg",
+      "prompt": "Create a refined low-poly Statue of Liberty: oxidized copper robed standing figure on a stepped stone pedestal, seven-point crown, right arm raised high with a gold flame torch, left arm holding a tablet. Build a readable human silhouette with deliberate geometry, distinguish arms and head, include the star-shaped island foundation and blue harbor. Strong side lighting.\n\nReturn only one complete standalone SVG document without Markdown fences. Use xmlns=\"http://www.w3.org/2000/svg\", width=\"1200\", height=\"800\", viewBox=\"0 0 1200 800\". Build the entire artwork with native SVG paths, shapes, gradients, masks and filters. No scripts or embedded HTML. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Create a refined low-poly Statue of Liberty: oxidized copper robed standing figure on a stepped stone pedestal, seven-point crown, right arm raised high with a gold flame torch, left arm holding a tablet. Build a readable human silhouette with deliberate geometry, distinguish arms and head, include the star-shaped island foundation and blue harbor. Strong side lighting.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 273,
+        "completion_tokens": 11868,
+        "total_tokens": 12141,
+        "cost": 0.0059613,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0059613,
+          "upstream_inference_prompt_cost": 2.73e-05,
+          "upstream_inference_completions_cost": 0.005934
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 7895,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 9919,
+      "generation_id": "gen-1794280454-yHP0UqyOxYLluAilSAcE",
+      "file": "05-liberty-svg.svg",
+      "elapsed_seconds": 27.085
+    },
+    {
+      "slug": "06-opera-house",
+      "name": "Sydney Opera House",
+      "approach": "Paper sculpture",
+      "format": "canvas",
+      "prompt": "Create a sculptural paper-craft Sydney Opera House beside a deep blue harbor. Arrange multiple groups of overlapping tall pointed white sail-shell roofs of different sizes on a terracotta podium, each shell curved and sharply peaked. Show the interleaved roof silhouette from a three-quarter harbor viewpoint. Crisp ivory material, soft ambient shadows, restrained surrounding details.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Create a sculptural paper-craft Sydney Opera House beside a deep blue harbor. Arrange multiple groups of overlapping tall pointed white sail-shell roofs of different sizes on a terracotta podium, each shell curved and sharply peaked. Show the interleaved roof silhouette from a three-quarter harbor viewpoint. Crisp ivory material, soft ambient shadows, restrained surrounding details.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 264,
+        "completion_tokens": 13708,
+        "total_tokens": 13972,
+        "cost": 0.0068804,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0068804,
+          "upstream_inference_prompt_cost": 2.64e-05,
+          "upstream_inference_completions_cost": 0.006854
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 8850,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 11894,
+      "generation_id": "gen-1794280471-EnoJsSxwtRUVzQoGlEYt",
+      "file": "06-opera-house-canvas.html",
+      "elapsed_seconds": 23.607
+    },
+    {
+      "slug": "06-opera-house",
+      "name": "Sydney Opera House",
+      "approach": "Paper sculpture",
+      "format": "svg",
+      "prompt": "Create a sculptural paper-craft Sydney Opera House beside a deep blue harbor. Arrange multiple groups of overlapping tall pointed white sail-shell roofs of different sizes on a terracotta podium, each shell curved and sharply peaked. Show the interleaved roof silhouette from a three-quarter harbor viewpoint. Crisp ivory material, soft ambient shadows, restrained surrounding details.\n\nReturn only one complete standalone SVG document without Markdown fences. Use xmlns=\"http://www.w3.org/2000/svg\", width=\"1200\", height=\"800\", viewBox=\"0 0 1200 800\". Build the entire artwork with native SVG paths, shapes, gradients, masks and filters. No scripts or embedded HTML. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Create a sculptural paper-craft Sydney Opera House beside a deep blue harbor. Arrange multiple groups of overlapping tall pointed white sail-shell roofs of different sizes on a terracotta podium, each shell curved and sharply peaked. Show the interleaved roof silhouette from a three-quarter harbor viewpoint. Crisp ivory material, soft ambient shadows, restrained surrounding details.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 274,
+        "completion_tokens": 10812,
+        "total_tokens": 11086,
+        "cost": 0.0054334,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0054334,
+          "upstream_inference_prompt_cost": 2.74e-05,
+          "upstream_inference_completions_cost": 0.005406
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 5098,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 14356,
+      "generation_id": "gen-1794280482-E3phOasITFIOmDExuxEl",
+      "file": "06-opera-house-svg.svg",
+      "elapsed_seconds": 20.857
+    },
+    {
+      "slug": "07-pyramids",
+      "name": "Pyramids of Giza",
+      "approach": "Cinematic landscape",
+      "format": "canvas",
+      "prompt": "Create a cinematic desert scene featuring the three Pyramids of Giza at distinct realistic relative scales. Use square-based pyramids with clean triangular faces and subtle horizontal stone courses, sandy ground with gentle dune variation, low warm sun, long soft shadows and atmospheric depth. The great pyramid is the focal point. Elegant restrained composition from a low elevated camera.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Create a cinematic desert scene featuring the three Pyramids of Giza at distinct realistic relative scales. Use square-based pyramids with clean triangular faces and subtle horizontal stone courses, sandy ground with gentle dune variation, low warm sun, long soft shadows and atmospheric depth. The great pyramid is the focal point. Elegant restrained composition from a low elevated camera.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 262,
+        "completion_tokens": 23126,
+        "total_tokens": 23388,
+        "cost": 0.0115892,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0115892,
+          "upstream_inference_prompt_cost": 2.62e-05,
+          "upstream_inference_completions_cost": 0.011563
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 19006,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 9989,
+      "generation_id": "gen-1794280482-UBxnv94X4W9itDayDzpm",
+      "file": "07-pyramids-canvas.html",
+      "elapsed_seconds": 47.693
+    },
+    {
+      "slug": "07-pyramids",
+      "name": "Pyramids of Giza",
+      "approach": "Cinematic landscape",
+      "format": "svg",
+      "prompt": "Create a cinematic desert scene featuring the three Pyramids of Giza at distinct realistic relative scales. Use square-based pyramids with clean triangular faces and subtle horizontal stone courses, sandy ground with gentle dune variation, low warm sun, long soft shadows and atmospheric depth. The great pyramid is the focal point. Elegant restrained composition from a low elevated camera.\n\nReturn only one complete standalone SVG document without Markdown fences. Use xmlns=\"http://www.w3.org/2000/svg\", width=\"1200\", height=\"800\", viewBox=\"0 0 1200 800\". Build the entire artwork with native SVG paths, shapes, gradients, masks and filters. No scripts or embedded HTML. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Create a cinematic desert scene featuring the three Pyramids of Giza at distinct realistic relative scales. Use square-based pyramids with clean triangular faces and subtle horizontal stone courses, sandy ground with gentle dune variation, low warm sun, long soft shadows and atmospheric depth. The great pyramid is the focal point. Elegant restrained composition from a low elevated camera.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 272,
+        "completion_tokens": 9766,
+        "total_tokens": 10038,
+        "cost": 0.0049102,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0049102,
+          "upstream_inference_prompt_cost": 2.72e-05,
+          "upstream_inference_completions_cost": 0.004883
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 6022,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 9489,
+      "generation_id": "gen-1794280483-EVonYmwxLmAKJu8seOsU",
+      "file": "07-pyramids-svg.svg",
+      "elapsed_seconds": 18.775
+    },
+    {
+      "slug": "08-big-ben",
+      "name": "Elizabeth Tower / Big Ben",
+      "approach": "Night illumination",
+      "format": "canvas",
+      "prompt": "Create a recognizable Elizabeth Tower (Big Ben) at blue hour. Model the tall square tan Gothic clock tower, large luminous round clock faces on all four sides, decorative vertical buttresses, belfry and steep dark pyramidal spire with finial. Add a modest Westminster wing, warm ground lights and dark blue sky. The clock hands and hour marks should be clearly visible.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Create a recognizable Elizabeth Tower (Big Ben) at blue hour. Model the tall square tan Gothic clock tower, large luminous round clock faces on all four sides, decorative vertical buttresses, belfry and steep dark pyramidal spire with finial. Add a modest Westminster wing, warm ground lights and dark blue sky. The clock hands and hour marks should be clearly visible.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 268,
+        "completion_tokens": 13384,
+        "total_tokens": 13652,
+        "cost": 0.0067188,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0067188,
+          "upstream_inference_prompt_cost": 2.68e-05,
+          "upstream_inference_completions_cost": 0.006692
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 7911,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 13404,
+      "generation_id": "gen-1794280494-p5k0SjUaeqQaE0WvCfux",
+      "file": "08-big-ben-canvas.html",
+      "elapsed_seconds": 25.421
+    },
+    {
+      "slug": "08-big-ben",
+      "name": "Elizabeth Tower / Big Ben",
+      "approach": "Night illumination",
+      "format": "svg",
+      "prompt": "Create a recognizable Elizabeth Tower (Big Ben) at blue hour. Model the tall square tan Gothic clock tower, large luminous round clock faces on all four sides, decorative vertical buttresses, belfry and steep dark pyramidal spire with finial. Add a modest Westminster wing, warm ground lights and dark blue sky. The clock hands and hour marks should be clearly visible.\n\nReturn only one complete standalone SVG document without Markdown fences. Use xmlns=\"http://www.w3.org/2000/svg\", width=\"1200\", height=\"800\", viewBox=\"0 0 1200 800\". Build the entire artwork with native SVG paths, shapes, gradients, masks and filters. No scripts or embedded HTML. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Create a recognizable Elizabeth Tower (Big Ben) at blue hour. Model the tall square tan Gothic clock tower, large luminous round clock faces on all four sides, decorative vertical buttresses, belfry and steep dark pyramidal spire with finial. Add a modest Westminster wing, warm ground lights and dark blue sky. The clock hands and hour marks should be clearly visible.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 278,
+        "completion_tokens": 24782,
+        "total_tokens": 25060,
+        "cost": 0.0124188,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0124188,
+          "upstream_inference_prompt_cost": 2.78e-05,
+          "upstream_inference_completions_cost": 0.012391
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 18568,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 15160,
+      "generation_id": "gen-1794280499-zgmjUwq85wUSxMY5IsHI",
+      "file": "08-big-ben-svg.svg",
+      "elapsed_seconds": 44.954
+    },
+    {
+      "slug": "09-christ",
+      "name": "Christ the Redeemer",
+      "approach": "Clay maquette",
+      "format": "canvas",
+      "prompt": "Sculpt Christ the Redeemer as a sophisticated monochrome clay architectural maquette on Corcovado mountain. A readable robed human figure stands upright with both arms fully outstretched horizontally, a small defined head, hands and flowing vertical robe folds, on its pedestal. Use soft off-white clay for statue, muted green-gray mountain layers, museum lighting and a clear frontal three-quarter camera.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Sculpt Christ the Redeemer as a sophisticated monochrome clay architectural maquette on Corcovado mountain. A readable robed human figure stands upright with both arms fully outstretched horizontally, a small defined head, hands and flowing vertical robe folds, on its pedestal. Use soft off-white clay for statue, muted green-gray mountain layers, museum lighting and a clear frontal three-quarter camera.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 271,
+        "completion_tokens": 16679,
+        "total_tokens": 16950,
+        "cost": 0.0083666,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0083666,
+          "upstream_inference_prompt_cost": 2.71e-05,
+          "upstream_inference_completions_cost": 0.0083395
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 10149,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 16913,
+      "generation_id": "gen-1794280501-8YjeFmga0A1rznrfY21k",
+      "file": "09-christ-canvas.html",
+      "elapsed_seconds": 29.225
+    },
+    {
+      "slug": "09-christ",
+      "name": "Christ the Redeemer",
+      "approach": "Clay maquette",
+      "format": "svg",
+      "prompt": "Sculpt Christ the Redeemer as a sophisticated monochrome clay architectural maquette on Corcovado mountain. A readable robed human figure stands upright with both arms fully outstretched horizontally, a small defined head, hands and flowing vertical robe folds, on its pedestal. Use soft off-white clay for statue, muted green-gray mountain layers, museum lighting and a clear frontal three-quarter camera.\n\nReturn only one complete standalone SVG document without Markdown fences. Use xmlns=\"http://www.w3.org/2000/svg\", width=\"1200\", height=\"800\", viewBox=\"0 0 1200 800\". Build the entire artwork with native SVG paths, shapes, gradients, masks and filters. No scripts or embedded HTML. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Sculpt Christ the Redeemer as a sophisticated monochrome clay architectural maquette on Corcovado mountain. A readable robed human figure stands upright with both arms fully outstretched horizontally, a small defined head, hands and flowing vertical robe folds, on its pedestal. Use soft off-white clay for statue, muted green-gray mountain layers, museum lighting and a clear frontal three-quarter camera.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 281,
+        "completion_tokens": 12512,
+        "total_tokens": 12793,
+        "cost": 0.0062841,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0062841,
+          "upstream_inference_prompt_cost": 2.81e-05,
+          "upstream_inference_completions_cost": 0.006256
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 7893,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 11061,
+      "generation_id": "gen-1794280501-cofDgnwKsBPMoTdH46fY",
+      "file": "09-christ-svg.svg",
+      "elapsed_seconds": 24.215
+    },
+    {
+      "slug": "10-tower-bridge",
+      "name": "Tower Bridge",
+      "approach": "Isometric precision",
+      "format": "canvas",
+      "prompt": "Create a precise isometric-style Tower Bridge scene over the Thames: two matching stone Gothic towers capped by blue-gray pointed roofs, two high-level walkways joining the towers, a lower road deck with the two bascule leaves closed, blue suspension elements extending toward both shores. Include tower arches, warm stone masonry hints and calm water. Use an orthographic camera and clean detailed miniature style.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Create a precise isometric-style Tower Bridge scene over the Thames: two matching stone Gothic towers capped by blue-gray pointed roofs, two high-level walkways joining the towers, a lower road deck with the two bascule leaves closed, blue suspension elements extending toward both shores. Include tower arches, warm stone masonry hints and calm water. Use an orthographic camera and clean detailed miniature style.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 269,
+        "completion_tokens": 19579,
+        "total_tokens": 19848,
+        "cost": 0.0098164,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0098164,
+          "upstream_inference_prompt_cost": 2.69e-05,
+          "upstream_inference_completions_cost": 0.0097895
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 14703,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 10786,
+      "generation_id": "gen-1794280519-2loFCW5MKU39m4TVmgR4",
+      "file": "10-tower-bridge-canvas.html",
+      "elapsed_seconds": 42.382
+    },
+    {
+      "slug": "10-tower-bridge",
+      "name": "Tower Bridge",
+      "approach": "Isometric precision",
+      "format": "svg",
+      "prompt": "Create a precise isometric-style Tower Bridge scene over the Thames: two matching stone Gothic towers capped by blue-gray pointed roofs, two high-level walkways joining the towers, a lower road deck with the two bascule leaves closed, blue suspension elements extending toward both shores. Include tower arches, warm stone masonry hints and calm water. Use an orthographic camera and clean detailed miniature style.\n\nReturn only one complete standalone SVG document without Markdown fences. Use xmlns=\"http://www.w3.org/2000/svg\", width=\"1200\", height=\"800\", viewBox=\"0 0 1200 800\". Build the entire artwork with native SVG paths, shapes, gradients, masks and filters. No scripts or embedded HTML. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+      "scene_brief": "Create a precise isometric-style Tower Bridge scene over the Thames: two matching stone Gothic towers capped by blue-gray pointed roofs, two high-level walkways joining the towers, a lower road deck with the two bascule leaves closed, blue suspension elements extending toward both shores. Include tower arches, warm stone masonry hints and calm water. Use an orthographic camera and clean detailed miniature style.",
+      "requested_model": "meta/muse-ember",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 279,
+        "completion_tokens": 30387,
+        "total_tokens": 30666,
+        "cost": 0.0152214,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0152214,
+          "upstream_inference_prompt_cost": 2.79e-05,
+          "upstream_inference_completions_cost": 0.0151935
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 23090,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 17625,
+      "generation_id": "gen-1794280525-xrcm67F21YTeNxlTX8Zv",
+      "file": "10-tower-bridge-svg.svg",
+      "elapsed_seconds": 52.302
+    }
+  ]
+}

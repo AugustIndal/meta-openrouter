@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+<defs>
+<linearGradient id="skyGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="800">
+<stop offset="0" stop-color="#a7c5da"/><stop offset="0.45" stop-color="#d9e2d2"/><stop offset="0.72" stop-color="#f4e3b6"/><stop offset="1" stop-color="#e6cd9c"/>
+</linearGradient>
+<radialGradient id="sunGrad"><stop offset="0" stop-color="#fff8cf" stop-opacity="0.95"/><stop offset="0.55" stop-color="#ffedb0" stop-opacity="0.45"/><stop offset="1" stop-color="#ffedb0" stop-opacity="0"/></radialGradient>
+<linearGradient id="groundGrad" gradientUnits="userSpaceOnUse" x1="0" y1="430" x2="0" y2="800">
+<stop offset="0" stop-color="#dbc79d"/><stop offset="0.5" stop-color="#bd9f6e"/><stop offset="1" stop-color="#8f774e"/>
+</linearGradient>
+<linearGradient id="stoneGrad" gradientUnits="userSpaceOnUse" x1="600" y1="340" x2="600" y2="690">
+<stop offset="0" stop-color="#f3e0ae"/><stop offset="0.5" stop-color="#dabf86"/><stop offset="1" stop-color="#ad8a52"/>
+</linearGradient>
+<linearGradient id="rimGrad" gradientUnits="userSpaceOnUse" x1="600" y1="180" x2="600" y2="530">
+<stop offset="0" stop-color="#f0ddaa"/><stop offset="1" stop-color="#bf9d64"/>
+</linearGradient>
+<linearGradient id="shadeGrad" gradientUnits="userSpaceOnUse" x1="170" y1="0" x2="1030" y2="0">
+<stop offset="0" stop-color="#3d2c12" stop-opacity="0"/><stop offset="0.68" stop-color="#3d2c12" stop-opacity="0"/><stop offset="1" stop-color="#3d2c12" stop-opacity="0.36"/>
+</linearGradient>
+<linearGradient id="darkGrad" gradientUnits="userSpaceOnUse" x1="0" y1="450" x2="0" y2="690">
+<stop offset="0" stop-color="#6e5738"/><stop offset="1" stop-color="#2f2413"/>
+</linearGradient>
+<radialGradient id="innerShade"><stop offset="0" stop-color="#000000" stop-opacity="0"/><stop offset="0.72" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.20"/></radialGradient>
+<filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7"/></filter>
+<filter id="cloud" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="10"/></filter>
+<path id="archHole" d="M -16 0 L -16 -22 A 16 16 0 0 1 16 -22 L 16 0 Z"/>
+<path id="archOutline" d="M -16 0 L -16 -22 A 16 16 0 0 1 16 -22 L 16 0"/>
+<g id="cypress"><path d="M0 2 C -9 -28 -8 -72 0 -98 C 8 -72 9 -28 0 2 Z" fill="#3c5a38"/><path d="M0 -20 C -4 -45 -3 -70 0 -88" stroke="#2c452a" stroke-width="2" fill="none" opacity="0.6"/><rect x="-1.6" y="-4" width="3.2" height="10" fill="#5a4630"/></g>
+<g id="column"><rect x="-11" y="-52" width="22" height="52" fill="#dcc790" stroke="#a8895a" stroke-width="1.5"/><rect x="-14" y="-58" width="28" height="8" fill="#cdb37e" stroke="#a8895a"/><path d="M-11 -38 L11 -38 M-11 -24 L11 -24 M-11 -10 L11 -10" stroke="#a8895a" stroke-width="1.4" opacity="0.7"/></g>
+<mask id="facadeMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="800">
+<rect x="0" y="0" width="1200" height="800" fill="#ffffff"/>
+<g fill="#000000">
+<use href="#archHole" transform="translate(930 523.2) rotate(-26) scale(1.2 0.842)"/><use href="#archHole" transform="translate(875 545.5) rotate(-18.7) scale(1.2 0.842)"/><use href="#archHole" transform="translate(820 561.4) rotate(-13.6) scale(1.2 0.842)"/><use href="#archHole" transform="translate(765 572.6) rotate(-9.6) scale(1.2 0.842)"/><use href="#archHole" transform="translate(710 580.2) rotate(-6.2) scale(1.2 0.842)"/><use href="#archHole" transform="translate(655 584.6) rotate(-3) scale(1.2 0.842)"/><use href="#archHole" transform="translate(600 586) rotate(0) scale(1.2 0.842)"/><use href="#archHole" transform="translate(545 584.6) rotate(3) scale(1.2 0.842)"/><use href="#archHole" transform="translate(490 580.2) rotate(6.2) scale(1.2 0.842)"/><use href="#archHole" transform="translate(435 572.6) rotate(9.6) scale(1.2 0.842)"/><use href="#archHole" transform="translate(380 561.4) rotate(13.6) scale(1.2 0.842)"/><use href="#archHole" transform="translate(325 545.5) rotate(18.7) scale(1.2 0.842)"/><use href="#archHole" transform="translate(270 523.2) rotate(26) scale(1.2 0.842)"/>
+<use href="#archHole" transform="translate(930 565.2) rotate(-26) scale(1.2 0.947)"/><use href="#archHole" transform="translate(875 587.5) rotate(-18.7) scale(1.2 0.947)"/><use href="#archHole" transform="translate(820 603.4) rotate(-13.6) scale(1.2 0.947)"/><use href="#archHole" transform="translate(765 614.6) rotate(-9.6) scale(1.2 0.947)"/><use href="#archHole" transform="translate(710 622.2) rotate(-6.2) scale(1.2 0.947)"/><use href="#archHole" transform="translate(655 626.6) rotate(-3) scale(1.2 0.947)"/><use href="#archHole" transform="translate(600 628) rotate(0) scale(1.2 0.947)"/><use href="#archHole" transform="translate(545 626.6) rotate(3) scale(1.2 0.947)"/><use href="#archHole" transform="translate(490 622.2) rotate(6.2) scale(1.2 0.947)"/><use href="#archHole" transform="translate(435 614.6) rotate(9.6) scale(1.2 0.947)"/><use href="#archHole" transform="translate(380 603.4) rotate(13.6) scale(1.2 0.947)"/><use href="#archHole" transform="translate(325 587.5) rotate(18.7) scale(1.2 0.947)"/><use href="#archHole" transform="translate(270 565.2) rotate(26) scale(1.2 0.947)"/>
+<use href="#archHole" transform="translate(930 617.2) rotate(-26) scale(1.2 1.158)"/><use href="#archHole" transform="translate(875 639.5) rotate(-18.7) scale(1.2 1.158)"/><use href="#archHole" transform="translate(820 655.4) rotate(-13.6) scale(1.2 1.158)"/><use href="#archHole" transform="translate(765 666.6) rotate(-9.6) scale(1.2 1.158)"/><use href="#archHole" transform="translate(710 674.2) rotate(-6.2) scale(1.2 1.158)"/><use href="#archHole" transform="translate(655 678.6) rotate(-3) scale(1.2 1.158)"/><use href="#archHole" transform="translate(600 680) rotate(0) scale(1.2 1.158)"/><use href="#archHole" transform="translate(545 678.6) rotate(3) scale(1.2 1.158)"/><use href="#archHole" transform="translate(490 674.2) rotate(6.2) scale(1.2 1.158)"/><use href="#archHole" transform="translate(435 666.6) rotate(9.6) scale(1.2 1.158)"/><use href="#archHole" transform="translate(380 655.4) rotate(13.6) scale(1.2 1.158)"/><use href="#archHole" transform="translate(325 639.5) rotate(18.7) scale(1.2 1.158)"/><use href="#archHole" transform="translate(270 617.2) rotate(26) scale(1.2 1.158)"/>
+</g>
+</mask>
+</defs>
+<rect x="0" y="0" width="1200" height="800" fill="url(#skyGrad)"/>
+<circle cx="260" cy="150" r="150" fill="url(#sunGrad)"/>
+<ellipse cx="320" cy="118" rx="115" ry="26" fill="#ffffff" opacity="0.35" filter="url(#cloud)"/>
+<ellipse cx="860" cy="102" rx="145" ry="24" fill="#ffffff" opacity="0.32" filter="url(#cloud)"/>
+<ellipse cx="1050" cy="185" rx="95" ry="19" fill="#ffffff" opacity="0.28" filter="url(#cloud)"/>
+<path d="M0 470 Q140 390 300 440 Q420 400 600 445 Q780 395 920 440 Q1050 400 1200 450 L1200 530 L0 530 Z" fill="#a8b5a0" opacity="0.55"/>
+<rect x="0" y="430" width="1200" height="370" fill="url(#groundGrad)"/>
+<ellipse cx="300" cy="655" rx="190" ry="42" fill="#cbb384" opacity="0.45"/>
+<ellipse cx="905" cy="705" rx="230" ry="46" fill="#cbb384" opacity="0.4"/>
+<path d="M70 725 Q600 660 1130 725" stroke="#e6d3a2" stroke-width="19" fill="none" opacity="0.32" stroke-linecap="round"/>
+<use href="#cypress" transform="translate(138 505) scale(0.95)"/>
+<use href="#cypress" transform="translate(1068 500) scale(1.05)"/>
+<use href="#cypress" transform="translate(88 565) scale(0.75)"/>
+<use href="#column" transform="translate(122 605) scale(0.9)"/>
+<use href="#column" transform="translate(1088 615) scale(0.85)"/>
+<ellipse cx="620" cy="558" rx="482" ry="188" fill="#352813" opacity="0.30" filter="url(#soft)"/>
+<ellipse cx="600" cy="535" rx="475" ry="175" fill="#a68b5e" stroke="#7d653d" stroke-width="2"/>
+<ellipse cx="600" cy="520" rx="452" ry="172" fill="#c7ab78" stroke="#8a6f3f" stroke-width="1.5"/>
+<ellipse cx="600" cy="355" rx="430" ry="175" fill="url(#rimGrad)" stroke="#8f7342" stroke-width="2"/>
+<ellipse cx="600" cy="355" rx="410" ry="166" fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.28"/>
+<ellipse cx="600" cy="380" rx="340" ry="145" fill="#b89a68"/>
+<ellipse cx="600" cy="386" rx="315" ry="136" fill="#d3ba8a"/>
+<ellipse cx="600" cy="391" rx="290" ry="126" fill="#c2a273"/>
+<ellipse cx="600" cy="396" rx="263" ry="115" fill="#d6be93"/>
+<ellipse cx="600" cy="401" rx="236" ry="104" fill="#c4a678"/>
+<ellipse cx="600" cy="406" rx="212" ry="94" fill="#dbc69e"/>
+<ellipse cx="600" cy="380" rx="340" ry="145" fill="url(#innerShade)"/>
+<g fill="none" stroke="#8d7242" stroke-width="1.5" opacity="0.5">
+<ellipse cx="600" cy="380" rx="340" ry="145"/><ellipse cx="600" cy="386" rx="315" ry="136"/><ellipse cx="600" cy="391" rx="290" ry="126"/><ellipse cx="600" cy="396" rx="263" ry="115"/><ellipse cx="600" cy="401" rx="236" ry="104"/><ellipse cx="600" cy="406" rx="212" ry="94"/>
+</g>
+<g stroke="#f0e2b8" stroke-width="4" opacity="0.65" stroke-linecap="round">
+<path d="M260 380 L400 405"/><path d="M360 278 L459 340"/><path d="M600 235 L600 313"/><path d="M840 278 L741 340"/><path d="M940 380 L800 405"/><path d="M840 482 L741 470"/><path d="M360 482 L459 470"/>
+</g>
+<ellipse cx="600" cy="408" rx="196" ry="90" fill="#e9d7a8" stroke="#a88a55" stroke-width="2"/>
+<ellipse cx="600" cy="408" rx="160" ry="73" fill="none" stroke="#c2a978" stroke-width="1.6"/>
+<ellipse cx="600" cy="408" rx="105" ry="47" fill="none" stroke="#b79a62" stroke-width="1.4" opacity="0.8"/>
+<path d="M572 398 L628 398 L638 420 L562 420 Z" fill="#c9ad7a" stroke="#9c814f" stroke-width="1.2"/>
+<ellipse cx="600" cy="409" rx="28" ry="11" fill="#bfa06d" opacity="0.8"/>
+<path d="M847 212 A430 175 0 0 1 1028 340 L939 367 A340 145 0 0 0 795 261 L815 240 L835 255 L850 238 Z" fill="url(#skyGrad)"/>
+<path d="M828 204 L862 194 L868 216 L834 226 Z" fill="#d8bf8d" stroke="#8f7342" stroke-width="1.2"/>
+<path d="M790 255 L818 242 L824 262 L796 272 Z" fill="#c9ad7a" stroke="#8f7342" stroke-width="1.2"/>
+<path d="M170 453 A430 175 0 0 0 990 527 L990 579 A430 175 0 0 1 170 505 Z" fill="url(#darkGrad)"/>
+<path d="M1030 355 A430 175 0 0 0 990 429 L990 527 L998 500 L1008 518 L1018 488 L1026 505 L1030 453 Z" fill="url(#stoneGrad)" stroke="#8f7342" stroke-width="1.8"/>
+<path d="M950 596 L992 584 L1004 606 L962 618 Z" fill="#cdb37e" stroke="#8f7342" stroke-width="1.2"/>
+<path d="M972 622 L1008 614 L1018 634 L984 642 Z" fill="#bfa06e" stroke="#8f7342" stroke-width="1.2"/>
+<g mask="url(#facadeMask)">
+<path d="M170 355 A430 175 0 0 0 990 429 L990 579 A430 175 0 0 1 170 505 Z" fill="url(#stoneGrad)"/>
+<path d="M170 355 A430 175 0 0 0 990 429 L990 579 A430 175 0 0 1 170 505 Z" fill="url(#shadeGrad)"/>
+<path d="M170 373 A430 175 0 0 0 990 447" fill="none" stroke="#8f7342" stroke-width="2.4" opacity="0.55"/>
+<path d="M170 411 A430 175 0 0 0 990 485" fill="none" stroke="#8f7342" stroke-width="2.4" opacity="0.55"/>
+<path d="M170 453 A430 175 0 0 0 990 527" fill="none" stroke="#8f7342" stroke-width="2.4" opacity="0.55"/>
+<g fill="none" stroke="#9b7f4d" stroke-width="3" opacity="0.85">
+<use href="#archOutline" transform="translate(930 523.2) rotate(-26) scale(1.45 1.0)"/><use href="#archOutline" transform="translate(875 545.5) rotate(-18.7) scale(1.45 1.0)"/><use href="#archOutline" transform="translate(820 561.4) rotate(-13.6) scale(1.45 1.0)"/><use href="#archOutline" transform="translate(765 572.6) rotate(-9.6) scale(1.45 1.0)"/><use href="#archOutline" transform="translate(710 580.2) rotate(-6.2) scale(1.45 1.0)"/><use href="#archOutline" transform="translate(655 584.6) rotate(-3) scale(1.45 1.0)"/><use href="#archOutline" transform="translate(600 586) rotate(0) scale(1.45 1.0)"/><use href="#archOutline" transform="translate(545 584.6) rotate(3) scale(1.45 1.0)"/><use href="#archOutline" transform="translate(490 580.2) rotate(6.2) scale(1.45 1.0)"/><use href="#archOutline" transform="translate(435 572.6) rotate(9.6) scale(1.45 1.0)"/><use href="#archOutline" transform="translate(380 561.4) rotate(13.6) scale(1.45 1.0)"/><use href="#archOutline" transform="translate(325 545.5) rotate(18.7) scale(1.45 1.0)"/><use href="#archOutline" transform="translate(270 523.2) rotate(26) scale(1.45 1.0)"/>
+<use href="#archOutline" transform="translate(930 565.2) rotate(-26) scale(1.45 1.06)"/><use href="#archOutline" transform="translate(875 587.5) rotate(-18.7) scale(1.45 1.06)"/><use href="#archOutline" transform="translate(820 603.4) rotate(-13.6) scale(1.45 1.06)"/><use href="#archOutline" transform="translate(765 614.6) rotate(-9.6) scale(1.45 1.06)"/><use href="#archOutline" transform="translate(710 622.2) rotate(-6.2) scale(1.45 1.06)"/><use href="#archOutline" transform="translate(655 626.6) rotate(-3) scale(1.45 1.06)"/><use href="#archOutline" transform="translate(600 628) rotate(0) scale(1.45 1.06)"/><use href="#archOutline" transform="translate(545 626.6) rotate(3) scale(1.45 1.06)"/><use href="#archOutline" transform="translate(490 622.2) rotate(6.2) scale(1.45 1.06)"/><use href="#archOutline" transform="translate(435 614.6) rotate(9.6) scale(1.45 1.06)"/><use href="#archOutline" transform="translate(380 603.4) rotate(13.6) scale(1.45 1.06)"/><use href="#archOutline" transform="translate(325 587.5) rotate(18.7) scale(1.45 1.06)"/><use href="#archOutline" transform="translate(270 565.2) rotate(26) scale(1.45 1.06)"/>
+<use href="#archOutline" transform="translate(930 617.2) rotate(-26) scale(1.45 1.3)"/><use href="#archOutline" transform="translate(875 639.5) rotate(-18.7) scale(1.45 1.3)"/><use href="#archOutline" transform="translate(820 655.4) rotate(-13.6) scale(1.45 1.3)"/><use href="#archOutline" transform="translate(765 666.6) rotate(-9.6) scale(1.45 1.3)"/><use href="#archOutline" transform="translate(710 674.2) rotate(-6.2) scale(1.45 1.3)"/><use href="#archOutline" transform="translate(655 678.6) rotate(-3) scale(1.45 1.3)"/><use href="#archOutline" transform="translate(600 680) rotate(0) scale(1.45 1.3)"/><use href="#archOutline" transform="translate(545 678.6) rotate(3) scale(1.45 1.3)"/><use href="#archOutline" transform="translate(490 674.2) rotate(6.2) scale(1.45 1.3)"/><use href="#archOutline" transform="translate(435 666.6) rotate(9.6) scale(1.45 1.3)"/><use href="#archOutline" transform="translate(380 655.4) rotate(13.6) scale(1.45 1.3)"/><use href="#archOutline" transform="translate(325 639.5) rotate(18.7) scale(1.

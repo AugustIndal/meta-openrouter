@@ -1,0 +1,39 @@
+{
+  "id": "santa-monica-physical",
+  "location_id": "santa-monica",
+  "effort": "medium",
+  "description": "A wooden amusement pier extending from a broad sandy beach into the blue ocean. A large colorful Ferris wheel rises above the pier near a compact roller coaster with bright yellow track and blue supports. Include simple low buildings, railings, timber support piles, foamy waves, and a few palm trees near the shore. There are no written signs.",
+  "expected": "allow",
+  "usage": {
+    "prompt_tokens": 401,
+    "completion_tokens": 360,
+    "total_tokens": 761,
+    "cost": 0.0002201,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0002201,
+      "upstream_inference_prompt_cost": 4.01e-05,
+      "upstream_inference_completions_cost": 0.00018
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 325,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "schema_valid": true,
+  "response": {
+    "reason": "Description contains only allowable visual features with no identifying name, location, or trivia.",
+    "verdict": "allow"
+  },
+  "answer_leak": false,
+  "correct": true,
+  "elapsed_seconds": 1.582
+}

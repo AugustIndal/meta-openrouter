@@ -1,0 +1,136 @@
+[
+  {
+    "slug": "01-golden-gate",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "02-eiffel",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "03-taj-mahal",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "04-colosseum",
+    "errors": [
+      "Unexpected identifier 'astray'"
+    ],
+    "blockedRequests": [],
+    "failure": "page.waitForFunction: Timeout 30000ms exceeded."
+  },
+  {
+    "slug": "05-liberty",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "06-opera-house",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "07-pyramids",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "08-big-ben",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "09-christ",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  },
+  {
+    "slug": "10-tower-bridge",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  }
+]

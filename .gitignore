@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+game/node_modules/
+game/dist/
+game/data/
+
+node_modules/
+.DS_Store
+.hyperframes/
+video/**/assets/live-capture/
+video/**/layout-preview*/
+video/**/*.log
+video/**/review-*.png
+game/design/

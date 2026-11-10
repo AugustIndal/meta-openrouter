@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suspension Bridge</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#bfd9e8;}
+  #app{position:fixed;inset:0;}
+  canvas{display:block;width:100%;height:100%;}
+</style>
+<script type="importmap">
+{"imports":{"three":"./three.module.js"}}
+</script>
+</head>
+<body>
+<div id="app"></div>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const container = document.getElementById('app');
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.setSize(1200, 800);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xbfd9e8);
+scene.fog = new THREE.Fog(0xcfe0ea, 120, 340);
+
+const camera = new THREE.PerspectiveCamera(42, 1200/800, 0.1, 1000);
+// Orbit state
+let theta = 0.62; // azimuth
+let phi = 1.18;   // polar
+let radius = 118;
+const target = new THREE.Vector3(0, 13, 0);
+function updateCamera(){
+  const x = target.x + radius * Math.sin(phi) * Math.sin(theta);
+  const y = target.y + radius * Math.cos(phi);
+  const z = target.z + radius * Math.sin(phi) * Math.cos(theta);
+  camera.position.set(x,y,z);
+  camera.lookAt(target);
+}
+updateCamera();
+
+// Lighting
+const hemi = new THREE.HemisphereLight(0xd6ecff, 0x3a5a3a, 0.85);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff2d0, 2.2);
+sun.position.set(55, 80, 45);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-90; sun.shadow.camera.right=90;
+sun.shadow.camera.top=70; sun.shadow.camera.bottom=-70;
+sun.shadow.camera.near=10; sun.shadow.camera.far=260;
+sun.shadow.bias = -0.0004;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xbcd9ff, 0.55);
+fill.position.set(-60, 35, -50);
+scene.add(fill);
+
+// Materials
+const vermilion = new THREE.MeshStandardMaterial({color:0xd93a28, roughness:0.45, metalness:0.35});
+const vermilionDark = new THREE.MeshStandardMaterial({color:0xb82e20, roughness:0.5, metalness:0.3});
+const deckMat = new THREE.MeshStandardMaterial({color:0x4a4d52, roughness:0.8, metalness:0.05});
+const deckSideMat = new THREE.MeshStandardMaterial({color:0xc23a2a, roughness:0.5, metalness:0.25});
+const cableMat = new THREE.MeshStandardMaterial({color:0xa92c20, roughness:0.4, metalness:0.5});
+const hangerMat = new THREE.MeshStandardMaterial({color:0x7a7d82, roughness:0.5, metalness:0.6});
+const waterMat = new THREE.MeshStandardMaterial({color:0x2a6b9e, roughness:0.35, metalness:0.15});
+const rockMat = new THREE.MeshStandardMaterial({color:0x6b6f66, roughness:0.95, flatShading:true});
+const greenMat = new THREE.MeshStandardMaterial({color:0x3f7d3a, roughness:0.9, flatShading:true});
+const green2Mat = new THREE.MeshStandardMaterial({color:0x5a9a4a, roughness:0.9, flatShading:true});
+const whiteMat = new THREE.MeshStandardMaterial({color:0xe8e8e8, roughness:0.6});
+const yellowMat = new THREE.MeshStandardMaterial({color:0xf2c94c, roughness:0.7});
+
+function box(w,h,d,mat,x,y,z,ry=0){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+  m.position.set(x,y,z); m.rotation.y=ry; m.castShadow=true; m.receiveShadow=true;
+  scene.add(m); return m;
+}
+function cyl(rTop,rBot,h,mat,x,y,z,seg=10){
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(rTop,rBot,h,seg), mat);
+  m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true;
+  scene.add(m); return m;
+}
+
+// Water - large plane
+const water = new THREE.Mesh(new THREE.PlaneGeometry(520, 340, 1,1), waterMat);
+water.rotation.x = -Math.PI/2; water.position.y = 0; water.receiveShadow=true;
+scene.add(water);
+// subtle water variation strips
+for(let i=0;i<14;i++){
+  const s = new THREE.Mesh(new THREE.PlaneGeometry(520, 2.2), new THREE.MeshStandardMaterial({color:0x3a82b8, roughness:0.4}));
+  s.rotation.x=-Math.PI/2; s.position.set(0,0.06,-90+i*13); scene.add(s);
+}
+
+// Headlands - rocky green at both ends (deterministic cones / displaced boxes)
+function headland(cx, cz, scale){
+  // base rock mass
+  const base = new THREE.Mesh(new THREE.ConeGeometry(34*scale, 22*scale, 7), rockMat);
+  base.position.set(cx, 8*scale, cz); base.castShadow=true; base.receiveShadow=true; scene.add(base);
+  const top = new THREE.Mesh(new THREE.ConeGeometry(22*scale, 14*scale, 7), greenMat);
+  top.position.set(cx, 16*scale, cz); top.castShadow=true; top.receiveShadow=true; scene.add(top);
+  const top2 = new THREE.Mesh(new THREE.ConeGeometry(13*scale, 9*scale, 6), green2Mat);
+  top2.position.set(cx+4*scale, 22*scale, cz+2*scale); top2.castShadow=true; scene.add(top2);
+  // side rocks
+  for(let i=0;i<5;i++){
+    const r = new THREE.Mesh(new THREE.ConeGeometry((6-i)*scale, 8*scale, 5), i%2?greenMat:rockMat);
+    r.position.set(cx + (i-2)*11*scale, 3*scale, cz + (i%2? 14:-14)*scale*0.6);
+    r.castShadow=true; r.receiveShadow=true; scene.add(r);
+  }
+  // shoreline blocks
+  box(26*scale, 3, 10, rockMat, cx, 1.2, cz + 16*scale*0.5);
+}
+headland(-78, -10, 1.15);
+headland(78, -10, 1.15);
+headland(-70, 28, 0.7);
+headland(70, 28, 0.7);
+
+// Distant hazy hills (solid geometry, not flat planes)
+for(let i=0;i<6;i++){
+  const h = new THREE.Mesh(new THREE.ConeGeometry(28, 16, 6), new THREE.MeshStandardMaterial({color:0x7aa08a, roughness:1, flatShading:true}));
+  h.position.set(-110+i*44, 6, -105 - (i%2)*10); scene.add(h);
+}
+
+// Bridge parameters
+const towerX = 32;
+const deckY = 10;
+const towerTopY = 52;
+const deckLength = 150; // -75 to 75
+const deckWidth = 9;
+
+// Deck
+box(deckLength, 1.6, deckWidth, deckSideMat, 0, deckY, 0);
+box(deckLength, 0.5, deckWidth+0.4, deckMat, 0, deckY+1.05, 0);
+// road center line dashes
+for(let x=-72;x<=72;x+=6){
+  box(3,0.08,0.35, whiteMat, x, deckY+1.32, 0);
+}
+// side rails / guard
+box(deckLength, 0.9, 0.35, vermilion, 0, deckY+1.7, deckWidth/2-0.2);
+box(deckLength, 0.9, 0.35, vermilion, 0, deckY+1.7, -deckWidth/2+0.2);
+// sidewalk edges
+box(deckLength, 0.35, 1.2, new THREE.MeshStandardMaterial({color:0xd8d8d8, roughness:0.8}), 0, deckY+1.4, deckWidth/2-0.8);
+box(deckLength, 0.35, 1.2, new THREE.MeshStandardMaterial({color:0xd8d8d8, roughness:0.8}), 0, deckY+1.4, -deckWidth/2+0.8);
+
+// Towers
+function createTower(tx){
+  const legW=3.2, legD=4.2, legH=towerTopY-deckY+6;
+  const centerY = deckY + legH/2 - 3;
+  // two legs separated in Z
+  box(legW, legH, legD, vermilion, tx, centerY, 4.6);
+  box(legW, legH, legD, vermilion, tx, centerY, -4.6);
+  // top beam
+  box(legW+1.2, 3.6, 13.5, vermilion, tx, towerTopY+1.5, 0);
+  // portal beams at mid heights with large openings
+  box(legW+0.8, 2.8, 5.2, vermilion, tx, 26, 0);
+  box(legW+0.8, 2.8, 5.2, vermilion, tx, 38, 0);
+  // cross braces (X) between legs - diagonal boxes
+  const braceLen = 9.2;
+  const b1 = box(1.4, braceLen, 1.4, vermilionDark, tx, 20, 0);
+  b1.rotation.x = 0.65;
+  const b2 = box(1.4, braceLen, 1.4, vermilionDark, tx, 20, 0);
+  b2.rotation.x = -0.65;
+  const b3 = box(1.4, braceLen, 1.4, vermilionDark, tx, 32, 0);
+  b3.rotation.x = 0.65;
+  const b4 = box(1.4, braceLen, 1.4, vermilionDark, tx, 32, 0);
+  b4.rotation.x = -0.65;
+  // side X braces on outer face (visible)
+  const s1 = box(1.2, 11, 1.2, vermilionDark, tx+2.1, 32, 0);
+  s1.rotation.z = 0.55;
+  const s2 = box(1.2, 11, 1.2, vermilionDark, tx+2.1, 32, 0);
+  s2.rotation.z = -0.55;
+  // base plinth
+  box(6, 3, 15, new THREE.MeshStandardMaterial({color:0x8a8a8a, roughness:0.9}), tx, 1.5, 0);
+  // saddle cap
+  box(4.5, 1.8, 3.5, vermilionDark, tx, towerTopY+4.2, 4.6);
+  box(4.5, 1.8, 3.5, vermilionDark, tx, towerTopY+4.2, -4.6);
+}
+createTower(-towerX);
+createTower(towerX);
+
+// Main cables - parabolic sag between towers, and side spans to anchors
+function cableCurve(points){
+  const curve = new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p)));
+  const geo = new THREE.TubeGeometry(curve, 80, 0.45, 8, false);
+  const m = new THREE.Mesh(geo, cableMat);
+  m.castShadow=true; scene.add(m); return m;
+}
+function cableY(x){
+  // parabola: top at towers, sag to deck+~6 at center
+  const t = x / towerX; // -1..1
+  return (towerTopY+3) - (towerTopY+3 - (deckY+7)) * (1 - t*t);
+}
+for(const z of [4.6, -4.6]){
+  // main span
+  const pts=[];
+  for(let x=-towerX;x<=towerX;x+=4) pts.push([x, cableY(x), z]);
+  cableCurve(pts);
+  // left side span to anchor
+  const leftPts=[];
+  for(let x=-75;x<=-towerX;x+=5){
+    const t=(x+towerX)/(-75+towerX); // 0 at tower,1 at anchor
+    const y = THREE.MathUtils.lerp(towerTopY+3, deckY+2, Math.pow(t,0.7));
+    leftPts.push([x,y,z]);
+  }
+  cableCurve(leftPts);
+  const rightPts=[];
+  for(let x=towerX;x<=75;x+=5){
+    const t=(x-towerX)/(75-towerX);
+    const y = THREE.MathUtils.lerp(towerTopY+3, deckY+2, Math.pow(t,0.7));
+    rightPts.push([x,y,z]);
+  }
+  cableCurve(rightPts);
+  // anchor blocks
+  box(8,6,6, new THREE.MeshStandardMaterial({color:0x9a9a9a, roughness:0.9}), -73, deckY-2, z);
+  box(8,6,6, new THREE.MeshStandardMaterial({color:0x9a9a9a, roughness:0.9}), 73, deckY-2, z);
+}
+
+// Hangers
+const hangerGeo = new THREE.CylinderGeometry(0.12,0.12,1,6);
+for(let x=-towerX+2;x<=towerX-2;x+=3){
+  for(const z of [4.6,-4.6]){
+    const topY = cableY(x);
+    const bottomY = deckY+1.8;
+    const h = topY-bottomY;
+    if(h<1) continue;
+    const m = new THREE.Mesh(hangerGeo, hangerMat);
+    m.scale.y=h; m.position.set(x, bottomY+h/2, z); m.castShadow=true; scene.add(m);
+  }
+}
+// side hangers
+for(const side of [-1,1]){
+  for(let i=1;i<=5;i++){
+    const x = side*(towerX + i*7);
+    if(Math.abs(x)>74) continue;
+    const t=i/6;
+    const topY = THREE.MathUtils.lerp(towerTopY+3, deckY+2, Math.pow(t,0.7));
+    for(const z of [4.6,-4.6]){
+      const h=topY-(deckY+1.8); if(h<1) continue;
+      const m=new THREE.Mesh(hangerGeo,hangerMat); m.scale.y=h; m.position.set(x, deckY+1.8+h/2, z); scene.add(m);
+    }
+  }
+}
+
+// Small details: lamp posts
+for(let x=-60;x<=60;x+=20){
+  cyl(0.14,0.18,6, vermilionDark, x, deckY+4.5, deckWidth/2-0.3);
+  const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.55,10,8), yellowMat);
+  lamp.position.set(x, deckY+7.7, deckWidth/2-0.3); scene.add(lamp);
+}
+
+function render(){ renderer.render(scene,camera); }
+render();
+window.sceneReady = true;
+
+// Orbit controls (native pointer drag + wheel)
+let dragging=false, lastX=0, lastY=0;
+renderer.domElement.addEventListener('pointerdown', e=>{dragging=true; lastX=e.clientX; lastY=e.clientY; renderer.domElement.setPointerCapture(e.pointerId);});
+renderer.domElement.addEventListener('pointermove', e=>{
+  if(!dragging) return;
+  const dx=e.clientX-lastX, dy=e.clientY-lastY; lastX=e.clientX; lastY=e.clientY;
+  theta -= dx*0.005;
+  phi = THREE.MathUtils.clamp(phi - dy*0.005, 0.35, 1.45);
+  updateCamera(); render();
+});
+renderer.domElement.addEventListener('pointerup', ()=>{dragging=false;});
+renderer.domElement.addEventListener('pointercancel', ()=>{dragging=false;});
+renderer.domElement.addEventListener('wheel', e=>{
+  e.preventDefault();
+  radius = THREE.MathUtils.clamp(radius + e.deltaY*0.12, 55, 220);
+  updateCamera(); render();
+},{passive:false});
+
+function onResize(){
+  const w=window.innerWidth, h=window.innerHeight;
+  camera.aspect=w/h; camera.updateProjectionMatrix();
+  renderer.setSize(w,h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+  render();
+}
+window.addEventListener('resize', onResize);
+// initial size already 1200x800, adapt to window if different
+if(window.innerWidth!==1200 || window.innerHeight!==800) onResize();
+</script>
+</body>
+</html>

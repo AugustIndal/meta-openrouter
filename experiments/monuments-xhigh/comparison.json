@@ -1,0 +1,885 @@
+{
+  "method": "Identical saved prompts, one sample per effort per monument. Same model and provider, no reference images or repairs to xhigh outputs. Response cap increased from 11,000 to 32,000 tokens; all generations in both rounds ended with stop. Scores are subjective, using 40% recognizability, 30% visual finish, 20% framing and 10% working interaction. These paired samples suggest differences but do not establish statistical significance or isolate effort from the larger token cap.",
+  "medium": {
+    "cost_usd": 0.0395529,
+    "wall_seconds": 19.096,
+    "median_request_seconds": 14.4215,
+    "reasoning_tokens": 40721,
+    "total_tokens": 81409,
+    "mean_score": 6.25,
+    "render_successes": 9
+  },
+  "xhigh": {
+    "cost_usd": 0.0678194,
+    "wall_seconds": 33.336,
+    "median_request_seconds": 25.929499999999997,
+    "reasoning_tokens": 95028,
+    "total_tokens": 137942,
+    "mean_score": 7.39,
+    "render_successes": 10,
+    "improved": 8,
+    "worse": 2
+  },
+  "results": [
+    {
+      "slug": "01-golden-gate",
+      "name": "Golden Gate Bridge",
+      "approach": "Geometry-first",
+      "prompt": "Build the Golden Gate Bridge with accurate structural hierarchy: two International Orange open-frame towers, a continuous road deck, paired sagging main cables and evenly spaced vertical hangers attached at both ends. Use a wide three-quarter viewpoint, cool ocean, distant hills and warm afternoon sun. Prioritize structural correctness over decoration.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 278,
+        "completion_tokens": 10522,
+        "total_tokens": 10800,
+        "cost": 0.0052888,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0052888,
+          "upstream_inference_prompt_cost": 2.78e-05,
+          "upstream_inference_completions_cost": 0.005261
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 7907,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 6949,
+      "generation_id": "gen-1794279963-xvXFYIY1rZlWjcu4dBez",
+      "elapsed_seconds": 20.682,
+      "dimensions": [
+        6.5,
+        6,
+        8.5,
+        10
+      ],
+      "assessment": "The whole bridge fits and cables attach more coherently. The span is compressed, towers are broad and side approaches are simplified.",
+      "score": 7.1,
+      "medium_score": 6.8,
+      "delta": 0.3,
+      "checks": {
+        "slug": "01-golden-gate",
+        "errors": [],
+        "blockedRequests": [],
+        "rendered": true,
+        "orbitChangesImage": true,
+        "zoomChangesImage": true,
+        "resizedCanvas": {
+          "width": 900,
+          "height": 650,
+          "cssWidth": 900,
+          "cssHeight": 650
+        }
+      },
+      "medium_usage": {
+        "prompt_tokens": 278,
+        "completion_tokens": 8165,
+        "total_tokens": 8443,
+        "cost": 0.0041103,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0041103,
+          "upstream_inference_prompt_cost": 2.78e-05,
+          "upstream_inference_completions_cost": 0.0040825
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 4500,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "medium_seconds": 15.083,
+      "rank": 7
+    },
+    {
+      "slug": "02-eiffel",
+      "name": "Eiffel Tower",
+      "approach": "Miniature diorama",
+      "prompt": "Create a collectible miniature diorama of the Eiffel Tower on a circular landscaped base. Emphasize four splayed lattice legs, the wide arch at the base, two observation platforms and a tapering open lattice spire. Tiny paths and trees establish scale. Refined warm brass and iron materials, soft studio lighting, lovely three-quarter composition.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 287,
+        "completion_tokens": 16084,
+        "total_tokens": 16371,
+        "cost": 0.0080707,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0080707,
+          "upstream_inference_prompt_cost": 2.87e-05,
+          "upstream_inference_completions_cost": 0.008042
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 11705,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 11425,
+      "generation_id": "gen-1794279963-KlmCKesmt4M3fnji03dC",
+      "elapsed_seconds": 29.617,
+      "dimensions": [
+        8.5,
+        8,
+        7.5,
+        10
+      ],
+      "assessment": "The open base arches and dense lattice improve the silhouette. The spire fits, though the circular base still touches the lower edge.",
+      "score": 8.3,
+      "medium_score": 7.3,
+      "delta": 1.0,
+      "checks": {
+        "slug": "02-eiffel",
+        "errors": [],
+        "blockedRequests": [],
+        "rendered": true,
+        "orbitChangesImage": true,
+        "zoomChangesImage": true,
+        "resizedCanvas": {
+          "width": 900,
+          "height": 650,
+          "cssWidth": 900,
+          "cssHeight": 650
+        }
+      },
+      "medium_usage": {
+        "prompt_tokens": 287,
+        "completion_tokens": 7371,
+        "total_tokens": 7658,
+        "cost": 0.0037142,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0037142,
+          "upstream_inference_prompt_cost": 2.87e-05,
+          "upstream_inference_completions_cost": 0.0036855
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 2977,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "medium_seconds": 13.277,
+      "rank": 2
+    },
+    {
+      "slug": "03-taj-mahal",
+      "name": "Taj Mahal",
+      "approach": "Symmetry and reflection",
+      "prompt": "Render the Taj Mahal as a serene architectural scene: central ivory onion dome with finial above a symmetrical building with a tall central pointed portal, smaller domed kiosks and four slender corner minarets. A long foreground reflecting pool and flanking formal gardens guide the eye to the facade. Symmetry, soft dawn light, pale pink sky, polished proportions.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 289,
+        "completion_tokens": 11226,
+        "total_tokens": 11515,
+        "cost": 0.0056419,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0056419,
+          "upstream_inference_prompt_cost": 2.89e-05,
+          "upstream_inference_completions_cost": 0.005613
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 6917,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 11478,
+      "generation_id": "gen-1794279963-T1cjYyKwqoi45jfhbbeW",
+      "elapsed_seconds": 20.55,
+      "dimensions": [
+        7,
+        7,
+        6,
+        10
+      ],
+      "assessment": "The front portal is stronger, but the oversized central dome and narrow facade weaken proportions. The garden remains cropped.",
+      "score": 7.1,
+      "medium_score": 7.4,
+      "delta": -0.3,
+      "checks": {
+        "slug": "03-taj-mahal",
+        "errors": [],
+        "blockedRequests": [],
+        "rendered": true,
+        "orbitChangesImage": true,
+        "zoomChangesImage": true,
+        "resizedCanvas": {
+          "width": 900,
+          "height": 650,
+          "cssWidth": 900,
+          "cssHeight": 650
+        }
+      },
+      "medium_usage": {
+        "prompt_tokens": 289,
+        "completion_tokens": 5832,
+        "total_tokens": 6121,
+        "cost": 0.0029449,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0029449,
+          "upstream_inference_prompt_cost": 2.89e-05,
+          "upstream_inference_completions_cost": 0.002916
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1831,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "medium_seconds": 9.866,
+      "rank": 8
+    },
+    {
+      "slug": "04-colosseum",
+      "name": "Colosseum",
+      "approach": "Architectural cutaway",
+      "prompt": "Build a recognizable Colosseum as a detailed architectural cutaway: elliptical amphitheater, three stacked rings of repeated open arches, a partially broken upper wall and visible stepped seating surrounding the exposed arena. Warm travertine stone, sparse Roman ground context, elevated three-quarter view. Make openings genuine empty spaces between columns and arch segments.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 284,
+        "completion_tokens": 15393,
+        "total_tokens": 15677,
+        "cost": 0.0077249,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0077249,
+          "upstream_inference_prompt_cost": 2.84e-05,
+          "upstream_inference_completions_cost": 0.0076965
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 10862,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 12399,
+      "generation_id": "gen-1794279963-HJgmtL2F000Nusg578Cx",
+      "elapsed_seconds": 29.164,
+      "dimensions": [
+        8,
+        7.5,
+        7,
+        10
+      ],
+      "assessment": "Renders on the first attempt with repeated open arches and clear stepped seating. The camera is close and the ruin treatment is simplified.",
+      "score": 7.9,
+      "medium_score": 0.0,
+      "delta": 7.9,
+      "checks": {
+        "slug": "04-colosseum",
+        "errors": [],
+        "blockedRequests": [],
+        "rendered": true,
+        "orbitChangesImage": true,
+        "zoomChangesImage": true,
+        "resizedCanvas": {
+          "width": 900,
+          "height": 650,
+          "cssWidth": 900,
+          "cssHeight": 650
+        }
+      },
+      "medium_usage": {
+        "prompt_tokens": 284,
+        "completion_tokens": 10137,
+        "total_tokens": 10421,
+        "cost": 0.0050969,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0050969,
+          "upstream_inference_prompt_cost": 2.84e-05,
+          "upstream_inference_completions_cost": 0.0050685
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 5803,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "medium_seconds": 19.092,
+      "rank": 4
+    },
+    {
+      "slug": "05-liberty",
+      "name": "Statue of Liberty",
+      "approach": "Faceted low-poly",
+      "prompt": "Create a refined low-poly Statue of Liberty: oxidized copper robed standing figure on a stepped stone pedestal, seven-point crown, right arm raised high with a gold flame torch, left arm holding a tablet. Build a readable human silhouette with deliberate geometry, distinguish arms and head, include the star-shaped island foundation and blue harbor. Strong side lighting.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 287,
+        "completion_tokens": 10640,
+        "total_tokens": 10927,
+        "cost": 0.0053487,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0053487,
+          "upstream_inference_prompt_cost": 2.87e-05,
+          "upstream_inference_completions_cost": 0.00532
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 6288,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 10761,
+      "generation_id": "gen-1794279963-rO0F8KiwXvbrKyCFC1EA",
+      "elapsed_seconds": 18.941,
+      "dimensions": [
+        7,
+        6.5,
+        8,
+        10
+      ],
+      "assessment": "Larger figure, clearer flame and blue harbor improve readability. The anatomy and tablet position are still blocky, with the island close to the frame edge.",
+      "score": 7.4,
+      "medium_score": 7.0,
+      "delta": 0.4,
+      "checks": {
+        "slug": "05-liberty",
+        "errors": [],
+        "blockedRequests": [],
+        "rendered": true,
+        "orbitChangesImage": true,
+        "zoomChangesImage": true,
+        "resizedCanvas": {
+          "width": 900,
+          "height": 650,
+          "cssWidth": 900,
+          "cssHeight": 650
+        }
+      },
+      "medium_usage": {
+        "prompt_tokens": 287,
+        "completion_tokens": 7991,
+        "total_tokens": 8278,
+        "cost": 0.0040242,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0040242,
+          "upstream_inference_prompt_cost": 2.87e-05,
+          "upstream_inference_completions_cost": 0.0039955
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 4158,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "medium_seconds": 14.478,
+      "rank": 6
+    },
+    {
+      "slug": "06-opera-house",
+      "name": "Sydney Opera House",
+      "approach": "Paper sculpture",
+      "prompt": "Create a sculptural paper-craft Sydney Opera House beside a deep blue harbor. Arrange multiple groups of overlapping tall pointed white sail-shell roofs of different sizes on a terracotta podium, each shell curved and sharply peaked. Show the interleaved roof silhouette from a three-quarter harbor viewpoint. Crisp ivory material, soft ambient shadows, restrained surrounding details.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 288,
+        "completion_tokens": 15594,
+        "total_tokens": 15882,
+        "cost": 0.0078258,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0078258,
+          "upstream_inference_prompt_cost": 2.88e-05,
+          "upstream_inference_completions_cost": 0.007797
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 12249,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 8700,
+      "generation_id": "gen-1794279963-b1yjGcC2sC62IufWK5tX",
+      "elapsed_seconds": 29.488,
+      "dimensions": [
+        3,
+        4.5,
+        8,
+        10
+      ],
+      "assessment": "Cleaner background and framing, but the roofs look like upright cones. The landmark silhouette is less convincing than medium.",
+      "score": 5.2,
+      "medium_score": 5.3,
+      "delta": -0.1,
+      "checks": {
+        "slug": "06-opera-house",
+        "errors": [],
+        "blockedRequests": [],
+        "rendered": true,
+        "orbitChangesImage": true,
+        "zoomChangesImage": true,
+        "resizedCanvas": {
+          "width": 900,
+          "height": 650,
+          "cssWidth": 900,
+          "cssHeight": 650
+        }
+      },
+      "medium_usage": {
+        "prompt_tokens": 288,
+        "completion_tokens": 8870,
+        "total_tokens": 9158,
+        "cost": 0.0044638,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0044638,
+          "upstream_inference_prompt_cost": 2.88e-05,
+          "upstream_inference_completions_cost": 0.004435
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 5530,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "medium_seconds": 16.982,
+      "rank": 10
+    },
+    {
+      "slug": "07-pyramids",
+      "name": "Pyramids of Giza",
+      "approach": "Cinematic landscape",
+      "prompt": "Create a cinematic desert scene featuring the three Pyramids of Giza at distinct realistic relative scales. Use square-based pyramids with clean triangular faces and subtle horizontal stone courses, sandy ground with gentle dune variation, low warm sun, long soft shadows and atmospheric depth. The great pyramid is the focal point. Elegant restrained composition from a low elevated camera.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 286,
+        "completion_tokens": 14064,
+        "total_tokens": 14350,
+        "cost": 0.0070606,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0070606,
+          "upstream_inference_prompt_cost": 2.86e-05,
+          "upstream_inference_completions_cost": 0.007032
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 10995,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 9170,
+      "generation_id": "gen-1794279963-VJUuQBcOxU8CUxjBPwNZ",
+      "elapsed_seconds": 26.549,
+      "dimensions": [
+        8,
+        6.5,
+        8.5,
+        10
+      ],
+      "assessment": "All three pyramids fit and the scene has clear depth. It is sparse, with sharp shadows and limited stone detail.",
+      "score": 7.9,
+      "medium_score": 6.9,
+      "delta": 1.0,
+      "checks": {
+        "slug": "07-pyramids",
+        "errors": [],
+        "blockedRequests": [],
+        "rendered": true,
+        "orbitChangesImage": true,
+        "zoomChangesImage": true,
+        "resizedCanvas": {
+          "width": 900,
+          "height": 650,
+          "cssWidth": 900,
+          "cssHeight": 650
+        }
+      },
+      "medium_usage": {
+        "prompt_tokens": 286,
+        "completion_tokens": 8451,
+        "total_tokens": 8737,
+        "cost": 0.0042541,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0042541,
+          "upstream_inference_prompt_cost": 2.86e-05,
+          "upstream_inference_completions_cost": 0.0042255
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 5208,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "medium_seconds": 16.979,
+      "rank": 5
+    },
+    {
+      "slug": "08-big-ben",
+      "name": "Elizabeth Tower / Big Ben",
+      "approach": "Night illumination",
+      "prompt": "Create a recognizable Elizabeth Tower (Big Ben) at blue hour. Model the tall square tan Gothic clock tower, large luminous round clock faces on all four sides, decorative vertical buttresses, belfry and steep dark pyramidal spire with finial. Add a modest Westminster wing, warm ground lights and dark blue sky. The clock hands and hour marks should be clearly visible.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 292,
+        "completion_tokens": 13027,
+        "total_tokens": 13319,
+        "cost": 0.0065427,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0065427,
+          "upstream_inference_prompt_cost": 2.92e-05,
+          "upstream_inference_completions_cost": 0.0065135
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 7932,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 12904,
+      "generation_id": "gen-1794279963-op7pk5kIpL6mC1m2gsfH",
+      "elapsed_seconds": 25.31,
+      "dimensions": [
+        8,
+        8,
+        7.5,
+        10
+      ],
+      "assessment": "Stronger golden illumination, readable clocks and more detail. The full spire fits, although some building proportions are simplified.",
+      "score": 8.1,
+      "medium_score": 7.7,
+      "delta": 0.4,
+      "checks": {
+        "slug": "08-big-ben",
+        "errors": [],
+        "blockedRequests": [],
+        "rendered": true,
+        "orbitChangesImage": true,
+        "zoomChangesImage": true,
+        "resizedCanvas": {
+          "width": 900,
+          "height": 650,
+          "cssWidth": 900,
+          "cssHeight": 650
+        }
+      },
+      "medium_usage": {
+        "prompt_tokens": 292,
+        "completion_tokens": 7594,
+        "total_tokens": 7886,
+        "cost": 0.0038262,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0038262,
+          "upstream_inference_prompt_cost": 2.92e-05,
+          "upstream_inference_completions_cost": 0.003797
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 3432,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "medium_seconds": 14.365,
+      "rank": 3
+    },
+    {
+      "slug": "09-christ",
+      "name": "Christ the Redeemer",
+      "approach": "Clay maquette",
+      "prompt": "Sculpt Christ the Redeemer as a sophisticated monochrome clay architectural maquette on Corcovado mountain. A readable robed human figure stands upright with both arms fully outstretched horizontally, a small defined head, hands and flowing vertical robe folds, on its pedestal. Use soft off-white clay for statue, muted green-gray mountain layers, museum lighting and a clear frontal three-quarter camera.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 295,
+        "completion_tokens": 11421,
+        "total_tokens": 11716,
+        "cost": 0.00574,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00574,
+          "upstream_inference_prompt_cost": 2.95e-05,
+          "upstream_inference_completions_cost": 0.0057105
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 7797,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 10163,
+      "generation_id": "gen-1794279963-f210LKd98VUX5QabBjNA",
+      "elapsed_seconds": 21.273,
+      "dimensions": [
+        5.5,
+        5,
+        8,
+        10
+      ],
+      "assessment": "Smoother robe and a clearer arm silhouette improve the figure slightly. The head remains doll-like and contrast is low.",
+      "score": 6.3,
+      "medium_score": 6.0,
+      "delta": 0.3,
+      "checks": {
+        "slug": "09-christ",
+        "errors": [],
+        "blockedRequests": [],
+        "rendered": true,
+        "orbitChangesImage": true,
+        "zoomChangesImage": true,
+        "resizedCanvas": {
+          "width": 900,
+          "height": 650,
+          "cssWidth": 900,
+          "cssHeight": 650
+        }
+      },
+      "medium_usage": {
+        "prompt_tokens": 295,
+        "completion_tokens": 7292,
+        "total_tokens": 7587,
+        "cost": 0.0036755,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0036755,
+          "upstream_inference_prompt_cost": 2.95e-05,
+          "upstream_inference_completions_cost": 0.003646
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 3912,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "medium_seconds": 13.25,
+      "rank": 9
+    },
+    {
+      "slug": "10-tower-bridge",
+      "name": "Tower Bridge",
+      "approach": "Isometric precision",
+      "prompt": "Create a precise isometric-style Tower Bridge scene over the Thames: two matching stone Gothic towers capped by blue-gray pointed roofs, two high-level walkways joining the towers, a lower road deck with the two bascule leaves closed, blue suspension elements extending toward both shores. Include tower arches, warm stone masonry hints and calm water. Use an orthographic camera and clean detailed miniature style.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "requested_effort": "xhigh",
+      "max_tokens": 32000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 293,
+        "completion_tokens": 17092,
+        "total_tokens": 17385,
+        "cost": 0.0085753,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0085753,
+          "upstream_inference_prompt_cost": 2.93e-05,
+          "upstream_inference_completions_cost": 0.008546
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 12376,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 11101,
+      "generation_id": "gen-1794279963-m35H3xQcJDCDi0YwWAGE",
+      "elapsed_seconds": 33.333,
+      "dimensions": [
+        8.5,
+        8,
+        9,
+        10
+      ],
+      "assessment": "Complete diorama fits comfortably with richer tower detail and clear blue structural elements. Some suspension geometry is schematic.",
+      "score": 8.6,
+      "medium_score": 8.1,
+      "delta": 0.5,
+      "checks": {
+        "slug": "10-tower-bridge",
+        "errors": [],
+        "blockedRequests": [],
+        "rendered": true,
+        "orbitChangesImage": true,
+        "zoomChangesImage": true,
+        "resizedCanvas": {
+          "width": 900,
+          "height": 650,
+          "cssWidth": 900,
+          "cssHeight": 650
+        }
+      },
+      "medium_usage": {
+        "prompt_tokens": 293,
+        "completion_tokens": 6827,
+        "total_tokens": 7120,
+        "cost": 0.0034428,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0034428,
+          "upstream_inference_prompt_cost": 2.93e-05,
+          "upstream_inference_completions_cost": 0.0034135
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 3370,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "medium_seconds": 13.594,
+      "rank": 1
+    }
+  ]
+}

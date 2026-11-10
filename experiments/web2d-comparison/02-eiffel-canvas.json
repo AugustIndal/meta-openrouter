@@ -1,0 +1,41 @@
+{
+  "slug": "02-eiffel",
+  "name": "Eiffel Tower",
+  "approach": "Miniature diorama",
+  "format": "canvas",
+  "prompt": "Create a collectible miniature diorama of the Eiffel Tower on a circular landscaped base. Emphasize four splayed lattice legs, the wide arch at the base, two observation platforms and a tapering open lattice spire. Tiny paths and trees establish scale. Refined warm brass and iron materials, soft studio lighting, lovely three-quarter composition.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+  "scene_brief": "Create a collectible miniature diorama of the Eiffel Tower on a circular landscaped base. Emphasize four splayed lattice legs, the wide arch at the base, two observation platforms and a tapering open lattice spire. Tiny paths and trees establish scale. Refined warm brass and iron materials, soft studio lighting, lovely three-quarter composition.",
+  "requested_model": "meta/muse-ember",
+  "requested_effort": "xhigh",
+  "max_tokens": 32000,
+  "model": "meta/muse-ember",
+  "provider": "Meta",
+  "usage": {
+    "prompt_tokens": 263,
+    "completion_tokens": 29854,
+    "total_tokens": 30117,
+    "cost": 0.0149533,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0149533,
+      "upstream_inference_prompt_cost": 2.63e-05,
+      "upstream_inference_completions_cost": 0.014927
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 23593,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "bytes": 14224,
+  "generation_id": "gen-1794280400-d3DvC4gLL420zqvdLZMP",
+  "file": "02-eiffel-canvas.html",
+  "elapsed_seconds": 54.095
+}

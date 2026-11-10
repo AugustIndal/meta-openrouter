@@ -1,0 +1,42 @@
+{
+  "players": [
+    {
+      "id": "luna",
+      "name": "Luna",
+      "model": "gpt-6-luna",
+      "provider": "Codex",
+      "type": "ai",
+      "score": 2
+    },
+    {
+      "id": "terra",
+      "name": "Terra",
+      "model": "gpt-6.1-terra",
+      "provider": "Codex",
+      "type": "ai",
+      "score": 4
+    },
+    {
+      "id": "sonnet",
+      "name": "Sonnet",
+      "model": "anthropic/claude-sonnet-5.5",
+      "provider": "OpenRouter",
+      "type": "ai",
+      "score": 2
+    },
+    {
+      "id": "haiku",
+      "name": "Haiku",
+      "model": "anthropic/claude-haiku-5.5",
+      "provider": "OpenRouter",
+      "type": "ai",
+      "score": 2
+    }
+  ],
+  "cost": {
+    "openrouterUsd": 0.031485268,
+    "codexCalls": 6,
+    "codexUsd": null,
+    "note": "OpenRouter-reported API cost. Codex subscription debit is not available."
+  }
+}

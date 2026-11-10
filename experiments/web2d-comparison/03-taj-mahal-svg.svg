@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+<defs>
+<linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#f8ded9"/><stop offset="0.38" stop-color="#fbe9e2"/><stop offset="0.72" stop-color="#ece7e9"/><stop offset="1" stop-color="#e2e9ee"/>
+</linearGradient>
+<radialGradient id="sunGrad" cx="0.5" cy="0.5" r="0.5">
+<stop offset="0" stop-color="#fff7e8" stop-opacity="0.95"/><stop offset="0.45" stop-color="#ffe9d2" stop-opacity="0.55"/><stop offset="1" stop-color="#ffe9d2" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="marbleGrad" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0" stop-color="#e6d8c4"/><stop offset="0.22" stop-color="#f8f0e0"/><stop offset="0.5" stop-color="#fffaf0"/><stop offset="0.78" stop-color="#f3e8d6"/><stop offset="1" stop-color="#dccbb2"/>
+</linearGradient>
+<radialGradient id="domeGrad" cx="0.38" cy="0.28" r="0.85">
+<stop offset="0" stop-color="#fffef8"/><stop offset="0.42" stop-color="#f7ecd8"/><stop offset="0.78" stop-color="#e2d1b4"/><stop offset="1" stop-color="#cdb695"/>
+</radialGradient>
+<linearGradient id="poolGrad" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#d7e9ec"/><stop offset="0.45" stop-color="#aecfd6"/><stop offset="1" stop-color="#8bb3c0"/>
+</linearGradient>
+<linearGradient id="lawnGrad" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#a9c498"/><stop offset="1" stop-color="#7ea874"/>
+</linearGradient>
+<linearGradient id="interiorGrad" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#5a4a3c"/><stop offset="1" stop-color="#241e19"/>
+</linearGradient>
+<linearGradient id="minaretGrad" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0" stop-color="#e2d4bd"/><stop offset="0.5" stop-color="#fff8ea"/><stop offset="1" stop-color="#d3c2a4"/>
+</linearGradient>
+<linearGradient id="treeGrad" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0" stop-color="#3f6d3a"/><stop offset="0.5" stop-color="#5c8f4f"/><stop offset="1" stop-color="#2f552c"/>
+</linearGradient>
+<filter id="blur4" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4"/></filter>
+<filter id="blur8" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="8"/></filter>
+<filter id="blur12" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+<clipPath id="poolClip"><polygon points="550,608 650,608 730,718 470,718"/></clipPath>
+<path id="domeShape" d="M-95 0 C-115 -25 -115 -60 -90 -95 C-70 -123 -35 -150 0 -183 C35 -150 70 -123 90 -95 C115 -60 115 -25 95 0 Z"/>
+<g id="minaret">
+<rect x="-10" y="-248" width="20" height="248" fill="url(#minaretGrad)" stroke="#c9b89f" stroke-width="1"/>
+<rect x="-10" y="-248" width="7" height="248" fill="#ffffff" opacity="0.35"/>
+<rect x="-12" y="-190" width="24" height="5" fill="#d8c8ae"/><rect x="-12" y="-120" width="24" height="5" fill="#d8c8ae"/><rect x="-12" y="-55" width="24" height="5" fill="#d8c8ae"/>
+<rect x="-19" y="-200" width="38" height="9" rx="3" fill="#e9dcc6" stroke="#c9b89f"/><rect x="-19" y="-130" width="38" height="9" rx="3" fill="#e9dcc6" stroke="#c9b89f"/><rect x="-19" y="-65" width="38" height="9" rx="3" fill="#e9dcc6" stroke="#c9b89f"/>
+<path d="M-5 -170 Q0 -179 5 -170 L5 -156 L-5 -156 Z" fill="#a89476" opacity="0.65"/><path d="M-5 -100 Q0 -109 5 -100 L5 -86 L-5 -86 Z" fill="#a89476" opacity="0.65"/><path d="M-5 -34 Q0 -43 5 -34 L5 -20 L-5 -20 Z" fill="#a89476" opacity="0.65"/>
+<rect x="-17" y="-282" width="34" height="36" fill="url(#marbleGrad)" stroke="#c9b89f"/>
+<path d="M-11 -262 L-11 -271 Q-5 -278 0 -271 Q5 -278 11 -271 L11 -262 Z" fill="#7d6c55" opacity="0.75"/>
+<path d="M-18 -282 C-18 -302 -8 -314 0 -332 C8 -314 18 -302 18 -282 Z" fill="url(#domeGrad)" stroke="#c9b89f"/>
+<rect x="-1.5" y="-360" width="3" height="30" fill="#b89a6a"/><circle cx="0" cy="-363" r="4" fill="#c9a86a"/>
+</g>
+<g id="kiosk">
+<rect x="-30" y="-44" width="60" height="44" fill="url(#marbleGrad)" stroke="#c9b89f"/>
+<path d="M-21 -6 L-21 -20 Q-14 -28 -7 -20 L-7 -6 Z" fill="#6f6050" opacity="0.8"/><path d="M-4 -6 L-4 -22 Q0 -30 4 -22 L4 -6 Z" fill="#6f6050" opacity="0.8"/><path d="M7 -6 L7 -20 Q14 -28 21 -20 L21 -6 Z" fill="#6f6050" opacity="0.8"/>
+<rect x="-35" y="-50" width="70" height="7" fill="#f0e4d0" stroke="#c9b89f"/>
+<path d="M-28 -50 C-30 -72 -16 -88 0 -108 C16 -88 30 -72 28 -50 Z" fill="url(#domeGrad)" stroke="#c9b89f"/>
+<path d="M0 -108 C-4 -88 -5 -68 -3 -50 M0 -108 C4 -88 5 -68 3 -50" fill="none" stroke="#d8c6a8" stroke-width="1.5" opacity="0.7"/>
+<rect x="-1.2" y="-128" width="2.4" height="22" fill="#b89a6a"/><circle cx="0" cy="-130" r="3.5" fill="#c9a86a"/>
+</g>
+<g id="cypress">
+<rect x="-3" y="-8" width="6" height="8" fill="#6b4f35"/>
+<path d="M0 -98 C14 -70 18 -35 15 0 L-15 0 C-18 -35 -14 -70 0 -98 Z" fill="url(#treeGrad)"/>
+<path d="M0 -98 C6 -70 8 -35 7 0 L0 0 Z" fill="#ffffff" opacity="0.16"/>
+</g>
+<g id="roundTree">
+<rect x="-4" y="-22" width="8" height="22" fill="#6b4f35"/>
+<circle cx="0" cy="-38" r="26" fill="#6f9a5e"/><circle cx="-20" cy="-28" r="18" fill="#7fae6b"/><circle cx="20" cy="-28" r="18" fill="#5f8c50"/><circle cx="-6" cy="-48" r="12" fill="#8fbc78" opacity="0.85"/>
+</g>
+</defs>
+
+<rect width="1200" height="800" fill="url(#skyGrad)"/>
+<circle cx="600" cy="300" r="230" fill="url(#sunGrad)"/>
+<g opacity="0.75" filter="url(#blur8)">
+<ellipse cx="205" cy="138" rx="95" ry="20" fill="#ffffff"/><ellipse cx="285" cy="125" rx="65" ry="16" fill="#ffffff"/>
+<ellipse cx="985" cy="118" rx="105" ry="20" fill="#ffffff"/><ellipse cx="1085" cy="150" rx="70" ry="15" fill="#ffffff"/>
+<ellipse cx="850" cy="82" rx="80" ry="13" fill="#fff4ec"/><ellipse cx="350" cy="88" rx="75" ry="13" fill="#fff4ec"/>
+</g>
+<path d="M0 568 L0 548 Q120 532 260 546 Q420 530 600 544 Q780 530 940 546 Q1080 534 1200 548 L1200 568 Z" fill="#9db09a" opacity="0.55" filter="url(#blur4)"/>
+<rect x="0" y="566" width="1200" height="234" fill="url(#lawnGrad)"/>
+<rect x="0" y="566" width="1200" height="18" fill="#8fae84" opacity="0.6"/>
+
+<!-- plinth -->
+<ellipse cx="600" cy="548" rx="355" ry="12" fill="#4a4036" opacity="0.12" filter="url(#blur8)"/>
+<polygon points="185,540 1015,540 1040,568 160,568" fill="#e9dfcd" stroke="#c9b89f"/>
+<rect x="160" y="568" width="880" height="20" fill="#cdbda4" stroke="#b8a88e"/>
+<rect x="160" y="568" width="880" height="5" fill="#f0e6d2"/>
+<rect x="185" y="552" width="830" height="3" fill="#b8a88e" opacity="0.55"/>
+<polygon points="560,588 640,588 662,610 538,610" fill="#e6dac4" stroke="#c9b89f"/>
+<path d="M552 596 L648 596 M545 603 L655 603" stroke="#b8a88e" stroke-width="2" opacity="0.7"/>
+
+<!-- minarets : four corners -->
+<use href="#minaret" transform="translate(335,545) scale(0.88)"/>
+<use href="#minaret" transform="translate(865,545) scale(0.88)"/>
+<use href="#minaret" transform="translate(250,568) scale(1.02)"/>
+<use href="#minaret" transform="translate(950,568) scale(1.02)"/>
+
+<!-- main facade -->
+<rect x="375" y="395" width="450" height="145" fill="url(#marbleGrad)" stroke="#c9b89f"/>
+<rect x="375" y="395" width="70" height="145" fill="#8a7a63" opacity="0.07"/>
+<rect x="755" y="395" width="70" height="145" fill="#8a7a63" opacity="0.07"/>
+<rect x="365" y="385" width="470" height="14" rx="2" fill="#f2e6d0" stroke="#c9b89f"/>
+<rect x="375" y="526" width="450" height="8" fill="#d9c8ae"/>
+<rect x="385" y="410" width="430" height="6" fill="#d5c5a8" opacity="0.85"/>
+<rect x="385" y="398" width="8" height="142" fill="#e9dcc6" opacity="0.7"/><rect x="807" y="398" width="8" height="142" fill="#e9dcc6" opacity="0.7"/>
+
+<!-- side blind arches left -->
+<g fill="#ded0b8" stroke="#b8a88e">
+<path d="M408 540 L408 495 Q408 468 425 452 Q442 468 442 495 L442 540 Z"/>
+<path d="M458 540 L458 495 Q458 468 475 452 Q492 468 492 495 L492 540 Z"/>
+<path d="M708 540 L708 495 Q708 468 725 452 Q742 468 742 495 L742 540 Z"/>
+<path d="M758 540 L758 495 Q758 468 775 452 Q792 468 792 495 L792 540 Z"/>
+</g>
+<g fill="#8a7a63" opacity="0.55">
+<path d="M414 540 L414 498 Q414 476 425 464 Q436 476 436 498 L436 540 Z"/>
+<path d="M464 540 L464 498 Q464 476 475 464 Q486 476 486 498 L486 540 Z"/>
+<path d="M714 540 L714 498 Q714 476 725 464 Q736 476 736 498 L736 540 Z"/>
+<path d="M764 540 L764 498 Q764 476 775 464 Q786 476 786 498 L786 540 Z"/>
+</g>
+<g fill="#f7ecd9" stroke="#c9b89f">
+<circle cx="425" cy="438" r="6"/><circle cx="475" cy="438" r="6"/><circle cx="725" cy="438" r="6"/><circle cx="775" cy="438" r="6"/>
+</g>
+
+<!-- central pointed portal -->
+<path d="M525 540 L525 475 C525 425 560 395 600 365 C640 395 675 425 675 475 L675 540 Z" fill="#f7ecd9" stroke="#c9b89f"/>
+<path d="M542 540 L542 478 C542 435 570 408 600 385 C630 408 658 435 658 478 L658 540 Z" fill="#e2d3ba" stroke="#b8a88e"/>
+<path d="M560 540 L560 482 C560 448 580 425 600 405 C620 425 640 448 640 482 L640 540 Z" fill="url(#interiorGrad)"/>
+<path d="M585 540 L585 498 Q585 478 600 468 Q615 478 615 498 L615 540 Z" fill="#171310" opacity="0.85"/>
+<path d="M585 540 L585 498 Q585 478 600 468 Q615 478 615 498 L615 540" fill="none" stroke="#c9a86a" stroke-width="2" opacity="0.8"/>
+<circle cx="600" cy="428" r="7" fill="#c9a86a" opacity="0.85"/>
+
+<!-- roof kiosks -->
+<use href="#kiosk" transform="translate(415,395)"/>
+<use href="#kiosk" transform="translate(785,395)"/>
+
+<!-- drum under central dome -->
+<rect x="505" y="355" width="190" height="42" fill="url(#marbleGrad)" stroke="#c9b89f"/>
+<rect x="495" y="348" width="210" height="10" fill="#f2e6d0" stroke="#c9b89f"/>
+<g fill="#8a7a63" opacity="0.6">
+<path d="M517 392 L517 380 Q522 374 527 380 L527 392 Z"/><path d="M541 392 L541 380 Q546 374 551 380 L551 392 Z"/><path d="M565 392 L565 380 Q570 374 575 380 L575 392 Z"/><path d="M589 392 L589 380 Q594 374 599 380 L599 392 Z"/><path d="M613 392 L613 380 Q618 374 623 380 L623 392 Z"/><path d="M637 392 L637 380 Q642 374 647 380 L647 392 Z"/><path d="M661 392 L661 380 Q666 374 671 380 L671 392 Z"/>
+</g>
+
+<!-- central onion dome -->
+<ellipse cx="600" cy="358" rx="118" ry="10" fill="#6b5a44" opacity="0.15" filter="url(#blur4)"/>
+<use href="#domeShape" transform="translate(600,355)" fill="url(#domeGrad)" stroke="#c2ab8a" stroke-width="1.5"/>
+<g fill="none" stroke="#d8c6a8" stroke-width="2" opacity="0.55">
+<path d="M600 172 C582 230 578 290 588 355"/><path d="M600 172 C618 230 622 290 612 355"/>
+<path d="M600 172 C560 225 545 285 552 355"/><path d="M600 172 C640 225 655 285 648 355"/>
+</g>
+<ellipse cx="552" cy="268" rx="24" ry="58" fill="#ffffff" opacity="0.38" filter="url(#blur8)" transform="rotate(-14 552 268)"/>
+<!-- finial -->
+<rect x="598.5" y="108" width="3" height="68" fill="#b89a6a"/>
+<circle cx="600" cy="132" r="6" fill="#c9a86a"/><circle cx="600" cy="118" r="3.5" fill="#c9a86a"/>
+<path d="M600 92 C592 100 591 108 600 115 C609 108 608 100 600 92 Z" fill="#c9a86a"/>
+
+<!-- gardens -->
+<polygon points="440,608 550,608 470,718 370,718" fill="#e8ded0" stroke="#c9b89f"/>
+<polygon points="650,608 760,608 830,718 730,718" fill="#e8ded0" stroke="#c9b89f"/>
+<g>
+<rect x="120" y="592" width="240" height="126" fill="url(#lawnGrad)" stroke="#4f7a44" stroke-width="5"/>
+<rect x="234" y="592" width="12" height="126" fill="#e8ded0" opacity="0.85"/><rect x="120" y="650" width="240" height="10" fill="#e8ded0" opacity="0.85"/>
+<rect x="840" y="592" width="240" height="126" fill="url(#lawnGrad)" stroke="#4f7a44" stroke-width="5"/>
+<rect x="954" y="592" width="12" height="126" fill="#e8ded0" opacity="0.85"/><rect x="840" y="650" width="240" height="10" fill="#e8ded0" opacity="0.85"/>
+<g fill="#e8a0b0" opacity="0.85">
+<circle cx="165" cy="620" r="4"/><circle cx="205" cy="630" r="4"/><circle cx="285" cy="620" r="4"/><circle cx="315" cy="632" r="4"/><circle cx="165" cy="690" r="4"/><circle cx="205" cy="700" r="4"/><circle cx="285" cy="690" r="4"/><circle cx="315" cy="700" r="4"/>
+<circle cx="885" cy="620" r="4"/><circle cx="925" cy="630" r="4"/><circle cx="1005" cy="620" r="4"/><circle cx="1035" cy="632" r="4"/><circle cx="885" cy="690" r="4"/><circle cx="925" cy="700" r="4"/><circle cx="1005" cy="690" r="4"/><circle cx="1035" cy="700" r="4"/>
+</g>
+</g>
+
+<!-- reflecting pool -->
+<polygon points="550,608 650,608 730,718 470,718" fill="url(#poolGrad)" stroke="#d8cbb5" stroke-width="4"/>
+<g clip-path="url(#poolClip)">
+<rect x="515" y="618" width="170" height="80" fill="#ffffff" opacity="0.18" filter="url(#blur8)"/>
+<use href="#domeShape" transform="translate(600,628) scale(0.82,-0.52)" fill="#f7ecd8" opacity="0.32" filter="url(#blur4)"/>
+<rect x="545" y="618" width="110" height="55" fill="#5a4a3c" opacity="0.16" filter="url(#blur4)"/>
+<path d="M545 632 L655 632 M522 656 L678 656 M500 684 L700 684 M485 704 L715 704" stroke="#ffffff" stroke-width="2" opacity="0.4"/>
+<ellipse cx="600" cy="642" rx="18" ry="4" fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.6"/>
+<ellipse cx="585" cy="672" rx="14" ry="3" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.5"/>
+<ellipse cx="615" cy="672" rx="14" ry="3" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.5"/>
+</g>
+<polygon points="550,608 650,608 730,718 470,718" fill="none" stroke="#efe4d2" stroke-width="2" opacity="0.8"/>
+
+<!-- foreground trees flanking pool -->
+<use href="#cypress" transform="translate(432,682) scale(0.78)"/>
+<use href="#cypress" transform="translate(768,682) scale(0.78)"/>
+<use href="#cypress" transform="translate(395,714) scale(0.95)"/>
+<use href="#cypress" transform="translate(805,714) scale(0.95)"/>
+<use href="#roundTree" transform="translate(165,652) scale(0.9)"/>
+<use href="#roundTree" transform="translate(1035,652) scale(0.9)"/>
+<use href="#roundTree" transform="translate(315,708) scale(0.75)"/>
+<use href="#roundTree" transform="translate(885,708) scale(0.75)"/>
+<use href="#cypress" transform="translate(140,718) scale(0.85)"/>
+<use href="#cypress" transform="translate(1060,718) scale(0.85)"/>
+</svg>

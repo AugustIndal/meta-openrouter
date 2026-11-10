@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sydney Opera House Paper Craft</title>
+<style>
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#cfdde7}
+canvas{display:block;width:100%;height:100%}
+</style>
+<script type="importmap">
+{"imports":{"three":"./three.module.js"}}
+</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.setSize(1200,800);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xcfe0ec);
+
+const camera = new THREE.PerspectiveCamera(38,1200/800,0.1,300);
+
+const hemi = new THREE.HemisphereLight(0xeaf3fb,0xb59a84,1.15);
+scene.add(hemi);
+const amb = new THREE.AmbientLight(0xffffff,0.25);
+scene.add(amb);
+const sun = new THREE.DirectionalLight(0xfff3df,2.2);
+sun.position.set(26,38,22);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-28; sun.shadow.camera.right=28;
+sun.shadow.camera.top=28; sun.shadow.camera.bottom=-28;
+sun.shadow.camera.near=5; sun.shadow.camera.far=90;
+sun.shadow.bias=-0.0004;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xd8ebff,0.55);
+fill.position.set(-24,16,-18);
+scene.add(fill);
+
+// Materials
+const ivoryMats = [0xf8f4ea,0xf3eee1,0xfbf8f0,0xefe9da].map(c=>new THREE.MeshStandardMaterial({color:c,roughness:0.82,metalness:0.02,side:THREE.DoubleSide}));
+const ribMat = new THREE.MeshStandardMaterial({color:0xded5c2,roughness:0.9});
+const terraMats = [0xa65336,0xb86441,0xc6784f].map(c=>new THREE.MeshStandardMaterial({color:c,roughness:0.95}));
+const stoneMat = new THREE.MeshStandardMaterial({color:0xd9cfc0,roughness:0.95});
+const stoneLight = new THREE.MeshStandardMaterial({color:0xe8e0d2,roughness:0.95});
+
+// Water - low poly deep blue harbor
+const waterGeo = new THREE.PlaneGeometry(180,180,56,56);
+waterGeo.rotateX(-Math.PI/2);
+{
+  const p = waterGeo.attributes.position;
+  for(let i=0;i<p.count;i++){
+    const x=p.getX(i), z=p.getZ(i);
+    const d=Math.hypot(x,z);
+    if(d>14){
+      p.setY(i, Math.sin(x*0.45+z*0.22)*0.10 + Math.cos(z*0.5-x*0.18)*0.08);
+    } else p.setY(i,0);
+  }
+  waterGeo.computeVertexNormals();
+}
+const water = new THREE.Mesh(waterGeo,new THREE.MeshStandardMaterial({color:0x0f4268,roughness:0.38,metalness:0.12,flatShading:true}));
+water.position.y=0;
+water.receiveShadow=true;
+scene.add(water);
+
+// subtle water bands
+for(let i=0;i<10;i++){
+  const w=6+((i*37)%10);
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,0.04,0.35),new THREE.MeshStandardMaterial({color:0x1b5c88,roughness:0.5}));
+  m.position.set(-38+((i*83)%76),0.07,24+((i*41)%44)-22);
+  m.rotation.y=(i%3)*0.3-0.3;
+  scene.add(m);
+}
+
+// Distant low skyline (restrained, behind)
+const skyMat=new THREE.MeshStandardMaterial({color:0x8fa9bd,roughness:1});
+const skyData=[[-42,-48,8,7],[-30,-52,10,10],[-18,-50,7,6],[-6,-54,12,11],[8,-52,9,8],[20,-50,7,6],[33,-54,11,9],[44,-48,8,7]];
+for(const [x,z,w,h] of skyData){
+  const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,w*0.7),skyMat);
+  b.position.set(x,h/2-0.2,z);
+  scene.add(b);
+}
+
+// Quay / promenade
+function box(w,h,d,mat,x,y,z,ry=0){
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+  m.position.set(x,y,z); m.rotation.y=ry;
+  m.castShadow=true; m.receiveShadow=true;
+  scene.add(m); return m;
+}
+box(34,0.9,20,stoneMat,0,0.0,0);
+box(34.6,0.25,20.6,stoneLight,0,0.42,0);
+
+// Terracotta podium tiers
+box(26,1.05,14.5,terraMats[0],0,1.02,0);
+box(23,1.0,12.5,terraMats[1],0,1.98,0);
+box(20.5,0.85,11,terraMats[2],0,2.88,0);
+const podiumTop=3.30;
+
+// Front steps
+box(7,0.35,1.2,terraMats[1],0,2.65,6.1);
+box(7,0.35,1.2,terraMats[0],0,2.15,6.9);
+box(7,0.35,1.2,stoneMat,0,1.65,7.7);
+box(7,0.35,1.2,stoneLight,0,1.15,8.5);
+
+// Shell parametric
+function shellPoint(u,v,h,w,d,out){
+  const pw=Math.pow(1-v,0.55);
+  const x=(u-0.5)*w*pw;
+  const z=d*Math.sin(Math.PI*u)*Math.pow(1-v,0.30)-v*v*d*0.55;
+  const y=v*h;
+  out.set(x,y,z);
+  return out;
+}
+function shellGeometry(h,w,d){
+  const nx=22, ny=28;
+  const pos=[], idx=[];
+  const tmp=new THREE.Vector3();
+  for(let j=0;j<=ny;j++){
+    const v=j/ny;
+    for(let i=0;i<=nx;i++){
+      const u=i/nx;
+      shellPoint(u,v,h,w,d,tmp);
+      pos.push(tmp.x,tmp.y,tmp.z);
+    }
+  }
+  for(let j=0;j<ny;j++){
+    for(let i=0;i<nx;i++){
+      const a=j*(nx+1)+i, b=a+1, c=a+nx+1, d2=c+1;
+      idx.push(a,c,b,b,c,d2);
+    }
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+function tube(points,radius,mat,seg=24){
+  const curve=new THREE.CatmullRomCurve3(points);
+  const geo=new THREE.TubeGeometry(curve,seg,radius,6,false);
+  const m=new THREE.Mesh(geo,mat);
+  m.castShadow=true; m.receiveShadow=true;
+  return m;
+}
+
+let shellIndex=0;
+function addShell(x,z,h,w,d,rotY,tiltX){
+  const grp=new THREE.Group();
+  grp.position.set(x,podiumTop-0.25,z);
+  grp.rotation.y=rotY;
+  grp.rotation.x=tiltX;
+  const mat=ivoryMats[shellIndex%ivoryMats.length]; shellIndex++;
+  const mesh=new THREE.Mesh(shellGeometry(h,w,d),mat);
+  mesh.castShadow=true; mesh.receiveShadow=true;
+  grp.add(mesh);
+
+  // base plinth anchoring shell
+  const plinth=new THREE.Mesh(new THREE.BoxGeometry(w*0.94,0.95,d*1.10),stoneLight);
+  plinth.position.set(0,0.28,d*0.34);
+  plinth.castShadow=true; plinth.receiveShadow=true;
+  grp.add(plinth);
+
+  const tmp=new THREE.Vector3();
+  // edge rims
+  for(const u of [0,1]){
+    const pts=[];
+    for(let j=0;j<=14;j++){ shellPoint(u,j/14,h,w,d,tmp); pts.push(tmp.clone()); }
+    grp.add(tube(pts,0.065,mat,28));
+  }
+  // bottom rim
+  {
+    const pts=[];
+    for(let i=0;i<=14;i++){ shellPoint(i/14,0,h,w,d,tmp); pts.push(tmp.clone()); }
+    grp.add(tube(pts,0.055,mat,28));
+  }
+  // ribs
+  for(const u of [0.22,0.38,0.5,0.62,0.78]){
+    const pts=[];
+    for(let j=0;j<=14;j++){ shellPoint(u,j/14,h,w,d,tmp); pts.push(tmp.clone()); }
+    grp.add(tube(pts,0.028,ribMat,24));
+  }
+  scene.add(grp);
+  return grp;
+}
+
+// Major hall group (larger, back-left)
+addShell(-7.2,-2.4,17.5,7.6,3.9,-0.28,-0.035);
+addShell(-4.8,-1.7,14.8,6.6,3.3,-0.07,-0.03);
+addShell(-2.6,-2.6,11.2,5.4,2.7,0.16,-0.02);
+// Minor hall group (smaller, front-right)
+addShell(3.4,1.8,13.2,6.0,3.0,-0.22,-0.03);
+addShell(5.6,2.3,10.2,5.0,2.45,0.02,-0.02);
+addShell(7.6,1.4,7.4,4.0,1.95,0.26,-0.015);
+// Single / linking shells
+addShell(0.2,-4.6,9.2,4.6,2.3,0.05,-0.02);
+addShell(0.6,3.2,6.2,3.6,1.8,-0.15,-0.01);
+addShell(-0.9,-0.6,8.0,4.2,2.1,0.35,-0.02);
+
+// Small sailboat far to the side (does not obstruct)
+{
+  const boat=new THREE.Group();
+  boat.position.set(-32,0.2,26); boat.rotation.y=0.6;
+  const hull=new THREE.Mesh(new THREE.BoxGeometry(2.2,0.35,0.7),new THREE.MeshStandardMaterial({color:0xf5f0e6,roughness:0.8}));
+  hull.position.y=0.2; hull.castShadow=true; boat.add(hull);
+  const sailGeo=new THREE.BufferGeometry();
+  sailGeo.setAttribute('position',new THREE.Float32BufferAttribute([0,0.3,0, 0,2.6,0, 1.5,0.35,0],3));
+  sailGeo.setIndex([0,1,2]); sailGeo.computeVertexNormals();
+  const sail=new THREE.Mesh(sailGeo,new THREE.MeshStandardMaterial({color:0xffffff,side:THREE.DoubleSide,roughness:0.85}));
+  sail.castShadow=true; boat.add(sail);
+  scene.add(boat);
+}
+
+// Orbit controls (native pointer)
+const target=new THREE.Vector3(0,9.5,0);
+let theta=0.58, phi=1.12, radius=48;
+function updateCamera(){
+  phi=THREE.MathUtils.clamp(phi,0.35,1.42);
+  radius=THREE.MathUtils.clamp(radius,22,85);
+  theta=THREE.MathUtils.clamp(theta,-1.35,1.35);
+  const sp=Math.sin(phi), cp=Math.cos(phi);
+  camera.position.set(
+    target.x+radius*sp*Math.sin(theta),
+    target.y+radius*cp,
+    target.z+radius*sp*Math.cos(theta)
+  );
+  camera.lookAt(target);
+}
+let dragging=false,lastX=0,lastY=0;
+renderer.domElement.addEventListener('pointerdown',e=>{
+  dragging=true; lastX=e.clientX; lastY=e.clientY;
+  renderer.domElement.setPointerCapture(e.pointerId);
+});
+renderer.domElement.addEventListener('pointermove',e=>{
+  if(!dragging) return;
+  const dx=e.clientX-lastX, dy=e.clientY-lastY;
+  lastX=e.clientX; lastY=e.clientY;
+  theta-=dx*0.005; phi-=dy*0.005;
+  updateCamera(); renderer.render(scene,camera);
+});
+renderer.domElement.addEventListener('pointerup',()=>{dragging=false;});
+renderer.domElement.addEventListener('pointercancel',()=>{dragging=false;});
+renderer.domElement.addEventListener('wheel',e=>{
+  e.preventDefault();
+  radius*=Math.exp(e.deltaY*0.001);
+  updateCamera(); renderer.render(scene,camera);
+},{passive:false});
+
+function onResize(){
+  const w=window.innerWidth, h=window.innerHeight;
+  camera.aspect=w/h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w,h);
+  renderer.render(scene,camera);
+}
+window.addEventListener('resize',onResize);
+
+updateCamera();
+renderer.render(scene,camera);
+window.sceneReady=true;
+</script>
+</body>
+</html>

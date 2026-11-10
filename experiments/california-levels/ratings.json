@@ -1,0 +1,146 @@
+{
+  "golden-gate-minimal": {
+    "score": 6.0,
+    "note": "Recognizable bridge and road detail, but both tower tops and the right approach are cropped."
+  },
+  "golden-gate-low": {
+    "score": 7.0,
+    "note": "The whole span fits. Clear silhouette, though the bridge is small and the mountain backdrop is stylized."
+  },
+  "golden-gate-medium": {
+    "score": 6.5,
+    "note": "Good structural detail and water, but the road and cable approach leave the right edge."
+  },
+  "golden-gate-high": {
+    "score": 8.0,
+    "note": "Complete span with balanced framing and readable tower structure. Landforms are simplified."
+  },
+  "golden-gate-xhigh": {
+    "score": 8.5,
+    "note": "Complete and well-composed bridge, clear suspension structure and coherent shoreline detail."
+  },
+  "golden-gate-max": {
+    "score": 7.5,
+    "note": "Complete bridge and headlands, but the strong haze hides much of the far tower and span."
+  },
+  "painted-ladies-minimal": {
+    "score": 7.0,
+    "note": "Distinctive pastel Victorian row with bay windows. Repeated forms and oversized background towers simplify the setting."
+  },
+  "painted-ladies-low": {
+    "score": 7.0,
+    "note": "Readable colorful Victorian row. Flat staging and close framing weaken the hillside setting."
+  },
+  "painted-ladies-medium": {
+    "score": 7.5,
+    "note": "Well-separated house colors and good row composition; detailing remains schematic."
+  },
+  "painted-ladies-high": {
+    "score": 8.0,
+    "note": "Detailed gables and trim with a full hillside scene. The houses sit a little small under the skyline."
+  },
+  "painted-ladies-xhigh": {
+    "score": 8.5,
+    "note": "Strong roof silhouettes, bay windows, trim and sloping street. Richest readable house geometry in this set."
+  },
+  "painted-ladies-max": {
+    "score": 0.0,
+    "note": "No usable scene was emitted. The 32,000-token response budget was consumed by reasoning."
+  },
+  "transamerica-minimal": {
+    "score": 3.5,
+    "note": "The top is cropped and the broad blank lower body obscures the intended pyramid shape."
+  },
+  "transamerica-low": {
+    "score": 5.0,
+    "note": "Full tower is visible, but window coverage and taper are inaccurate and the tower reads like an obelisk."
+  },
+  "transamerica-medium": {
+    "score": 6.5,
+    "note": "Clear taper and many windows, but the spire is cropped and the surrounding grid is generic."
+  },
+  "transamerica-high": {
+    "score": 7.5,
+    "note": "Full taper, spire and exposed base supports fit well. The windows and fins remain simplified."
+  },
+  "transamerica-xhigh": {
+    "score": 7.5,
+    "note": "Balanced tower silhouette and contextual blocks, though some window rows and side fins are imprecise."
+  },
+  "transamerica-max": {
+    "score": 8.0,
+    "note": "Full city diorama with detailed windows, streets and trees. The main tower remains slightly schematic."
+  },
+  "griffith-minimal": {
+    "score": 1.0,
+    "note": "The scene renders, but the initial camera is obstructed by terrain and the observatory is not visible."
+  },
+  "griffith-low": {
+    "score": 7.0,
+    "note": "Three domes and front terrace are readable. The facade and site are simplified."
+  },
+  "griffith-medium": {
+    "score": 7.5,
+    "note": "Strong domes, staircase and landscape composition with a clear building silhouette."
+  },
+  "griffith-high": {
+    "score": 8.0,
+    "note": "Balanced front view with domes, terrace, landscaping and an unobstructed monument."
+  },
+  "griffith-xhigh": {
+    "score": 8.0,
+    "note": "Good complete building, dome hierarchy and site details. Foreground trees are oversized."
+  },
+  "griffith-max": {
+    "score": 0.0,
+    "note": "Generation reached the token limit with an incomplete script; no rendered scene was produced."
+  },
+  "half-dome-minimal": {
+    "score": 3.5,
+    "note": "Rounded shells and a circular base look like constructed domes instead of a sheer granite cliff."
+  },
+  "half-dome-low": {
+    "score": 4.0,
+    "note": "Shows a flat semicircular slab on a circular base; the black streaks and terrain feel artificial."
+  },
+  "half-dome-medium": {
+    "score": 4.5,
+    "note": "Cliff face is visible, but looks like a thin curved wall and the nearby rounded plates are implausible."
+  },
+  "half-dome-high": {
+    "score": 6.5,
+    "note": "Better sheer granite wall and forest scale, though the rock still resembles a thin slab."
+  },
+  "half-dome-xhigh": {
+    "score": 6.0,
+    "note": "Recognizable cut dome with forest, but floating or overhanging base and rounded background forms weaken realism."
+  },
+  "half-dome-max": {
+    "score": 7.0,
+    "note": "Best rock shading and forest terrain of this set, with a clear cut-dome outline; geometry is still simplified."
+  },
+  "santa-monica-minimal": {
+    "score": 6.5,
+    "note": "Bright pier and rides are readable, but the Ferris wheel top is cropped."
+  },
+  "santa-monica-low": {
+    "score": 6.5,
+    "note": "Complete amusement pier, but wheel supports and projecting spokes are awkward."
+  },
+  "santa-monica-medium": {
+    "score": 7.0,
+    "note": "Complete pier and rides with good separation; the scene is schematic and the wheel is small."
+  },
+  "santa-monica-high": {
+    "score": 7.5,
+    "note": "Readable wheel, roller coaster and timber deck. A few floating dark marks distract."
+  },
+  "santa-monica-xhigh": {
+    "score": 8.5,
+    "note": "Best complete pier composition, coherent rides, shoreline and water detail."
+  },
+  "santa-monica-max": {
+    "score": 7.5,
+    "note": "Full pier and wheel with clear approach; lighting is flat and the coaster is sparse."
+  }
+}

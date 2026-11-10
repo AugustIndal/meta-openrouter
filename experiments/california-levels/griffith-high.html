@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D Illustration</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#bcd9ea;}
+  canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab;}
+  canvas:active{cursor:grabbing;}
+</style>
+<script type="importmap">
+{"imports":{"three":"./three.module.js"}}
+</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true, powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.06;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xbcd9ea);
+scene.fog = new THREE.Fog(0xc4dde8, 90, 220);
+
+const camera = new THREE.PerspectiveCamera(36, window.innerWidth/window.innerHeight, 0.1, 600);
+
+// deterministic rng
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+const rng = mulberry32(20240612);
+
+const hemi = new THREE.HemisphereLight(0xd6ecff, 0x8a7a58, 0.95);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff1d2, 1.85);
+sun.position.set(24, 36, 22);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left = -45; sun.shadow.camera.right = 45;
+sun.shadow.camera.top = 45; sun.shadow.camera.bottom = -45;
+sun.shadow.camera.near = 1; sun.shadow.camera.far = 120;
+sun.shadow.bias = -0.0004;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xbcd6ff, 0.35);
+fill.position.set(-20, 18, -14);
+scene.add(fill);
+
+// materials
+const M = {
+  cream: new THREE.MeshStandardMaterial({color:0xf2e6cf, roughness:0.92}),
+  cream2: new THREE.MeshStandardMaterial({color:0xe9dcbe, roughness:0.92}),
+  stone: new THREE.MeshStandardMaterial({color:0xd6c09a, roughness:0.95}),
+  stoneDark: new THREE.MeshStandardMaterial({color:0xb99f76, roughness:0.95}),
+  copper: new THREE.MeshStandardMaterial({color:0x4e2e26, roughness:0.42, metalness:0.38}),
+  copperLight: new THREE.MeshStandardMaterial({color:0x5d3a2d, roughness:0.48, metalness:0.32}),
+  glass: new THREE.MeshStandardMaterial({color:0x1e3040, roughness:0.28, metalness:0.15}),
+  wood: new THREE.MeshStandardMaterial({color:0x4a3421, roughness:0.8}),
+  grass: new THREE.MeshStandardMaterial({color:0x75804a, roughness:1}),
+  grassTop: new THREE.MeshStandardMaterial({color:0x7e8852, roughness:1}),
+  hillSide: new THREE.MeshStandardMaterial({color:0x6d7042, roughness:1}),
+  ground: new THREE.MeshStandardMaterial({color:0x9aa07a, roughness:1}),
+  path: new THREE.MeshStandardMaterial({color:0xdcc9a2, roughness:0.95}),
+  trunk: new THREE.MeshStandardMaterial({color:0x5a4230, roughness:0.9}),
+  leaf: new THREE.MeshStandardMaterial({color:0x4f6334, roughness:1}),
+  leaf2: new THREE.MeshStandardMaterial({color:0x5f743c, roughness:1}),
+  city: new THREE.MeshStandardMaterial({color:0xcfc4ae, roughness:0.95}),
+  city2: new THREE.MeshStandardMaterial({color:0xb9b0a0, roughness:0.95}),
+  city3: new THREE.MeshStandardMaterial({color:0xd8cdb8, roughness:0.95})
+};
+
+function box(w,h,d,x,y,z,mat,parent){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+  m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true;
+  (parent||scene).add(m); return m;
+}
+function cyl(rt,rb,h,x,y,z,mat,seg,parent){
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg||24), mat);
+  m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true;
+  (parent||scene).add(m); return m;
+}
+function sphere(r,x,y,z,mat,parent){
+  const m = new THREE.Mesh(new THREE.SphereGeometry(r,20,14), mat);
+  m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true;
+  (parent||scene).add(m); return m;
+}
+
+// ground far below
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(360,360), M.ground);
+ground.rotation.x = -Math.PI/2; ground.position.y = 0; ground.receiveShadow=true; scene.add(ground);
+
+// hill
+const hill = new THREE.Mesh(new THREE.CylinderGeometry(27,39,6,64,1), M.hillSide);
+hill.position.y = 3; hill.castShadow=true; hill.receiveShadow=true; scene.add(hill);
+const hillBase = new THREE.Mesh(new THREE.CylinderGeometry(39,50,2.2,64,1), new THREE.MeshStandardMaterial({color:0x7a7d4f, roughness:1}));
+hillBase.position.y = 1.1; hillBase.receiveShadow=true; scene.add(hillBase);
+const plateau = new THREE.Mesh(new THREE.CircleGeometry(27.05,64), M.grassTop);
+plateau.rotation.x = -Math.PI/2; plateau.position.y = 6.02; plateau.receiveShadow=true; scene.add(plateau);
+const rim = new THREE.Mesh(new THREE.CylinderGeometry(27.2,27.2,0.55,64,1,true), M.stoneDark);
+rim.position.y = 5.95; rim.receiveShadow=true; scene.add(rim);
+
+// city in valley behind and to sides (deterministic)
+const cityGroup = new THREE.Group(); scene.add(cityGroup);
+for(let i=0;i<78;i++){
+  const side = i%3;
+  let x,z;
+  if(side===0){ x = -85 + rng()*170; z = -48 - rng()*38; }
+  else if(side===1){ x = -92 - rng()*28; z = -40 + rng()*70; }
+  else { x = 52 + rng()*38; z = -42 + rng()*72; }
+  const w = 3+rng()*5, d = 3+rng()*5, h = 2.5+rng()*7;
+  const mat = rng()>0.5 ? (rng()>0.5?M.city:M.city2) : M.city3;
+  const b = box(w,h,d,x,h/2,z,mat,cityGroup);
+  b.castShadow=false;
+  if(rng()>0.6){
+    const roof = box(w*0.6,0.5,d*0.6,x,h+0.25,z,M.stoneDark,cityGroup); roof.castShadow=false;
+  }
+}
+
+// terrace
+box(28.5,1.5,16.5, 0,6.75,0, M.stone, scene);
+box(29.2,0.35,17.2, 0,7.55,0, M.stoneDark, scene); // terrace slab edge
+
+// front lawn path
+const path = new THREE.Mesh(new THREE.PlaneGeometry(5.2,16), M.path);
+path.rotation.x=-Math.PI/2; path.position.set(0,6.06,15.5); path.receiveShadow=true; scene.add(path);
+// low geometric walls flanking front lawn
+box(0.35,0.55,9, -3.4,6.28,14.5, M.stone, scene);
+box(0.35,0.55,9,  3.4,6.28,14.5, M.stone, scene);
+box(7,0.5,0.35, 0,6.25,19, M.stone, scene);
+box(0.35,0.55,8, -9,6.28,10, M.stone, scene);
+box(0.35,0.55,8,  9,6.28,10, M.stone, scene);
+
+// wide steps
+for(let i=0;i<5;i++){
+  box(6.4,0.32,0.85, 0, 7.35-i*0.30, 8.45+i*0.72, M.stone, scene);
+}
+
+// balustrades (instanced balusters)
+const balusterGeo = new THREE.BoxGeometry(0.13,0.72,0.13);
+const positions=[];
+for(let x=-13.4;x<=-3.4;x+=0.58) positions.push([x,7.95,7.9]);
+for(let x=3.4;x<=13.4;x+=0.58) positions.push([x,7.95,7.9]);
+for(let z=0.5;z<=7.9;z+=0.58) positions.push([-13.9,7.95,z]);
+for(let z=0.5;z<=7.9;z+=0.58) positions.push([13.9,7.95,z]);
+const inst = new THREE.InstancedMesh(balusterGeo, M.stone, positions.length);
+const dummy = new THREE.Object3D();
+positions.forEach((p,i)=>{dummy.position.set(p[0],p[1],p[2]); dummy.updateMatrix(); inst.setMatrixAt(i,dummy.matrix);});
+inst.castShadow=true; inst.receiveShadow=true; scene.add(inst);
+// rails
+box(10.4,0.18,0.32, -8.6,8.38,7.9, M.stone, scene);
+box(10.4,0.18,0.32,  8.6,8.38,7.9, M.stone, scene);
+box(0.32,0.18,7.6, -13.9,8.38,4.2, M.stone, scene);
+box(0.32,0.18,7.6,  13.9,8.38,4.2, M.stone, scene);
+box(10.4,0.14,0.25, -8.6,7.62,7.9, M.stoneDark, scene);
+box(10.4,0.14,0.25,  8.6,7.62,7.9, M.stoneDark, scene);
+
+// main building blocks
+// central
+box(10,5.4,7.2, 0,10.2,-2, M.cream, scene);
+box(10.7,0.42,7.9, 0,13.05,-2, M.stone, scene);
+box(10.2,0.7,7.4, 0,12.6,-2, M.cream2, scene);
+// wings
+box(7.6,3.7,6.2, -8.8,9.35,-2, M.cream, scene);
+box(7.6,3.7,6.2,  8.8,9.35,-2, M.cream, scene);
+box(8.2,0.38,6.8, -8.8,11.35,-2, M.stone, scene);
+box(8.2,0.38,6.8,  8.8,11.35,-2, M.stone, scene);
+box(7.8,0.6,6.4, -8.8,10.95,-2, M.cream2, scene);
+box(7.8,0.6,6.4,  8.8,10.95,-2, M.cream2, scene);
+
+// horizontal string courses
+box(10.15,0.22,7.35, 0,10.8,-2, M.stone, scene);
+box(7.75,0.22,6.35, -8.8,9.6,-2, M.stone, scene);
+box(7.75,0.22,6.35,  8.8,9.6,-2, M.stone, scene);
+
+// windows and door - front faces
+function windowUnit(x,y,z,w,h){
+  box(w,h,0.12,x,y,z,M.glass,scene);
+  box(w+0.24,0.16,0.14,x,y+h/2+0.08,z+0.02,M.stone,scene);
+  box(w+0.24,0.16,0.14,x,y-h/2-0.08,z+0.02,M.stone,scene);
+}
+// central windows
+windowUnit(-2.8,11.2,1.62,1.05,1.5);
+windowUnit(2.8,11.2,1.62,1.05,1.5);
+windowUnit(-2.8,9.0,1.62,1.05,1.35);
+windowUnit(2.8,9.0,1.62,1.05,1.35);
+windowUnit(0,11.4,1.62,1.1,1.6);
+// wings
+[-8.8,8.8].forEach(cx=>{
+  windowUnit(cx-2.2,9.7,1.12,1.0,1.35);
+  windowUnit(cx+2.2,9.7,1.12,1.0,1.35);
+  windowUnit(cx,9.7,1.12,1.0,1.35);
+});
+// side windows
+[-5.05,5.05].forEach(x=>{
+  box(0.12,1.3,1.0,x,10.6,-2,M.glass,scene);
+});
+// door
+box(1.7,2.7,0.18,0,8.85,1.63,M.wood,scene);
+box(2.1,0.28,0.3,0,10.32,1.65,M.stone,scene);
+sphere(0.09,-0.55,8.85,1.76,M.stone,scene);
+sphere(0.09,0.55,8.85,1.76,M.stone,scene);
+
+// domes
+function makeDome(r, x, baseY, z){
+  const g = new THREE.Group(); g.position.set(x,baseY,z); scene.add(g);
+  // drum
+  const drum = new THREE.Mesh(new THREE.CylinderGeometry(r*0.98,r*1.02,r*0.42,28), M.cream2);
+  drum.position.y = r*0.21; drum.castShadow=true; drum.receiveShadow=true; g.add(drum);
+  // small windows on drum
+  for(let i=0;i<6;i++){
+    const a = (i/6)*Math.PI*2;
+    const wx = Math.cos(a)*r*0.99, wz = Math.sin(a)*r*0.99;
+    const w = box(0.42,0.55,0.1, wx, r*0.22, wz, M.glass, g);
+    w.lookAt(x+wx*2, baseY+r*0.22, z+wz*2);
+  }
+  const domeY = r*0.42;
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(r,32,18,0,Math.PI*2,0,Math.PI/2), M.copper);
+  dome.position.y = domeY; dome.castShadow=true; dome.receiveShadow=true; g.add(dome);
+  // rings following dome curvature
+  [0.35,0.62,0.86].forEach(f=>{
+    const yy = domeY + r*Math.sqrt(1-f*f)*0.92;
+    const rr = r*f;
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(rr,0.045,8,36), M.copperLight);
+    ring.rotation.x = Math.PI/2; ring.position.y = yy; ring.castShadow=true; g.add(ring);
+  });
+  // base ring
+  const baseRing = new THREE.Mesh(new THREE.TorusGeometry(r*1.02,0.09,8,36), M.stoneDark);
+  baseRing.rotation.x = Math.PI/2; baseRing.position.y = domeY; g.add(baseRing);
+  // finial
+  cyl(0.07,0.09,r*0.35,0,domeY+r+ r*0.12,0,M.copperLight,10,g);
+  sphere(r*0.11,0,domeY+r+r*0.32,0,M.copperLight,g);
+  return g;
+}
+makeDome(3.85, 0, 13.25, -2);
+makeDome(2.05, -8.8, 11.55, -2);
+makeDome(2.05,  8.8, 11.55, -2);
+
+// obelisk on front lawn
+const ob = new THREE.Group(); ob.position.set(0,6.02,21.2); scene.add(ob);
+box(1.9,0.45,1.9,0,0.22,0,M.stoneDark,ob);
+box(1.35,0.4,1.35,0,0.65,0,M.stone,ob);
+const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.48,0.68,3.4,4), M.cream);
+shaft.rotation.y = Math.PI/4; shaft.position.y = 2.55; shaft.castShadow=true; shaft.receiveShadow=true; ob.add(shaft);
+const pyr = new THREE.Mesh(new THREE.ConeGeometry(0.68,0.85,4), M.stoneDark);
+pyr.rotation.y = Math.PI/4; pyr.position.y = 4.65; pyr.castShadow=true; ob.add(pyr);
+sphere(0.12,0,5.15,0,M.copperLight,ob);
+
+// trees - symmetrical pairs
+function tree(x,z,s){
+  const g=new THREE.Group(); g.position.set(x,6,z); g.scale.setScalar(s); scene.add(g);
+  cyl(0.16,0.22,1.1,0,0.55,0,M.trunk,8,g);
+  const c1=new THREE.Mesh(new THREE.ConeGeometry(1.25,2.6,10), M.leaf); c1.position.y=2.2; c1.castShadow=true; g.add(c1);
+  const c2=new THREE.Mesh(new THREE.ConeGeometry(0.9,1.9,10), M.leaf2); c2.position.y=3.5; c2.castShadow=true; g.add(c2);
+}
+[[-19,-7],[19,-7],[-21,7],[21,7],[-16,17],[16,17],[-23,-15],[23,-15],[-14,-12],[14,-12]].forEach(p=>tree(p[0],p[1],0.95+Math.abs(p[0])*0.012));
+// shrubs near building
+[[-11.5,3],[11.5,3],[-12.5,-6],[12.5,-6],[-4,4.5],[4,4.5]].forEach(p=>{
+  const s=sphere(0.7,p[0],6.55,p[1],M.leaf,scene); s.scale.y=0.65;
+});
+
+// orbit controls (native pointer + wheel)
+let theta=0, phi=1.24, radius=57;
+const target = new THREE.Vector3(0,8.6,0);
+let dragging=false, lastX=0, lastY=0;
+function updateCamera(){
+  const sp = Math.sin(phi), cp = Math.cos(phi);
+  camera.position.set(
+    target.x + radius*sp*Math.sin(theta),
+    target.y + radius*cp,
+    target.z + radius*sp*Math.cos(theta)
+  );
+  camera.lookAt(target);
+}
+function render(){ updateCamera(); renderer.render(scene,camera); }
+
+renderer.domElement.addEventListener('pointerdown', e=>{
+  dragging=true; lastX=e.clientX; lastY=e.clientY;
+  renderer.domElement.setPointerCapture(e.pointerId);
+});
+renderer.domElement.addEventListener('pointermove', e=>{
+  if(!dragging) return;
+  const dx=e.clientX-lastX, dy=e.clientY-lastY; lastX=e.clientX; lastY=e.clientY;
+  theta -= dx*0.005;
+  phi -= dy*0.005;
+  theta = Math.max(-1.15, Math.min(1.15, theta));
+  phi = Math.max(0.45, Math.min(1.42, phi));
+  render();
+});
+renderer.domElement.addEventListener('pointerup', ()=>{dragging=false;});
+renderer.domElement.addEventListener('pointercancel', ()=>{dragging=false;});
+renderer.domElement.addEventListener('wheel', e=>{
+  e.preventDefault();
+  radius += e.deltaY*0.04;
+  radius = Math.max(28, Math.min(88, radius));
+  render();
+},{passive:false});
+
+function onResize(){
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  render();
+}
+window.addEventListener('resize', onResize);
+
+render();
+window.sceneReady = true;
+</script>
+</body>
+</html>

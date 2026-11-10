@@ -1,0 +1,29 @@
+[
+  {
+    "slug": "01-golden-gate",
+    "format": "canvas",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 349
+  },
+  {
+    "slug": "04-colosseum",
+    "format": "svg",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 227
+  },
+  {
+    "slug": "06-opera-house",
+    "format": "canvas",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 262
+  }
+]

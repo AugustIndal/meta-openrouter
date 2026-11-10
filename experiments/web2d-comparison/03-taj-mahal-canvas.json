@@ -1,0 +1,41 @@
+{
+  "slug": "03-taj-mahal",
+  "name": "Taj Mahal",
+  "approach": "Symmetry and reflection",
+  "format": "canvas",
+  "prompt": "Render the Taj Mahal as a serene architectural scene: central ivory onion dome with finial above a symmetrical building with a tall central pointed portal, smaller domed kiosks and four slender corner minarets. A long foreground reflecting pool and flanking formal gardens guide the eye to the facade. Symmetry, soft dawn light, pale pink sky, polished proportions.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+  "scene_brief": "Render the Taj Mahal as a serene architectural scene: central ivory onion dome with finial above a symmetrical building with a tall central pointed portal, smaller domed kiosks and four slender corner minarets. A long foreground reflecting pool and flanking formal gardens guide the eye to the facade. Symmetry, soft dawn light, pale pink sky, polished proportions.",
+  "requested_model": "meta/muse-ember",
+  "requested_effort": "xhigh",
+  "max_tokens": 32000,
+  "model": "meta/muse-ember",
+  "provider": "Meta",
+  "usage": {
+    "prompt_tokens": 265,
+    "completion_tokens": 12598,
+    "total_tokens": 12863,
+    "cost": 0.0063255,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0063255,
+      "upstream_inference_prompt_cost": 2.65e-05,
+      "upstream_inference_completions_cost": 0.006299
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 7205,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "bytes": 12971,
+  "generation_id": "gen-1794280400-wVUBddzlNsarB0LVTSzd",
+  "file": "03-taj-mahal-canvas.html",
+  "elapsed_seconds": 23.314
+}

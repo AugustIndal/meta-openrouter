@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a9bcbf"/>
+      <stop offset="32%" stop-color="#d9c9a3"/>
+      <stop offset="62%" stop-color="#f0c185"/>
+      <stop offset="100%" stop-color="#f7d09a"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ecc88d"/>
+      <stop offset="38%" stop-color="#dda96a"/>
+      <stop offset="100%" stop-color="#b8823f"/>
+    </linearGradient>
+    <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff8d6" stop-opacity="0.95"/>
+      <stop offset="28%" stop-color="#ffdf9a" stop-opacity="0.65"/>
+      <stop offset="62%" stop-color="#f7b86a" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#f7b86a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="lit" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fbebb8"/>
+      <stop offset="42%" stop-color="#f2d092"/>
+      <stop offset="100%" stop-color="#ddac66"/>
+    </linearGradient>
+    <linearGradient id="shade" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d7a867"/>
+      <stop offset="48%" stop-color="#b48347"/>
+      <stop offset="100%" stop-color="#8e5f2f"/>
+    </linearGradient>
+    <linearGradient id="litFar" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7e6bd"/>
+      <stop offset="100%" stop-color="#ddb57c"/>
+    </linearGradient>
+    <linearGradient id="shadeFar" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d2b07d"/>
+      <stop offset="100%" stop-color="#a67c46"/>
+    </linearGradient>
+    <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f6d9a3" stop-opacity="0"/>
+      <stop offset="55%" stop-color="#f6d9a3" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#f6d9a3" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="vignette" cx="50%" cy="46%" r="78%">
+      <stop offset="58%" stop-color="#3d2410" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#3d2410" stop-opacity="0.22"/>
+    </radialGradient>
+    <filter id="blur5" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="5"/></filter>
+    <filter id="blur9" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="9"/></filter>
+    <filter id="blur14" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14"/></filter>
+    <clipPath id="clipMenL"><polygon points="930,350 815,485 930,520"/></clipPath>
+    <clipPath id="clipMenR"><polygon points="930,350 930,520 1045,485"/></clipPath>
+    <clipPath id="clipKhaL"><polygon points="355,260 180,500 360,545"/></clipPath>
+    <clipPath id="clipKhaR"><polygon points="355,260 360,545 540,500"/></clipPath>
+    <clipPath id="clipKhuL"><polygon points="675,200 460,520 680,580"/></clipPath>
+    <clipPath id="clipKhuR"><polygon points="675,200 680,580 900,520"/></clipPath>
+  </defs>
+
+  <!-- Sky -->
+  <rect x="0" y="0" width="1200" height="800" fill="url(#sky)"/>
+  <circle cx="195" cy="282" r="155" fill="url(#sunGlow)"/>
+  <circle cx="195" cy="282" r="36" fill="#fff4c2" opacity="0.95"/>
+  <circle cx="195" cy="282" r="52" fill="#ffe9a8" opacity="0.35"/>
+
+  <!-- Distant dunes -->
+  <path d="M0,408 C170,387 340,402 520,393 C700,384 880,406 1200,396 L1200,442 L0,442 Z" fill="#dcb078" opacity="0.55"/>
+  <path d="M0,428 C250,411 500,432 750,419 C950,408 1100,427 1200,421 L1200,475 L0,475 Z" fill="#d2a05f" opacity="0.32"/>
+
+  <!-- Ground -->
+  <path d="M0,402 C300,387 620,398 900,391 L1200,406 L1200,800 L0,800 Z" fill="url(#ground)"/>
+  <path d="M0,470 C320,452 640,478 1200,462 L1200,800 L0,800 Z" fill="#c99a58" opacity="0.22"/>
+  <path d="M0,560 C360,540 720,570 1200,548 L1200,800 L0,800 Z" fill="#a97a38" opacity="0.16"/>
+
+  <!-- Long soft shadows from pyramid bases, sun low from left -->
+  <g filter="url(#blur14)" opacity="0.34">
+    <path d="M815,485 L1045,485 L1150,528 L930,532 Z" fill="#7a4c20"/>
+  </g>
+  <g filter="url(#blur14)" opacity="0.38">
+    <path d="M180,500 L540,500 L710,562 L360,558 Z" fill="#7a4c20"/>
+  </g>
+  <g filter="url(#blur14)" opacity="0.42">
+    <path d="M460,520 L900,520 L1105,605 L680,602 Z" fill="#6f441c"/>
+  </g>
+
+  <!-- MENKAURE - smallest, farthest, haziest -->
+  <g>
+    <polygon points="930,350 815,485 930,520" fill="url(#litFar)" stroke="#8a6232" stroke-opacity="0.22" stroke-width="1"/>
+    <polygon points="930,350 930,520 1045,485" fill="url(#shadeFar)" stroke="#7c5527" stroke-opacity="0.22" stroke-width="1"/>
+    <g clip-path="url(#clipMenL)" stroke="#9a743c" stroke-width="1.1" opacity="0.26">
+      <path d="M907,377 L930,384"/><path d="M884,404 L930,418"/><path d="M861,431 L930,452"/><path d="M838,458 L930,486"/>
+    </g>
+    <g clip-path="url(#clipMenR)" stroke="#6f4b22" stroke-width="1.1" opacity="0.24">
+      <path d="M930,384 L953,377"/><path d="M930,418 L976,404"/><path d="M930,452 L999,431"/><path d="M930,486 L1007,458"/>
+    </g>
+    <path d="M930,350 L930,520" stroke="#fff1c2" stroke-width="2.2" opacity="0.75"/>
+    <path d="M930,350 L815,485" stroke="#fff6d0" stroke-width="1.4" opacity="0.45"/>
+    <path d="M930,350 L1045,485" stroke="#6e471f" stroke-width="1.2" opacity="0.35"/>
+    <polygon points="930,350 815,485 930,520" fill="#f2d5a0" opacity="0.14"/>
+    <polygon points="930,350 930,520 1045,485" fill="#f2d5a0" opacity="0.10"/>
+  </g>
+
+  <!-- KHAFRE - middle pyramid -->
+  <g>
+    <polygon points="355,260 180,500 360,545" fill="url(#lit)" stroke="#8a6232" stroke-opacity="0.25" stroke-width="1"/>
+    <polygon points="355,260 360,545 540,500" fill="url(#shade)" stroke="#7c5527" stroke-opacity="0.25" stroke-width="1"/>
+    <!-- remnant casing near apex -->
+    <polygon points="355,260 294,344 357,360" fill="#f9e7b4" opacity="0.88"/>
+    <polygon points="355,260 357,360 420,344" fill="#e9c88d" opacity="0.85"/>
+    <g clip-path="url(#clipKhaL)" stroke="#8c6530" stroke-width="1.3" opacity="0.28">
+      <path d="M320,308 L356,317"/><path d="M285,356 L357,374"/><path d="M250,404 L358,431"/><path d="M215,452 L359,488"/>
+    </g>
+    <g clip-path="url(#clipKhaR)" stroke="#65451f" stroke-width="1.3" opacity="0.26">
+      <path d="M356,317 L392,308"/><path d="M357,374 L429,356"/><path d="M358,431 L466,404"/><path d="M359,488 L503,452"/>
+    </g>
+    <path d="M355,260 L360,545" stroke="#fff1c2" stroke-width="2.6" opacity="0.8"/>
+    <path d="M355,260 L180,500" stroke="#fff6d0" stroke-width="1.5" opacity="0.4"/>
+    <path d="M355,260 L540,500" stroke="#5f3f1d" stroke-width="1.3" opacity="0.35"/>
+    <polygon points="355,260 180,500 360,545" fill="#f2d5a0" opacity="0.07"/>
+    <polygon points="355,260 360,545 540,500" fill="#f2d5a0" opacity="0.05"/>
+  </g>
+
+  <!-- KHUFU - Great Pyramid, focal point, foreground -->
+  <g>
+    <polygon points="675,200 460,520 680,580" fill="url(#lit)" stroke="#8a6232" stroke-opacity="0.28" stroke-width="1"/>
+    <polygon points="675,200 680,580 900,520" fill="url(#shade)" stroke="#7c5527" stroke-opacity="0.28" stroke-width="1"/>
+    <g clip-path="url(#clipKhuL)" stroke="#8c6530" stroke-width="1.4" opacity="0.3">
+      <path d="M632,264 L676,276"/><path d="M589,328 L677,352"/><path d="M546,392 L678,428"/><path d="M503,456 L679,504"/><path d="M482,488 L680,542"/>
+    </g>
+    <g clip-path="url(#clipKhuR)" stroke="#5f3f1d" stroke-width="1.4" opacity="0.28">
+      <path d="M676,276 L720,264"/><path d="M677,352 L765,328"/><path d="M678,428 L810,392"/><path d="M679,504 L855,456"/><path d="M680,542 L878,488"/>
+    </g>
+    <path d="M675,200 L680,580" stroke="#fff3c8" stroke-width="3" opacity="0.85"/>
+    <path d="M675,200 L460,520" stroke="#fff6d0" stroke-width="1.6" opacity="0.5"/>
+    <path d="M675,200 L900,520" stroke="#5f3f1d" stroke-width="1.4" opacity="0.38"/>
+    <!-- warm light on apex -->
+    <polygon points="675,200 632,264 676,276" fill="#fff8d8" opacity="0.35"/>
+    <polygon points="675,200 676,276 720,264" fill="#fff0c0" opacity="0.18"/>
+  </g>
+
+  <!-- Contact shadow at Great Pyramid base -->
+  <ellipse cx="680" cy="582" rx="235" ry="16" fill="#5f3a16" opacity="0.22" filter="url(#blur9)"/>
+
+  <!-- Atmospheric haze at horizon -->
+  <rect x="0" y="310" width="1200" height="190" fill="url(#haze)"/>
+
+  <!-- Foreground sand, gentle dunes and ripples - kept below monument base -->
+  <path d="M0,682 C300,660 640,692 1200,658 L1200,800 L0,800 Z" fill="#c99755" opacity="0.24"/>
+  <path d="M0,742 C400,720 820,752 1200,728 L1200,800 L0,800 Z" fill="#ad7f3e" opacity="0.18"/>
+  <g fill="none" stroke-linecap="round">
+    <path d="M70,705 C220,694 380,710 560,700" stroke="#f4d99e" stroke-width="2" opacity="0.35"/>
+    <path d="M640,724 C820,712 980,728 1130,716" stroke="#8f612c" stroke-width="2" opacity="0.22"/>
+    <path d="M120,762 C340,748 620,766 880,754" stroke="#f4d99e" stroke-width="2" opacity="0.28"/>
+    <path d="M280,640 C420,632 560,644 700,636" stroke="#e9c584" stroke-width="1.6" opacity="0.25"/>
+    <path d="M830,648 C950,640 1060,652 1150,644" stroke="#e9c584" stroke-width="1.6" opacity="0.22"/>
+  </g>
+  <g opacity="0.16" filter="url(#blur5)">
+    <ellipse cx="300" cy="760" rx="210" ry="18" fill="#8f612c"/>
+    <ellipse cx="900" cy="700" rx="260" ry="20" fill="#f4d99e"/>
+  </g>
+
+  <!-- Cinematic vignette -->
+  <rect x="0" y="0" width="1200" height="800" fill="url(#vignette)"/>
+</svg>

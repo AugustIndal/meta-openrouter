@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pyramids of Giza</title>
+<style>
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#e8d1a2;}
+canvas{display:block;width:100%;height:100%;}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.07;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xe6cf9f, 850, 3300);
+
+const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 1, 9000);
+
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+function smoothstep(a,b,x){ const t = clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+function fract(x){ return x - Math.floor(x); }
+let seed = 123456789;
+function rnd(){ seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+
+// Relative real dimensions (metres): Khufu 230x147, Khafre 215x143.5, Menkaure 103x65
+const pyramidsData = [
+  { x: 120, z: -100, base: 230, height: 147, casing:false, tint:1.00 },
+  { x: -80, z: 100, base: 215, height: 143.5, casing:true, tint:0.99 },
+  { x: -280, z: 300, base: 103, height: 65, casing:false, tint:0.97 }
+];
+
+function groundHeight(x,z){
+  let f = 1;
+  for(const p of pyramidsData){
+    const d = Math.hypot(x-p.x, z-p.z);
+    f = Math.min(f, smoothstep(p.base*0.62, p.base*0.62 + 150, d));
+  }
+  const h = (Math.sin(x*0.009 + z*0.003)*3.0 +
+             Math.cos(z*0.011 - x*0.004)*2.2 +
+             Math.sin((x+z)*0.0035)*3.6 +
+             Math.sin(x*0.025 + z*0.018)*0.5) * f;
+  return h;
+}
+
+// Sky dome - procedural vertex gradient
+{
+  const geo = new THREE.SphereGeometry(3800, 36, 18);
+  const pos = geo.attributes.position;
+  const colors = new Float32Array(pos.count*3);
+  const horizon = new THREE.Color(0xf0d9a8);
+  const mid = new THREE.Color(0xe2c48f);
+  const zenith = new THREE.Color(0x7fa8bd);
+  const c = new THREE.Color();
+  for(let i=0;i<pos.count;i++){
+    const y = pos.getY(i)/3800;
+    if(y < 0.08) c.copy(horizon).lerp(mid, smoothstep(-0.2,0.08,y));
+    else c.copy(mid).lerp(zenith, smoothstep(0.08,0.75,y));
+    colors[i*3]=c.r; colors[i*3+1]=c.g; colors[i*3+2]=c.b;
+  }
+  geo.setAttribute('color', new THREE.BufferAttribute(colors,3));
+  const mat = new THREE.MeshBasicMaterial({ vertexColors:true, side:THREE.BackSide, depthWrite:false, fog:false });
+  const sky = new THREE.Mesh(geo, mat);
+  sky.renderOrder = -1;
+  scene.add(sky);
+}
+
+// Lights - low warm sun
+const sun = new THREE.DirectionalLight(0xffe0ae, 3.0);
+sun.position.set(-700, 235, 360);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left = -780;
+sun.shadow.camera.right = 780;
+sun.shadow.camera.top = 780;
+sun.shadow.camera.bottom = -780;
+sun.shadow.camera.near = 100;
+sun.shadow.camera.far = 2600;
+sun.shadow.bias = -0.0004;
+sun.shadow.normalBias = 1.5;
+scene.add(sun);
+scene.add(sun.target);
+
+const hemi = new THREE.HemisphereLight(0x9fb8c8, 0xc79f62, 0.75);
+scene.add(hemi);
+const fill = new THREE.DirectionalLight(0xcfe0ea, 0.32);
+fill.position.set(600, 320, -500);
+scene.add(fill);
+
+// Sandy ground with gentle dunes, flattened at the pyramids
+{
+  const geo = new THREE.PlaneGeometry(5200, 5200, 160, 160);
+  geo.rotateX(-Math.PI/2);
+  const pos = geo.attributes.position;
+  const colors = new Float32Array(pos.count*3);
+  const sand = new THREE.Color(0xc9a86d);
+  const c = new THREE.Color();
+  for(let i=0;i<pos.count;i++){
+    const x = pos.getX(i), z = pos.getZ(i);
+    const h = groundHeight(x,z);
+    pos.setY(i, h);
+    const v = 0.94 + 0.05*Math.sin(x*0.008+1.7)*Math.cos(z*0.006-0.4) + 0.03*Math.sin((x-z)*0.02) + h*0.012;
+    c.copy(sand).multiplyScalar(v);
+    colors[i*3]=c.r; colors[i*3+1]=c.g; colors[i*3+2]=c.b;
+  }
+  geo.setAttribute('color', new THREE.BufferAttribute(colors,3));
+  geo.computeVertexNormals();
+  const mat = new THREE.MeshStandardMaterial({ vertexColors:true, roughness:1, metalness:0 });
+  const ground = new THREE.Mesh(geo, mat);
+  ground.receiveShadow = true;
+  scene.add(ground);
+}
+
+// Pyramids - clean faces with subtle horizontal stone courses
+const pyramidMaterial = new THREE.MeshStandardMaterial({
+  vertexColors:true, roughness:0.96, metalness:0, flatShading:true, side:THREE.DoubleSide
+});
+
+function createPyramid(data){
+  const base = data.base, height = data.height;
+  const courses = Math.max(16, Math.round(height/5.5));
+  const positions = [], colors = [], indices = [];
+  const baseColor = new THREE.Color(0xd9c69b);
+  for(let b=0;b<courses;b++){
+    const y0 = height*b/courses, y1 = height*(b+1)/courses;
+    const h0 = base*0.5*(1-b/courses), h1 = base*0.5*(1-(b+1)/courses);
+    const r = fract(Math.sin(b*127.1 + base*1.7)*43758.5453);
+    let c;
+    if(data.casing && b >= courses-4){
+      c = new THREE.Color(0xe9ddc0).multiplyScalar((0.96 + r*0.05)*data.tint);
+    } else {
+      c = baseColor.clone().multiplyScalar((0.93 + r*0.10)*data.tint);
+    }
+    const start = positions.length/3;
+    const cb = [[-h0,y0,-h0],[h0,y0,-h0],[h0,y0,h0],[-h0,y0,h0]];
+    const ct = [[-h1,y1,-h1],[h1,y1,-h1],[h1,y1,h1],[-h1,y1,h1]];
+    for(const v of cb){ positions.push(v[0],v[1],v[2]); colors.push(c.r,c.g,c.b); }
+    for(const v of ct){ positions.push(v[0],v[1],v[2]); colors.push(c.r,c.g,c.b); }
+    for(let s=0;s<4;s++){
+      const sn = (s+1)%4;
+      const b0=start+s, b1=start+sn, t0=start+4+s, t1=start+4+sn;
+      indices.push(b0,t0,t1, b0,t1,b1);
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions,3));
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(colors,3));
+  geo.setIndex(indices);
+  geo.computeVertexNormals();
+  const mesh = new THREE.Mesh(geo, pyramidMaterial);
+  mesh.position.set(data.x, 0, data.z);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  return mesh;
+}
+for(const p of pyramidsData) scene.add(createPyramid(p));
+
+// Small deterministic rocks, kept well away from the monument and default view axis
+{
+  const geo = new THREE.IcosahedronGeometry(1,0);
+  const mat = new THREE.MeshStandardMaterial({ color:0xa88a5c, roughness:1, metalness:0, flatShading:true });
+  const count = 90;
+  const inst = new THREE.InstancedMesh(geo, mat, count);
+  const dummy = new THREE.Object3D();
+  let placed = 0, attempts = 0;
+  while(placed < count && attempts < 800){
+    attempts++;
+    const ang = rnd()*Math.PI*2;
+    const rad = 380 + rnd()*950;
+    const x = -50 + Math.cos(ang)*rad;
+    const z = 70 + Math.sin(ang)*rad;
+    let ok = true;
+    for(const p of pyramidsData){
+      if(Math.hypot(x-p.x, z-p.z) < p.base*0.75 + 55) ok = false;
+    }
+    if(!ok) continue;
+    const s = 0.7 + rnd()*1.8;
+    dummy.position.set(x, groundHeight(x,z) + s*0.15, z);
+    dummy.rotation.set(rnd()*Math.PI, rnd()*Math.PI, rnd()*Math.PI);
+    dummy.scale.set(s, s*0.55, s*(0.7+rnd()*0.6));
+    dummy.updateMatrix();
+    inst.setMatrixAt(placed++, dummy.matrix);
+  }
+  inst.count = placed;
+  inst.instanceMatrix.needsUpdate = true;
+  inst.castShadow = true;
+  inst.receiveShadow = true;
+  scene.add(inst);
+}
+
+// Native orbit / zoom controls
+const target = new THREE.Vector3(-50, 46, 70);
+let radius = 1030;
+let theta = 0.59;   // atan2(offsetX, offsetZ) - south-easterly view
+let phi = 1.355;    // from +Y axis - low elevated view
+
+function renderScene(){
+  const sp = Math.sin(phi);
+  camera.position.set(
+    target.x + radius*sp*Math.sin(theta),
+    target.y + radius*Math.cos(phi),
+    target.z + radius*sp*Math.cos(theta)
+  );
+  camera.lookAt(target);
+  renderer.render(scene, camera);
+}
+
+const el = renderer.domElement;
+el.style.touchAction = 'none';
+let dragging = false, lastX = 0, lastY = 0;
+el.addEventListener('pointerdown', (e)=>{
+  dragging = true; lastX = e.clientX; lastY = e.clientY;
+  try{ el.setPointerCapture(e.pointerId); }catch(_){}
+});
+el.addEventListener('pointermove', (e)=>{
+  if(!dragging) return;
+  const dx = e.clientX - lastX, dy = e.clientY - lastY;
+  lastX = e.clientX; lastY = e.clientY;
+  theta -= dx*0.005;
+  phi = clamp(phi - dy*0.0035, 0.18, 1.52);
+  renderScene();
+});
+el.addEventListener('pointerup', ()=>{ dragging = false; });
+el.addEventListener('pointercancel', ()=>{ dragging = false; });
+el.addEventListener('wheel', (e)=>{
+  e.preventDefault();
+  radius = clamp(radius * Math.exp(e.deltaY*0.001), 380, 2200);
+  renderScene();
+}, { passive:false });
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderScene();
+});
+
+renderScene();
+window.sceneReady = true;
+</script>
+</body>
+</html>

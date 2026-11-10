@@ -1,0 +1,228 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#060f24"/><stop offset="0.45" stop-color="#10244a"/><stop offset="0.75" stop-color="#213f6b"/><stop offset="1" stop-color="#3d5f8f"/>
+</linearGradient>
+<linearGradient id="frontTan" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#dcc096"/><stop offset="0.5" stop-color="#c7a878"/><stop offset="1" stop-color="#a88b5d"/>
+</linearGradient>
+<linearGradient id="sideTan" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#b99b6f"/><stop offset="0.5" stop-color="#a58558"/><stop offset="1" stop-color="#84704a"/>
+</linearGradient>
+<linearGradient id="wingTan" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#c9ad7f"/><stop offset="1" stop-color="#967c53"/>
+</linearGradient>
+<linearGradient id="spireF" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#334a69"/><stop offset="1" stop-color="#132035"/>
+</linearGradient>
+<linearGradient id="spireS" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#22354f"/><stop offset="1" stop-color="#0c1828"/>
+</linearGradient>
+<linearGradient id="roof" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#2e415e"/><stop offset="1" stop-color="#18283f"/>
+</linearGradient>
+<linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#2c3d57"/><stop offset="0.3" stop-color="#1e2f47"/><stop offset="1" stop-color="#121d2f"/>
+</linearGradient>
+<radialGradient id="clockFace" cx="0.5" cy="0.4" r="0.65">
+<stop offset="0" stop-color="#fffdeb"/><stop offset="0.6" stop-color="#fef3c0"/><stop offset="1" stop-color="#edde9e"/>
+</radialGradient>
+<radialGradient id="clockGlow" cx="0.5" cy="0.5" r="0.5">
+<stop offset="0" stop-color="#ffdf8a" stop-opacity="0.85"/><stop offset="0.6" stop-color="#ffdf8a" stop-opacity="0.35"/><stop offset="1" stop-color="#ffdf8a" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="cone" x1="0" y1="1" x2="0" y2="0">
+<stop offset="0" stop-color="#ffcf6e" stop-opacity="0.45"/><stop offset="1" stop-color="#ffcf6e" stop-opacity="0"/>
+</linearGradient>
+<filter id="b4" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+<filter id="b8" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
+<path id="aw" d="M0,0 L0,-26 A11,11 0 0 1 22,-26 L22,0 Z"/>
+<g id="clockTicks">
+<line x1="0" y1="-38" x2="0" y2="-46" stroke="#1e1a12" stroke-width="3.2" stroke-linecap="round"/>
+<line x1="0" y1="-38" x2="0" y2="-46" stroke="#1e1a12" stroke-width="3.2" stroke-linecap="round" transform="rotate(30)"/>
+<line x1="0" y1="-38" x2="0" y2="-46" stroke="#1e1a12" stroke-width="3.2" stroke-linecap="round" transform="rotate(60)"/>
+<line x1="0" y1="-38" x2="0" y2="-46" stroke="#1e1a12" stroke-width="3.2" stroke-linecap="round" transform="rotate(90)"/>
+<line x1="0" y1="-38" x2="0" y2="-46" stroke="#1e1a12" stroke-width="3.2" stroke-linecap="round" transform="rotate(120)"/>
+<line x1="0" y1="-38" x2="0" y2="-46" stroke="#1e1a12" stroke-width="3.2" stroke-linecap="round" transform="rotate(150)"/>
+<line x1="0" y1="-38" x2="0" y2="-46" stroke="#1e1a12" stroke-width="3.2" stroke-linecap="round" transform="rotate(180)"/>
+<line x1="0" y1="-38" x2="0" y2="-46" stroke="#1e1a12" stroke-width="3.2" stroke-linecap="round" transform="rotate(210)"/>
+<line x1="0" y1="-38" x2="0" y2="-46" stroke="#1e1a12" stroke-width="3.2" stroke-linecap="round" transform="rotate(240)"/>
+<line x1="0" y1="-38" x2="0" y2="-46" stroke="#1e1a12" stroke-width="3.2" stroke-linecap="round" transform="rotate(270)"/>
+<line x1="0" y1="-38" x2="0" y2="-46" stroke="#1e1a12" stroke-width="3.2" stroke-linecap="round" transform="rotate(300)"/>
+<line x1="0" y1="-38" x2="0" y2="-46" stroke="#1e1a12" stroke-width="3.2" stroke-linecap="round" transform="rotate(330)"/>
+</g>
+<g id="clockHands">
+<line x1="0" y1="8" x2="-16" y2="27" stroke="#141414" stroke-width="7" stroke-linecap="round"/>
+<line x1="0" y1="8" x2="34" y2="-19" stroke="#141414" stroke-width="4.5" stroke-linecap="round"/>
+<circle r="5.5" fill="#141414" stroke="#c9a44a" stroke-width="1.5"/>
+</g>
+</defs>
+
+<rect width="1200" height="800" fill="url(#sky)"/>
+
+<g fill="#ffffff">
+<circle cx="120" cy="90" r="1.4" opacity="0.7"/><circle cx="320" cy="70" r="1.2" opacity="0.6"/><circle cx="520" cy="110" r="1.5" opacity="0.7"/><circle cx="760" cy="65" r="1.2" opacity="0.6"/><circle cx="980" cy="95" r="1.6" opacity="0.8"/><circle cx="1080" cy="170" r="1.2" opacity="0.5"/><circle cx="430" cy="160" r="1.1" opacity="0.5"/><circle cx="90" cy="210" r="1.2" opacity="0.5"/><circle cx="890" cy="200" r="1.1" opacity="0.5"/><circle cx="650" cy="45" r="1.3" opacity="0.6"/><circle cx="210" cy="280" r="1.1" opacity="0.4"/><circle cx="1050" cy="260" r="1.2" opacity="0.4"/>
+</g>
+<circle cx="215" cy="135" r="40" fill="url(#clockGlow)" opacity="0.5"/>
+<circle cx="215" cy="135" r="24" fill="#e6edf7" opacity="0.9"/>
+
+<g fill="#0b1a33" opacity="0.5" filter="url(#b8)">
+<ellipse cx="300" cy="185" rx="185" ry="22"/><ellipse cx="850" cy="145" rx="210" ry="26"/><ellipse cx="700" cy="430" rx="260" ry="20"/>
+</g>
+<path d="M420,190 q7,-7 14,0 q7,-7 14,0" fill="none" stroke="#0a1628" stroke-width="2" opacity="0.7"/>
+<path d="M470,205 q6,-6 12,0 q6,-6 12,0" fill="none" stroke="#0a1628" stroke-width="2" opacity="0.6"/>
+
+<rect x="0" y="685" width="175" height="30" fill="#0e1e38" opacity="0.7"/>
+<rect x="960" y="690" width="240" height="25" fill="#0e1e38" opacity="0.7"/>
+<rect width="1200" height="90" y="710" fill="url(#ground)"/>
+<line x1="0" y1="738" x2="1200" y2="738" stroke="#ffffff" stroke-opacity="0.06" stroke-width="2"/>
+<line x1="0" y1="766" x2="1200" y2="766" stroke="#ffffff" stroke-opacity="0.05" stroke-width="2"/>
+
+<polygon points="700,714 960,714 1040,764 780,764" fill="#050a14" opacity="0.35" filter="url(#b8)"/>
+
+<g>
+<circle cx="155" cy="688" r="26" fill="#0c1d30"/><rect x="152" y="700" width="6" height="16" fill="#0c1d30"/>
+<circle cx="968" cy="695" r="24" fill="#0c1d30"/><rect x="965" y="706" width="6" height="14" fill="#0c1d30"/>
+</g>
+
+<!-- Westminster wing -->
+<g>
+<rect x="348" y="515" width="24" height="48" fill="url(#wingTan)"/>
+<polygon points="342,517 360,485 378,517" fill="url(#spireF)"/>
+<circle cx="360" cy="481" r="3" fill="#d9b45a"/>
+<rect x="205" y="585" width="330" height="130" fill="url(#wingTan)"/>
+<polygon points="195,588 215,548 520,548 540,588" fill="url(#roof)"/>
+<line x1="215" y1="548" x2="520" y2="548" stroke="#6b84a8" stroke-width="2" opacity="0.6"/>
+<rect x="199" y="585" width="342" height="6" fill="#7d6440"/>
+<rect x="205" y="648" width="330" height="4" fill="#8a6f4a" opacity="0.85"/>
+<use href="#aw" transform="translate(232,630)" fill="#ffca7a"/>
+<use href="#aw" transform="translate(272,630)" fill="#16243c"/>
+<use href="#aw" transform="translate(312,630)" fill="#ffca7a"/>
+<use href="#aw" transform="translate(352,630)" fill="#16243c"/>
+<use href="#aw" transform="translate(392,630)" fill="#ffca7a"/>
+<use href="#aw" transform="translate(432,630)" fill="#16243c"/>
+<use href="#aw" transform="translate(472,630)" fill="#ffca7a"/>
+<use href="#aw" transform="translate(232,690)" fill="#16243c"/>
+<use href="#aw" transform="translate(272,690)" fill="#ffca7a"/>
+<use href="#aw" transform="translate(312,690)" fill="#16243c"/>
+<use href="#aw" transform="translate(352,690)" fill="#ffca7a"/>
+<use href="#aw" transform="translate(392,690)" fill="#16243c"/>
+<use href="#aw" transform="translate(432,690)" fill="#ffca7a"/>
+<use href="#aw" transform="translate(472,690)" fill="#16243c"/>
+<path d="M365,715 L365,672 A15,15 0 0 1 395,672 L395,715 Z" fill="#1a2333" stroke="#6f5736" stroke-width="2"/>
+<circle cx="380" cy="660" r="12" fill="url(#clockGlow)"/><circle cx="380" cy="660" r="4" fill="#ffe2a0"/>
+</g>
+
+<!-- Tower side and front faces -->
+<g>
+<polygon points="685,376 795,338 795,632 685,670" fill="url(#sideTan)"/>
+<rect x="535" y="376" width="150" height="294" fill="url(#frontTan)"/>
+<g stroke="#000000" stroke-opacity="0.16" stroke-width="1.5">
+<line x1="535" y1="410" x2="685" y2="410"/><line x1="535" y1="455" x2="685" y2="455"/><line x1="535" y1="500" x2="685" y2="500"/><line x1="535" y1="545" x2="685" y2="545"/><line x1="535" y1="590" x2="685" y2="590"/><line x1="535" y1="635" x2="685" y2="635"/>
+<line x1="685" y1="410" x2="795" y2="372"/><line x1="685" y1="455" x2="795" y2="417"/><line x1="685" y1="500" x2="795" y2="462"/><line x1="685" y1="545" x2="795" y2="507"/><line x1="685" y1="590" x2="795" y2="552"/><line x1="685" y1="635" x2="795" y2="597"/>
+</g>
+
+<polygon points="685,266 795,228 795,326 685,364" fill="url(#sideTan)"/>
+<rect x="535" y="266" width="150" height="98" fill="url(#frontTan)"/>
+<polygon points="685,214 795,176 795,216 685,254" fill="url(#sideTan)"/>
+<rect x="535" y="214" width="150" height="40" fill="url(#frontTan)"/>
+
+<!-- belfry openings -->
+<use href="#aw" transform="translate(562,250) scale(1.27,1.14)" fill="#101826"/>
+<use href="#aw" transform="translate(612,250) scale(1.27,1.14)" fill="#101826"/>
+<use href="#aw" transform="translate(567,250) scale(0.9,0.9)" fill="#8a6a2a" opacity="0.35"/>
+<use href="#aw" transform="translate(617,250) scale(0.9,0.9)" fill="#8a6a2a" opacity="0.35"/>
+<g stroke="#46536b" stroke-width="1.5" opacity="0.8">
+<line x1="563" y1="222" x2="591" y2="222"/><line x1="563" y1="232" x2="591" y2="232"/><line x1="563" y1="242" x2="591" y2="242"/>
+<line x1="613" y1="222" x2="641" y2="222"/><line x1="613" y1="232" x2="641" y2="232"/><line x1="613" y1="242" x2="641" y2="242"/>
+</g>
+<polygon points="715,240 760,224 760,196 715,212" fill="#101826"/>
+<g stroke="#46536b" stroke-width="1.5" opacity="0.8">
+<line x1="718" y1="232" x2="757" y2="218"/><line x1="718" y1="222" x2="757" y2="208"/>
+</g>
+
+<!-- buttresses -->
+<polygon points="685,670 707,662 707,258 685,266" fill="#b29468"/>
+<polygon points="773,632 795,624 795,228 773,236" fill="#b29468"/>
+<rect x="535" y="266" width="22" height="404" fill="#d6bc8d"/>
+<rect x="663" y="266" width="22" height="404" fill="#d6bc8d"/>
+<g stroke="#000000" stroke-opacity="0.2" stroke-width="1.5">
+<line x1="546" y1="280" x2="546" y2="660"/><line x1="674" y1="280" x2="674" y2="660"/><line x1="696" y1="280" x2="696" y2="650"/><line x1="784" y1="260" x2="784" y2="620"/>
+</g>
+
+<!-- cornices -->
+<polygon points="692,670 802,632 802,644 692,682" fill="#7a5f38"/><rect x="528" y="670" width="164" height="12" fill="#8c6f46"/>
+<polygon points="692,364 802,326 802,338 692,376" fill="#7a5f38"/><rect x="528" y="364" width="164" height="12" fill="#8c6f46"/>
+<polygon points="692,254 802,216 802,228 692,266" fill="#7a5f38"/><rect x="528" y="254" width="164" height="12" fill="#8c6f46"/>
+<polygon points="700,202 810,164 810,176 700,214" fill="#6f5736"/><rect x="520" y="202" width="180" height="12" fill="#7d6440"/>
+
+<!-- plinth -->
+<polygon points="692,682 802,644 802,670 692,708" fill="#967c53"/><rect x="528" y="682" width="164" height="26" fill="#a88b5d"/>
+<polygon points="700,708 810,670 810,677 700,715" fill="#7e6642"/><rect x="520" y="708" width="180" height="7" fill="#6f5736"/>
+
+<!-- shaft windows -->
+<use href="#aw" transform="translate(599,455)" fill="#16243c"/>
+<use href="#aw" transform="translate(599,545)" fill="#ffbe6a"/>
+<use href="#aw" transform="translate(599,635)" fill="#16243c"/>
+<polygon points="732,492 746,487 746,455 732,460" fill="#16243c"/>
+<polygon points="732,585 746,580 746,548 732,553" fill="#ffca7a"/>
+
+<!-- clock stage decoration -->
+<g fill="#b89a6a" stroke="#7a5f38" stroke-width="1.5">
+<circle cx="556" cy="284" r="6"/><circle cx="664" cy="284" r="6"/><circle cx="556" cy="346" r="6"/><circle cx="664" cy="346" r="6"/>
+</g>
+<circle cx="712" cy="268" r="5" fill="#a58558" stroke="#7a5f38"/>
+<circle cx="768" cy="248" r="5" fill="#a58558" stroke="#7a5f38"/>
+
+<!-- spire -->
+<polygon points="685,202 795,164 665,95" fill="url(#spireS)" stroke="#0a1420" stroke-width="1.5"/>
+<polygon points="535,202 685,202 665,95" fill="url(#spireF)" stroke="#0a1420" stroke-width="1.5"/>
+<g stroke="#ffffff" stroke-opacity="0.08" stroke-width="2">
+<line x1="562" y1="180" x2="681" y2="180"/><line x1="592" y1="155" x2="676" y2="155"/><line x1="623" y1="130" x2="672" y2="130"/><line x1="644" y1="112" x2="668" y2="112"/>
+<line x1="682" y1="180" x2="749" y2="180"/><line x1="675" y1="150" x2="769" y2="150"/><line x1="672" y1="130" x2="731" y2="130"/><line x1="669" y1="115" x2="704" y2="115"/>
+</g>
+<line x1="685" y1="202" x2="665" y2="95" stroke="#8fa8c8" stroke-opacity="0.5" stroke-width="2"/>
+<polygon points="520,202 533,178 546,202" fill="url(#spireF)"/><circle cx="533" cy="176" r="3" fill="#d9b45a"/>
+<polygon points="674,202 687,178 700,202" fill="url(#spireF)"/><circle cx="687" cy="176" r="3" fill="#d9b45a"/>
+<polygon points="784,164 797,140 810,164" fill="url(#spireS)"/><circle cx="797" cy="138" r="3" fill="#d9b45a"/>
+<polygon points="535,254 545,236 555,254" fill="url(#spireF)"/>
+<polygon points="665,254 675,236 685,254" fill="url(#spireF)"/>
+
+<!-- finial -->
+<line x1="665" y1="95" x2="665" y2="86" stroke="#d9b45a" stroke-width="3" stroke-linecap="round"/>
+<circle cx="665" cy="88" r="4" fill="#d9b45a" stroke="#7a5f20"/>
+<polygon points="665,80 668,86 665,92 662,86" fill="#d9b45a"/>
+
+<!-- clocks -->
+<g transform="translate(740,296) scale(0.68,1)">
+<circle r="62" fill="url(#clockGlow)" opacity="0.65"/>
+<circle r="50" fill="url(#clockFace)" stroke="#6b532c" stroke-width="7"/>
+<circle r="44" fill="none" stroke="#8a733f" stroke-width="1.5" opacity="0.7"/>
+<use href="#clockTicks"/><use href="#clockHands"/>
+</g>
+<g transform="translate(610,315)">
+<circle r="62" fill="url(#clockGlow)" opacity="0.65"/>
+<circle r="50" fill="url(#clockFace)" stroke="#6b532c" stroke-width="7"/>
+<circle r="44" fill="none" stroke="#8a733f" stroke-width="1.5" opacity="0.7"/>
+<ellipse cx="-14" cy="-18" rx="20" ry="10" fill="#ffffff" opacity="0.25"/>
+<use href="#clockTicks"/><use href="#clockHands"/>
+</g>
+
+<line x1="535" y1="214" x2="535" y2="708" stroke="#ffe9b0" stroke-opacity="0.35" stroke-width="2"/>
+</g>
+
+<!-- ground lights -->
+<g>
+<ellipse cx="365" cy="720" rx="150" ry="8" fill="#ffca7a" opacity="0.12" filter="url(#b4)"/>
+<ellipse cx="610" cy="720" rx="95" ry="10" fill="#ffca7a" opacity="0.18" filter="url(#b4)"/>
+<polygon points="530,712 552,712 546,640 536,640" fill="url(#cone)"/>
+<polygon points="668,712 690,712 684,640 674,640" fill="url(#cone)"/>
+<g stroke="#0a1420" stroke-width="3" stroke-linecap="round">
+<line x1="470" y1="715" x2="470" y2="668"/><line x1="855" y1="715" x2="855" y2="668"/><line x1="335" y1="715" x2="335" y2="678"/>
+</g>
+<circle cx="470" cy="662" r="15" fill="url(#clockGlow)"/><circle cx="470" cy="662" r="5" fill="#ffdf9a"/>
+<circle cx="855" cy="662" r="15" fill="url(#clockGlow)"/><circle cx="855" cy="662" r="5" fill="#ffdf9a"/>
+<circle cx="335" cy="672" r="12" fill="url(#clockGlow)"/><circle cx="335" cy="672" r="4" fill="#ffdf9a"/>
+<ellipse cx="470" cy="718" rx="60" ry="8" fill="#ffca7a" opacity="0.2" filter="url(#b4)"/>
+<ellipse cx="855" cy="718" rx="60" ry="8" fill="#ffca7a" opacity="0.2" filter="url(#b4)"/>
+</g>
+</svg>

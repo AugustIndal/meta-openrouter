@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Victorian Houses on a Hill</title>
+<style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#bfe3f2}canvas{display:block;width:100%;height:100%}</style>
+<script type="importmap">{"imports":{"three":"./three.module.js"}}</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.setSize(1200,800,false);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.05;
+document.body.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xbfe3f2);
+const camera=new THREE.PerspectiveCamera(42,1200/800,0.1,300);
+let azimuth=0.32, polar=1.18, distance=42, target=new THREE.Vector3(0,4.2,0);
+function updateCamera(){ const sp=Math.sin(polar), x=target.x+distance*sp*Math.sin(azimuth), y=target.y+distance*Math.cos(polar), z=target.z+distance*sp*Math.cos(azimuth); camera.position.set(x,y,z); camera.lookAt(target); renderer.render(scene,camera); }
+scene.add(new THREE.HemisphereLight(0xdff4ff,0x6a8f5a,1.35));
+const sun=new THREE.DirectionalLight(0xfff2d8,2.6); sun.position.set(-16,24,18); sun.castShadow=true; sun.shadow.mapSize.set(2048,2048); sun.shadow.camera.left=-30; sun.shadow.camera.right=30; sun.shadow.camera.top=30; sun.shadow.camera.bottom=-20; sun.shadow.camera.far=80; scene.add(sun);
+const fill=new THREE.DirectionalLight(0xcfe8ff,0.55); fill.position.set(14,10,-8); scene.add(fill);
+const mat=(c,r=0.75)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:0.02});
+const white=mat(0xf8f6ee,0.6), darkRoof=mat(0x4a3f3c,0.85), glass=mat(0x2e4a5a,0.18), glass2=mat(0x9fd4e8,0.12);
+function box(w,h,d,m,x,y,z,ry=0){ const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m); o.position.set(x,y,z); o.rotation.y=ry; o.castShadow=true; o.receiveShadow=true; scene.add(o); return o; }
+function gableRoof(w,h,d,m,x,y,z){
+  const s=new THREE.Shape(); s.moveTo(-w/2,0); s.lineTo(w/2,0); s.lineTo(0,h); s.closePath();
+  const g=new THREE.ExtrudeGeometry(s,{depth:d,bevelEnabled:false}); g.translate(0,0,-d/2);
+  const o=new THREE.Mesh(g,m); o.position.set(x,y,z); o.castShadow=true; o.receiveShadow=true; scene.add(o);
+  const ridge=new THREE.Mesh(new THREE.BoxGeometry(w*0.08,0.22,d+0.25),white); ridge.position.set(x,y+h,z); ridge.castShadow=true; scene.add(ridge);
+}
+function windowUnit(w,h,x,y,z,ry=0){
+  const g=new THREE.Group(); g.position.set(x,y,z); g.rotation.y=ry; scene.add(g);
+  const frame=new THREE.Mesh(new THREE.BoxGeometry(w+0.28,h+0.28,0.16),white); frame.castShadow=true; g.add(frame);
+  const gl=new THREE.Mesh(new THREE.BoxGeometry(w,h,0.2),glass); gl.position.z=0.02; g.add(gl);
+  const mull=new THREE.Mesh(new THREE.BoxGeometry(0.09,h,0.24),white); g.add(mull);
+  const mull2=new THREE.Mesh(new THREE.BoxGeometry(w,0.09,0.24),white); g.add(mull2);
+  const sill=new THREE.Mesh(new THREE.BoxGeometry(w+0.5,0.16,0.34),white); sill.position.set(0,-h/2-0.16,0.08); g.add(sill);
+  return g;
+}
+function bay(x,y,z,color){
+  const g=new THREE.Group(); g.position.set(x,y,z); scene.add(g);
+  const base=new THREE.Mesh(new THREE.BoxGeometry(2.0,3.6,1.5),color); base.position.y=0; base.castShadow=base.receiveShadow=true; g.add(base);
+  const roof=new THREE.Mesh(new THREE.ConeGeometry(1.55,0.9,4),darkRoof); roof.position.y=2.25; roof.rotation.y=Math.PI/4; roof.scale.set(1,1,0.75); roof.castShadow=true; g.add(roof);
+  const trim=new THREE.Mesh(new THREE.BoxGeometry(2.2,0.18,1.7),white); trim.position.y=1.82; g.add(trim);
+  [-0.62,0,0.62].forEach(dx=>{ const gl=new THREE.Mesh(new THREE.BoxGeometry(0.48,2.4,0.08),glass2); gl.position.set(dx,0.2,0.78); g.add(gl); const fr=new THREE.Mesh(new THREE.BoxGeometry(0.56,2.5,0.05),white); fr.position.set(dx,0.2,0.74); g.add(fr); });
+  return g;
+}
+function house(i){
+  const colors=[0xf2b8c6,0xf7d98b,0xb8e0c8,0xa8d0f0,0xe8c8f5,0xf5c9a8,0xaee6d8];
+  const x=(i-3)*4.6; const slopeZ=-Math.max(0,(i-2))*0.08+Math.max(0,(2-i))*0.05;
+  const c=mat(colors[i],0.8);
+  // street rises along x: main body
+  box(4.2,7.5,4.2,c,x,3.75,slopeZ);
+  // side gable extension + roof
+  gableRoof(4.7,3.4,4.8,darkRoof,x,7.5,slopeZ);
+  // decorative gable trim
+  const tri=new THREE.Mesh(new THREE.BoxGeometry(0.18,2.2,0.22),white); tri.position.set(x,8.55,slopeZ+2.42); tri.rotation.x=0.62; scene.add(tri);
+  const tri2=tri.clone(); tri2.position.x=x-1.15; tri2.rotation.x=0.62; scene.add(tri2);
+  const tri3=tri.clone(); tri3.position.x=x+1.15; tri3.rotation.x=-0.62; scene.add(tri3);
+  // chimney + finial
+  box(0.7,1.6,0.7,mat(0xb87a6a,0.9),x+1.2,9.9,slopeZ-0.6);
+  const fin=new THREE.Mesh(new THREE.ConeGeometry(0.22,1.0,8),white); fin.position.set(x-1.2,10.2,slopeZ+0.4); fin.castShadow=true; scene.add(fin);
+  // bay windows front (z+), two floors
+  bay(x-0.9,2.0,slopeZ+2.55,c);
+  windowUnit(0.95,1.5,x+1.35,5.9,slopeZ+2.13);
+  windowUnit(0.95,1.5,x+1.35,3.9,slopeZ+2.13);
+  windowUnit(0.85,1.9,x+1.35,1.55,slopeZ+2.13);
+  // upper side windows
+  windowUnit(0.8,1.3,x-1.35,5.9,slopeZ+2.13);
+  // door, steps, porch trim
+  box(1.15,2.4,0.22,mat(0x5a4038,0.7),x+1.35,1.2,slopeZ+2.16);
+  box(0.12,0.12,0.06,mat(0xd4af5a,0.4),x+1.65,1.2,slopeZ+2.3);
+  box(1.5,0.22,0.7,white,x+1.35,2.5,slopeZ+2.45);
+  [-0.6,0.6].forEach(dx=>{ const p=new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.09,2.5,8),white); p.position.set(x+1.35+dx,1.25,slopeZ+2.7); p.castShadow=true; scene.add(p); });
+  for(let s=0;s<4;s++){ box(1.9-s*0.15,0.28,0.55,mat(0xcabfa8,0.9),x+1.35,0.14+s*0.28,slopeZ+3.15+s*0.45); }
+  // cornice
+  box(4.5,0.35,4.6,white,x,7.35,slopeZ);
+  // attic round window
+  const att=new THREE.Mesh(new THREE.CylinderGeometry(0.48,0.48,0.2,20),white); att.rotation.x=Math.PI/2; att.position.set(x,8.6,slopeZ+2.05); scene.add(att);
+  const att2=new THREE.Mesh(new THREE.CylinderGeometry(0.36,0.36,0.24,20),glass); att2.rotation.x=Math.PI/2; att2.position.set(x,8.6,slopeZ+2.06); scene.add(att2);
+}
+for(let i=0;i<7;i++) house(i);
+// distant high-rises behind
+const towerMats=[mat(0x8fa8b8,0.5),mat(0xa8b8c8,0.5),mat(0x7a90a8,0.5),mat(0xb8c8d8,0.5)];
+const towers=[[-22,14,-28,5,28,5],[-14,10,-32,6,20,6],[-5,16,-30,5,32,5],[4,12,-34,7,24,6],[13,18,-29,5,36,5],[22,11,-32,6,22,6],[0,9,-38,9,18,6]];
+towers.forEach((t,i)=>{ const m=towerMats[i%4]; box(t[3],t[4],t[5],m,t[0],t[1],t[2]); box(t[3]+0.4,0.5,t[5]+0.4,white,t[0],t[1]+t[4]/2+0.25,t[2]);
+  for(let r=0;r<Math.floor(t[4]/2.2);r++) for(let cidx=0;cidx<3;cidx++){ const gl=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.9,0.08),glass2); gl.position.set(t[0]-t[3]/3+cidx*t[3]/3,t[1]-t[4]/2+1.4+r*2.2,t[2]+t[5]/2+0.04); scene.add(gl);} });
+// hillside foreground - sloped grass
+const hillGeo=new THREE.PlaneGeometry(70,26,48,20); hillGeo.rotateX(-Math.PI/2);
+const pos=hillGeo.attributes.position;
+for(let i=0;i<pos.count;i++){ const x=pos.getX(i), z=pos.getZ(i); let y=0; y+=Math.max(0,(z-2))*0.18; y+=Math.sin(x*0.12)*0.25; y+=Math.cos(z*0.25)*0.15; if(z<0) y-=(-z)*0.08; pos.setY(i,y); }
+hillGeo.computeVertexNormals();
+const hill=new THREE.Mesh(hillGeo,mat(0x7ab648,1.0)); hill.position.set(0,0,14); hill.receiveShadow=true; scene.add(hill);
+// street / sidewalk in front of houses
+box(36,0.3,3.2,mat(0xb8b0a0,0.95),0,0.15,5.2);
+box(36,0.22,2.2,mat(0x8a8a8a,0.95),0,0.11,7.4);
+// scattered trees / bushes on hillside (deterministic)
+const trunk=mat(0x6a4a32,0.95), leaf=mat(0x4f8f3a,0.95);
+[[-16,9],[-11,12],[-6,15],[2,11],[8,14],[15,10],[19,13]].forEach(p=>{
+  const t=new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.28,1.8,7),trunk); t.position.set(p[0],1.6,p[1]); t.castShadow=true; scene.add(t);
+  const s=new THREE.Mesh(new THREE.SphereGeometry(1.5,10,8),leaf); s.position.set(p[0],3.0,p[1]); s.castShadow=true; scene.add(s);
+  const s2=new THREE.Mesh(new THREE.SphereGeometry(0.9,8,6),leaf); s2.position.set(p[0]+0.7,2.2,p[1]+0.3); s2.castShadow=true; scene.add(s2);
+});
+// clouds
+const cloudM=mat(0xffffff,1); [[-14,16,-18,3],[6,18,-22,3.6],[18,15,-16,2.6]].forEach(p=>{ for(let k=0;k<3;k++){ const s=new THREE.Mesh(new THREE.SphereGeometry(p[3]*(1-k*0.25),10,8),cloudM); s.position.set(p[0]+k*2.2,p[1]+k*0.3,p[2]); s.scale.y=0.55; scene.add(s);} });
+let dragging=false,lastX=0,lastY=0;
+renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;renderer.domElement.setPointerCapture(e.pointerId);});
+renderer.domElement.addEventListener('pointermove',e=>{ if(!dragging)return; azimuth-=(e.clientX-lastX)*0.008; polar=Math.max(0.6,Math.min(1.45,polar-(e.clientY-lastY)*0.006)); lastX=e.clientX;lastY=e.clientY; updateCamera(); });
+renderer.domElement.addEventListener('pointerup',()=>dragging=false);
+renderer.domElement.addEventListener('wheel',e=>{ e.preventDefault(); distance=Math.max(22,Math.min(70,distance+e.deltaY*0.03)); updateCamera(); },{passive:false});
+function resize(){ const w=window.innerWidth,h=window.innerHeight; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h,false); renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5)); updateCamera(); }
+window.addEventListener('resize',resize);
+resize();
+requestAnimationFrame(()=>{ updateCamera(); window.sceneReady=true; });
+</script>
+</body>
+</html>

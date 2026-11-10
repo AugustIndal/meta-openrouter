@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pyramid Tower Illustration</title>
+<style>
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#d3e4f0}
+canvas{display:block;width:100%;height:100%}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+renderer.setSize(1200, 800);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.03;
+renderer.domElement.style.cursor = 'grab';
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xd3e4f0);
+
+const camera = new THREE.PerspectiveCamera(38, 1200 / 800, 0.1, 1000);
+const target = new THREE.Vector3(0, 48, 0);
+
+function mulberry32(a){
+  return function(){
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+const rng = mulberry32(20240917);
+
+const hemi = new THREE.HemisphereLight(0xd8ebff, 0x9a9a86, 0.85);
+scene.add(hemi);
+
+const sun = new THREE.DirectionalLight(0xfff1d8, 1.9);
+sun.position.set(80, 120, 60);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -110;
+sun.shadow.camera.right = 110;
+sun.shadow.camera.top = 110;
+sun.shadow.camera.bottom = -110;
+sun.shadow.camera.near = 10;
+sun.shadow.camera.far = 340;
+sun.shadow.bias = -0.0004;
+scene.add(sun);
+scene.add(sun.target);
+sun.target.position.set(0, 40, 0);
+
+const fill = new THREE.DirectionalLight(0xbcd4ea, 0.38);
+fill.position.set(-70, 60, -50);
+scene.add(fill);
+
+const groundMat = new THREE.MeshStandardMaterial({color:0xa9aa97, roughness:1});
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(520,520), groundMat);
+ground.rotation.x = -Math.PI/2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+const plaza = new THREE.Mesh(new THREE.BoxGeometry(78,0.16,78), new THREE.MeshStandardMaterial({color:0xc4bfa9, roughness:0.95}));
+plaza.position.y = 0.08;
+plaza.receiveShadow = true;
+scene.add(plaza);
+
+const roadMat = new THREE.MeshStandardMaterial({color:0x5f6265, roughness:0.95});
+const roadGeo = new THREE.BoxGeometry(220,0.2,9);
+[-75,-45,-15,15,45,75].forEach(function(p){
+  const r1 = new THREE.Mesh(roadGeo, roadMat);
+  r1.position.set(0,0.1,p); r1.receiveShadow = true; scene.add(r1);
+  const r2 = new THREE.Mesh(roadGeo, roadMat);
+  r2.rotation.y = Math.PI/2; r2.position.set(p,0.1,0); r2.receiveShadow = true; scene.add(r2);
+});
+
+const stoneMat = new THREE.MeshStandardMaterial({color:0xe9e3d3, roughness:0.85, flatShading:true});
+const stoneDarkMat = new THREE.MeshStandardMaterial({color:0xd9d2bd, roughness:0.9, flatShading:true});
+const supportMat = new THREE.MeshStandardMaterial({color:0xded7c3, roughness:0.9, flatShading:true});
+const podiumMat = new THREE.MeshStandardMaterial({color:0xd5cfbc, roughness:0.95});
+
+const step1 = new THREE.Mesh(new THREE.BoxGeometry(54,1.6,54), podiumMat);
+step1.position.y = 0.8; step1.castShadow = true; step1.receiveShadow = true; scene.add(step1);
+const step2 = new THREE.Mesh(new THREE.BoxGeometry(46,1.6,46), podiumMat);
+step2.position.y = 2.4; step2.castShadow = true; step2.receiveShadow = true; scene.add(step2);
+
+const baseY = 3.2;
+const H = 70;
+const wBottom = 15;
+const wTop = 3.0;
+const spireH = 28;
+const cornerBottom = wBottom * Math.SQRT2;
+const cornerTop = wTop * Math.SQRT2;
+const alpha = Math.atan2(wBottom - wTop, H);
+const cosA = Math.cos(alpha);
+const sinA = Math.sin(alpha);
+
+const bodyGeo = new THREE.CylinderGeometry(cornerTop, cornerBottom, H, 4, 1, false);
+const body = new THREE.Mesh(bodyGeo, stoneMat);
+body.rotation.y = Math.PI/4;
+body.position.y = baseY + H/2;
+body.castShadow = true; body.receiveShadow = true;
+scene.add(body);
+
+const edgeLines = new THREE.LineSegments(new THREE.EdgesGeometry(bodyGeo, 12), new THREE.LineBasicMaterial({color:0x9d9787}));
+edgeLines.rotation.y = Math.PI/4;
+edgeLines.position.y = baseY + H/2;
+scene.add(edgeLines);
+
+const spireGeo = new THREE.CylinderGeometry(0.14, cornerTop, spireH, 4, 1, false);
+const spire = new THREE.Mesh(spireGeo, stoneMat);
+spire.rotation.y = Math.PI/4;
+spire.position.y = baseY + H + spireH/2;
+spire.castShadow = true; spire.receiveShadow = true;
+scene.add(spire);
+
+const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.14,7,6), new THREE.MeshStandardMaterial({color:0x8a8f8c, roughness:0.5, metalness:0.4}));
+antenna.position.y = baseY + H + spireH + 3.2;
+antenna.castShadow = true;
+scene.add(antenna);
+const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.38,10,8), new THREE.MeshStandardMaterial({color:0x2a353d, roughness:0.4}));
+beacon.position.y = baseY + H + spireH + 5.2;
+scene.add(beacon);
+
+[22,44,61].forEach(function(yLocal){
+  const w = wBottom + (wTop - wBottom) * (yLocal / H);
+  const r = (w + 0.22) * Math.SQRT2;
+  const band = new THREE.Mesh(new THREE.CylinderGeometry(r,r,0.9,4,1,false), stoneDarkMat);
+  band.rotation.y = Math.PI/4;
+  band.position.y = baseY + yLocal;
+  band.castShadow = true; band.receiveShadow = true;
+  scene.add(band);
+});
+
+const finGeo = new THREE.BoxGeometry(4.6,24,1.9);
+[-1,1].forEach(function(s){
+  const fin = new THREE.Mesh(finGeo, stoneDarkMat);
+  fin.position.set(s * 6.2, baseY + 57, 0);
+  fin.castShadow = true; fin.receiveShadow = true;
+  scene.add(fin);
+});
+
+const supportShape = new THREE.Shape();
+supportShape.moveTo(-5,0);
+supportShape.lineTo(7,0);
+supportShape.lineTo(-2,17);
+supportShape.closePath();
+const supportGeo = new THREE.ExtrudeGeometry(supportShape, {depth:2.6, bevelEnabled:false});
+supportGeo.rotateY(-Math.PI/2);
+supportGeo.translate(1.3,0,0);
+for(let f=0; f<4; f++){
+  const ang = f * Math.PI/2;
+  const s = new THREE.Mesh(supportGeo, supportMat);
+  s.rotation.y = ang;
+  s.position.set(Math.sin(ang)*wBottom, baseY, Math.cos(ang)*wBottom);
+  s.castShadow = true; s.receiveShadow = true;
+  scene.add(s);
+}
+
+const entrance = new THREE.Mesh(new THREE.BoxGeometry(7,5,0.8), new THREE.MeshStandardMaterial({color:0x1c2a36, roughness:0.45}));
+entrance.rotation.x = -alpha;
+entrance.position.set(0, baseY+2.6, wBottom+0.25);
+scene.add(entrance);
+const canopy = new THREE.Mesh(new THREE.BoxGeometry(9,0.5,3), stoneDarkMat);
+canopy.position.set(0, baseY+5.3, wBottom+1.6);
+canopy.castShadow = true;
+scene.add(canopy);
+
+const windowGeo = new THREE.PlaneGeometry(1.15,1.55);
+const windowMat = new THREE.MeshStandardMaterial({color:0x1b2a38, roughness:0.32, metalness:0.18});
+const matrices = [];
+for(let f=0; f<4; f++){
+  const ang = f * Math.PI/2;
+  const ca = Math.cos(ang), sa = Math.sin(ang);
+  const tangent = new THREE.Vector3(ca,0,-sa);
+  const normalH = new THREE.Vector3(sa,0,ca);
+  const up = new THREE.Vector3(-sa*sinA, cosA, -ca*sinA);
+  const basis = new THREE.Matrix4().makeBasis(tangent, up, new THREE.Vector3(0,0,0));
+  const normal = new THREE.Vector3().crossVectors(tangent, up).normalize();
+  basis.makeBasis(tangent, up, normal);
+  for(let yLocal=7; yLocal<=66.5; yLocal+=3.4){
+    const w = wBottom + (wTop - wBottom) * (yLocal / H);
+    const count = Math.max(2, Math.floor((2*w - 2.5) / 2.35));
+    for(let i=0; i<count; i++){
+      const col = (i - (count-1)/2) * 2.35;
+      const pos = new THREE.Vector3(
+        normalH.x * (w+0.09) + tangent.x * col,
+        baseY + yLocal,
+        normalH.z * (w+0.09) + tangent.z * col
+      );
+      const m = basis.clone();
+      m.setPosition(pos);
+      matrices.push(m);
+    }
+  }
+}
+const windows = new THREE.InstancedMesh(windowGeo, windowMat, matrices.length);
+matrices.forEach(function(m,i){ windows.setMatrixAt(i,m); });
+windows.instanceMatrix.needsUpdate = true;
+scene.add(windows);
+
+const blockGeo = new THREE.BoxGeometry(1,1,1);
+const blockMats = [
+  new THREE.MeshStandardMaterial({color:0xd8d2c2, roughness:0.9}),
+  new THREE.MeshStandardMaterial({color:0xcac3b0, roughness:0.9}),
+  new THREE.MeshStandardMaterial({color:0xb9c0c4, roughness:0.9}),
+  new THREE.MeshStandardMaterial({color:0xd0bfa8, roughness:0.9}),
+  new THREE.MeshStandardMaterial({color:0xc7cdd0, roughness:0.9})
+];
+const grid = [-90,-60,-30,0,30,60,90];
+grid.forEach(function(gx){
+  grid.forEach(function(gz){
+    const x = gx + (rng()-0.5)*5;
+    const z = gz + (rng()-0.5)*5;
+    const dist = Math.hypot(x,z);
+    if(dist < 36 || dist > 118) return;
+    const bw = 12 + rng()*6;
+    const bd = 12 + rng()*6;
+    let bh;
+    if(dist < 50) bh = 6 + rng()*4;
+    else bh = 8 + rng()*7 + Math.min(9, dist*0.055);
+    const b = new THREE.Mesh(blockGeo, blockMats[Math.floor(rng()*blockMats.length)]);
+    b.scale.set(bw,bh,bd);
+    b.position.set(x,bh/2,z);
+    b.rotation.y = (rng()-0.5)*0.07;
+    b.castShadow = true; b.receiveShadow = true;
+    scene.add(b);
+  });
+});
+
+const trunkGeo = new THREE.CylinderGeometry(0.22,0.3,1.8,6);
+const trunkMat = new THREE.MeshStandardMaterial({color:0x6b4a33, roughness:1});
+const leafGeo = new THREE.ConeGeometry(1.7,3.6,8);
+const leafMats = [
+  new THREE.MeshStandardMaterial({color:0x4a7a4a, roughness:0.95}),
+  new THREE.MeshStandardMaterial({color:0x5a8a52, roughness:0.95}),
+  new THREE.MeshStandardMaterial({color:0x3f6d45, roughness:0.95})
+];
+function addTree(x,z,s){
+  const g = new THREE.Group();
+  const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+  trunk.position.y = 0.9; trunk.castShadow = true; g.add(trunk);
+  const leaf = new THREE.Mesh(leafGeo, leafMats[Math.floor(rng()*leafMats.length)]);
+  leaf.position.y = 3.5; leaf.castShadow = true; g.add(leaf);
+  g.position.set(x,0,z);
+  g.scale.setScalar(s);
+  scene.add(g);
+}
+for(let i=0;i<32;i++){
+  const a = (i/32)*Math.PI*2 + rng()*0.16;
+  const r = 25 + rng()*13;
+  addTree(Math.cos(a)*r, Math.sin(a)*r, 0.85 + rng()*0.55);
+}
+for(let i=0;i<20;i++){
+  const a = rng()*Math.PI*2;
+  const r = 42 + rng()*58;
+  addTree(Math.cos(a)*r, Math.sin(a)*r, 0.9 + rng()*0.6);
+}
+
+let theta = 0.62;
+let phi = 1.44;
+let distance = 210;
+let dragging = false;
+let lastX = 0, lastY = 0;
+
+function updateCamera(){
+  const sp = Math.sin(phi), cp = Math.cos(phi);
+  camera.position.set(
+    target.x + distance * sp * Math.sin(theta),
+    target.y + distance * cp,
+    target.z + distance * sp * Math.cos(theta)
+  );
+  camera.lookAt(target);
+}
+function renderFrame(){
+  updateCamera();
+  renderer.render(scene, camera);
+}
+function onResize(){
+  const w = window.innerWidth, h = window.innerHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w,h);
+  renderFrame();
+}
+window.addEventListener('resize', onResize);
+
+renderer.domElement.addEventListener('pointerdown', function(e){
+  dragging = true; lastX = e.clientX; lastY = e.clientY;
+  renderer.domElement.setPointerCapture(e.pointerId);
+  renderer.domElement.style.cursor = 'grabbing';
+});
+renderer.domElement.addEventListener('pointermove', function(e){
+  if(!dragging) return;
+  const dx = e.clientX - lastX, dy = e.clientY - lastY;
+  lastX = e.clientX; lastY = e.clientY;
+  theta -= dx * 0.0055;
+  phi -= dy * 0.0055;
+  phi = Math.max(0.28, Math.min(1.54, phi));
+  renderFrame();
+});
+function endDrag(e){
+  dragging = false;
+  renderer.domElement.style.cursor = 'grab';
+  try{ renderer.domElement.releasePointerCapture(e.pointerId); }catch(err){}
+}
+renderer.domElement.addEventListener('pointerup', endDrag);
+renderer.domElement.addEventListener('pointercancel', endDrag);
+renderer.domElement.addEventListener('wheel', function(e){
+  e.preventDefault();
+  distance *= (1 + e.deltaY * 0.001);
+  distance = Math.max(85, Math.min(360, distance));
+  renderFrame();
+}, {passive:false});
+
+onResize();
+renderFrame();
+window.sceneReady = true;
+</script>
+</body>
+</html>

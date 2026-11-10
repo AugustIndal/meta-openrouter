@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+<defs>
+<linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#fbf7ec"/><stop offset="0.55" stop-color="#e7f0f2"/><stop offset="1" stop-color="#cfe3ee"/>
+</linearGradient>
+<radialGradient id="sunGlow" cx="0.5" cy="0.5" r="0.5">
+<stop offset="0" stop-color="#fff8d9" stop-opacity="0.9"/><stop offset="0.5" stop-color="#fff2c2" stop-opacity="0.35"/><stop offset="1" stop-color="#fff2c2" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="harborGrad" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#2f6ea6"/><stop offset="0.25" stop-color="#1e5290"/><stop offset="0.6" stop-color="#143d74"/><stop offset="1" stop-color="#0b2a56"/>
+</linearGradient>
+<linearGradient id="shellLight" x1="0" y1="0" x2="0.9" y2="1">
+<stop offset="0" stop-color="#ffffff"/><stop offset="0.45" stop-color="#fdf8ec"/><stop offset="0.8" stop-color="#f0e7d2"/><stop offset="1" stop-color="#ddd2ba"/>
+</linearGradient>
+<linearGradient id="shellShade" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#efe6d0"/><stop offset="0.6" stop-color="#ddd0b2"/><stop offset="1" stop-color="#c4b492"/>
+</linearGradient>
+<linearGradient id="shellShade2" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#f6efe0"/><stop offset="1" stop-color="#d3c4a4"/>
+</linearGradient>
+<linearGradient id="podiumTop" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#d8916d"/><stop offset="1" stop-color="#bd7458"/>
+</linearGradient>
+<linearGradient id="podiumFront" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#a96047"/><stop offset="1" stop-color="#8a4a37"/>
+</linearGradient>
+<linearGradient id="podiumFront2" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#9c563f"/><stop offset="1" stop-color="#7c3f30"/>
+</linearGradient>
+<linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#364b5e"/><stop offset="1" stop-color="#1d2d3d"/>
+</linearGradient>
+<linearGradient id="fadeGrad" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#ffffff" stop-opacity="0.9"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+</linearGradient>
+<radialGradient id="vignette" cx="0.5" cy="0.48" r="0.75">
+<stop offset="0.75" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#0a1f3a" stop-opacity="0.12"/>
+</radialGradient>
+<filter id="blur6" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
+<filter id="blur10" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="10"/></filter>
+<filter id="blur3" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+<filter id="shellShadow" x="-30%" y="-20%" width="160%" height="150%"><feDropShadow dx="6" dy="8" stdDeviation="6" flood-color="#3d2f20" flood-opacity="0.24"/></filter>
+<filter id="podiumShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#051a34" flood-opacity="0.35"/></filter>
+<mask id="reflMask"><rect x="120" y="650" width="960" height="140" fill="url(#fadeGrad)"/></mask>
+<clipPath id="waterClip"><rect x="0" y="505" width="1200" height="295"/></clipPath>
+</defs>
+
+<!-- Sky -->
+<rect x="0" y="0" width="1200" height="520" fill="url(#skyGrad)"/>
+<ellipse cx="270" cy="150" rx="260" ry="180" fill="url(#sunGlow)"/>
+<circle cx="270" cy="145" r="42" fill="#fff6cf" opacity="0.75" filter="url(#blur10)"/>
+
+<!-- Distant headland and skyline, restrained -->
+<path d="M0 514 L0 482 Q130 468 265 500 L340 514 Z" fill="#7fa1b6" opacity="0.42"/>
+<path d="M860 514 L980 492 Q1080 482 1200 500 L1200 514 Z" fill="#7fa1b6" opacity="0.38"/>
+<g fill="#93b0c2" opacity="0.55">
+<rect x="62" y="474" width="22" height="40"/><rect x="88" y="482" width="18" height="32"/><rect x="110" y="468" width="24" height="46"/><rect x="138" y="486" width="16" height="28"/><rect x="158" y="476" width="20" height="38"/>
+<rect x="1028" y="478" width="20" height="36"/><rect x="1052" y="486" width="16" height="28"/><rect x="1072" y="470" width="22" height="44"/><rect x="1098" y="482" width="18" height="32"/><rect x="1120" y="476" width="20" height="38"/>
+</g>
+<!-- Harbour bridge hint -->
+<path d="M915 512 Q1045 398 1195 512" fill="none" stroke="#a9c0cf" stroke-width="5" stroke-linecap="round" opacity="0.55"/>
+<path d="M915 512 Q1045 398 1195 512" fill="none" stroke="#e8f0f4" stroke-width="1.5" opacity="0.5"/>
+<g stroke="#b8ccda" stroke-width="2" opacity="0.5"><path d="M962 470 L962 512"/><path d="M1005 442 L1005 512"/><path d="M1050 430 L1050 512"/><path d="M1095 442 L1095 512"/><path d="M1140 470 L1140 512"/></g>
+
+<!-- Deep blue harbour -->
+<rect x="0" y="505" width="1200" height="295" fill="url(#harborGrad)"/>
+<rect x="0" y="505" width="1200" height="7" fill="#ffffff" opacity="0.28"/>
+<rect x="0" y="512" width="1200" height="18" fill="#7fb2d9" opacity="0.18" filter="url(#blur6)"/>
+
+<!-- Shell reflections in water below podium -->
+<g mask="url(#reflMask)" opacity="0.16" filter="url(#blur6)">
+<path d="M430 675 C440 710 490 730 545 675 L545 760 C490 780 440 760 430 675Z" fill="#ffffff"/>
+<path d="M575 675 C590 715 650 735 700 675 L700 765 C640 785 585 760 575 675Z" fill="#ffffff"/>
+<path d="M320 675 C335 705 390 720 440 675 L440 745 C385 760 330 740 320 675Z" fill="#ffffff" opacity="0.7"/>
+<path d="M640 675 C655 705 710 720 760 675 L760 745 C705 760 650 740 640 675Z" fill="#ffffff" opacity="0.7"/>
+</g>
+
+<!-- Water ripples behind and around -->
+<g fill="none" stroke="#ffffff" stroke-linecap="round">
+<path d="M40 560 Q140 552 240 560" stroke-width="2" opacity="0.22"/><path d="M960 565 Q1070 555 1160 565" stroke-width="2" opacity="0.22"/>
+<path d="M60 600 Q180 590 300 600" stroke-width="2" opacity="0.16"/><path d="M920 605 Q1050 595 1150 605" stroke-width="2" opacity="0.16"/>
+<path d="M30 690 Q120 680 210 690" stroke-width="2.5" opacity="0.28"/><path d="M990 695 Q1080 685 1170 695" stroke-width="2.5" opacity="0.28"/>
+<path d="M80 735 Q220 722 360 735" stroke-width="2" opacity="0.2"/><path d="M860 740 Q1010 728 1140 740" stroke-width="2" opacity="0.2"/>
+<path d="M180 770 Q340 758 500 770" stroke-width="2" opacity="0.16"/><path d="M720 772 Q880 760 1040 772" stroke-width="2" opacity="0.16"/>
+</g>
+
+<!-- Podium shadow on water -->
+<ellipse cx="600" cy="668" rx="440" ry="24" fill="#04142e" opacity="0.38" filter="url(#blur10)"/>
+
+<!-- Terracotta podium -->
+<g filter="url(#podiumShadow)">
+<path d="M240 625 L960 625 L930 658 L270 658 Z" fill="url(#podiumFront2)"/>
+<path d="M210 585 L990 585 L960 625 L240 625 Z" fill="url(#podiumFront)"/>
+<path d="M180 545 L320 510 L880 510 L1020 545 L990 585 L210 585 Z" fill="url(#podiumTop)" stroke="#9c5a42" stroke-width="1.2" stroke-linejoin="round"/>
+</g>
+<!-- Podium edge lines and steps -->
+<path d="M180 545 L1020 545" stroke="#e8b090" stroke-width="1.5" opacity="0.6"/>
+<path d="M210 585 L990 585" stroke="#7c3f30" stroke-width="1.5" opacity="0.7"/>
+<path d="M240 625 L960 625" stroke="#5f2f25" stroke-width="1.5" opacity="0.6"/>
+<g fill="#c97f60" stroke="#8a4a37" stroke-width="1">
+<rect x="545" y="588" width="110" height="10" rx="2"/><rect x="555" y="600" width="90" height="10" rx="2"/><rect x="565" y="612" width="70" height="10" rx="2"/>
+<rect x="575" y="627" width="50" height="9" rx="2" fill="#b06a4f"/>
+</g>
+<g fill="#ffd9a0" opacity="0.9">
+<rect x="285" y="600" width="14" height="7" rx="3"/><rect x="330" y="600" width="14" height="7" rx="3"/><rect x="375" y="600" width="14" height="7" rx="3"/><rect x="420" y="600" width="14" height="7" rx="3"/>
+<rect x="765" y="600" width="14" height="7" rx="3"/><rect x="810" y="600" width="14" height="7" rx="3"/><rect x="855" y="600" width="14" height="7" rx="3"/><rect x="900" y="600" width="14" height="7" rx="3"/>
+</g>
+<path d="M245 645 L955 645" stroke="#ffd9b8" stroke-width="1" opacity="0.35"/>
+
+<!-- Shadow on podium top under shells -->
+<ellipse cx="600" cy="544" rx="365" ry="30" fill="#5a3426" opacity="0.22" filter="url(#blur6)"/>
+
+<!-- Glass base under shells -->
+<path d="M285 548 L285 508 Q600 486 915 508 L915 548 Q600 566 285 548 Z" fill="url(#glassGrad)" stroke="#16222e" stroke-width="1"/>
+<g stroke="#7fa0b8" stroke-width="1.2" opacity="0.45">
+<path d="M330 510 L330 545"/><path d="M380 505 L380 548"/><path d="M430 502 L430 550"/><path d="M480 500 L480 552"/><path d="M530 499 L530 553"/><path d="M580 499 L580 553"/><path d="M630 500 L630 552"/><path d="M680 501 L680 550"/><path d="M730 504 L730 548"/><path d="M780 507 L780 546"/><path d="M830 510 L830 545"/><path d="M875 512 L875 544"/>
+</g>
+<g fill="#ffcf87" opacity="0.85">
+<circle cx="380" cy="528" r="2.5"/><circle cx="480" cy="526" r="2.5"/><circle cx="580" cy="526" r="2.5"/><circle cx="680" cy="527" r="2.5"/><circle cx="780" cy="528" r="2.5"/>
+</g>
+
+<!-- SHELLS : back tallest -->
+<!-- Shell 1 -->
+<g filter="url(#shellShadow)">
+<path d="M430 548 C440 350 490 200 555 138 C575 230 625 380 625 548 C570 562 485 562 430 548 Z" fill="url(#shellLight)" stroke="#d8ccb0" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M555 138 C575 230 625 380 625 548 C600 555 575 558 548 558 C562 370 562 220 555 138 Z" fill="url(#shellShade)" opacity="0.97"/>
+<path d="M555 138 C540 260 532 400 538 548" fill="none" stroke="#cbbc9c" stroke-width="1.2" opacity="0.55"/>
+<path d="M555 138 C565 260 568 400 562 550" fill="none" stroke="#ffffff" stroke-width="1.6" opacity="0.7"/>
+</g>
+<!-- Shell 2 -->
+<g filter="url(#shellShadow)">
+<path d="M575 548 C590 360 640 220 695 165 C715 260 765 390 770 548 C715 562 635 562 575 548 Z" fill="url(#shellLight)" stroke="#d8ccb0" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M695 165 C715 260 765 390 770 548 C740 555 715 558 690 558 C705 380 705 250 695 165 Z" fill="url(#shellShade)" opacity="0.97"/>
+<path d="M695 165 C682 280 678 420 684 548" fill="none" stroke="#cbbc9c" stroke-width="1.2" opacity="0.5"/>
+<path d="M695 165 C705 280 708 420 702 550" fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.65"/>
+</g>
+
+<!-- Small side shells -->
+<!-- Shell 5 left small -->
+<g filter="url(#shellShadow)">
+<path d="M250 545 C260 470 285 410 318 365 C335 420 370 480 390 545 C340 557 295 557 250 545 Z" fill="url(#shellLight)" stroke="#d8ccb0" stroke-width="1.4" stroke-linejoin="round"/>
+<path d="M318 365 C335 420 370 480 390 545 C375 550 360 553 345 553 C352 470 350 410 318 365 Z" fill="url(#shellShade2)"/>
+<path d="M318 365 C308 430 305 490 310 545" fill="none" stroke="#cbbc9c" stroke-width="1" opacity="0.5"/>
+</g>
+<!-- Shell 6 right small -->
+<g filter="url(#shellShadow)">
+<path d="M765 545 C775 475 805 420 845 375 C862 430 890 490 905 545 C850 557 805 557 765 545 Z" fill="url(#shellLight)" stroke="#d8ccb0" stroke-width="1.4" stroke-linejoin="round"/>
+<path d="M845 375 C862 430 890 490 905 545 C890 550 878 553 865 553 C872 475 868 415 845 375 Z" fill="url(#shellShade2)"/>
+<path d="M845 375 C836 435 832 495 838 545" fill="none" stroke="#cbbc9c" stroke-width="1" opacity="0.5"/>
+</g>
+
+<!-- Medium shells front -->
+<!-- Shell 3 -->
+<g filter="url(#shellShadow)">
+<path d="M320 548 C335 430 375 340 415 285 C435 360 485 450 505 548 C440 562 375 562 320 548 Z" fill="url(#shellLight)" stroke="#d8ccb0" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M415 285 C435 360 485 450 505 548 C480 555 455 558 430 558 C440 430 435 350 415 285 Z" fill="url(#shellShade)"/>
+<path d="M415 285 C402 380 398 470 404 548" fill="none" stroke="#cbbc9c" stroke-width="1.1" opacity="0.55"/>
+<path d="M415 285 C425 380 428 470 424 550" fill="none" stroke="#ffffff" stroke-width="1.4" opacity="0.65"/>
+</g>
+<!-- Shell 4 -->
+<g filter="url(#shellShadow)">
+<path d="M640 548 C655 430 700 350 745 295 C765 370 815 460 830 548 C760 562 695 562 640 548 Z" fill="url(#shellLight)" stroke="#d8ccb0" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M745 295 C765 370 815 460 830 548 C805 555 780 558 755 558 C765 435 760 360 745 295 Z" fill="url(#shellShade)"/>
+<path d="M745 295 C733 385 730 475 736 548" fill="none" stroke="#cbbc9c" stroke-width="1.1" opacity="0.55"/>
+<path d="M745 295 C755 385 758 475 754 550" fill="none" stroke="#ffffff" stroke-width="1.4" opacity="0.65"/>
+</g>
+
+<!-- Centre front small shell -->
+<g filter="url(#shellShadow)">
+<path d="M470 548 C480 470 505 410 535 360 C550 415 580 480 600 548 C550 560 510 560 470 548 Z" fill="url(#shellLight)" stroke="#d8ccb0" stroke-width="1.4" stroke-linejoin="round"/>
+<path d="M535 360 C550 415 580 480 600 548 C582 553 565 556 550 556 C555 470 552 410 535 360 Z" fill="url(#shellShade2)"/>
+<path d="M535 360 C526 430 524 490 528 548" fill="none" stroke="#cbbc9c" stroke-width="1" opacity="0.5"/>
+<path d="M535 360 C544 430 546 490 543 550" fill="none" stroke="#ffffff" stroke-width="1.3" opacity="0.6"/>
+</g>
+
+<!-- Tip highlights -->
+<g fill="#ffffff" opacity="0.9">
+<path d="M555 138 L562 158 L548 158 Z"/><path d="M695 165 L702 184 L688 184 Z"/><path d="M415 285 L421 302 L409 302 Z"/><path d="M745 295 L751 312 L739 312 Z"/>
+<path d="M318 365 L323 380 L313 380 Z"/><path d="M845 375 L850 390 L840 390 Z"/><path d="M535 360 L540 375 L530 375 Z"/>
+</g>
+
+<!-- Wake around podium -->
+<path d="M190 662 Q600 682 1010 662" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.3" stroke-linecap="round"/>
+<path d="M220 675 Q600 692 980 675" fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.18" stroke-linecap="round"/>
+
+<!-- Tiny sailboats at edges, not obstructing -->
+<g opacity="0.95">
+<g transform="translate(88 648)"><path d="M-22 10 L26 10 L18 20 L-14 20 Z" fill="#ffffff"/><path d="M2 10 L2 -28 L20 10 Z" fill="#ffffff" opacity="0.95"/><path d="M-2 10 L-2 -20 L-16 10 Z" fill="#e8f0f4"/></g>
+<g transform="translate(1095 622) scale(0.85)"><path d="M-22 10 L26 10 L18 20 L-14 20 Z" fill="#ffffff"/><path d="M2 10 L2 -26 L19 10 Z" fill="#ffffff"/><path d="M-2 10 L-2 -18 L-15 10 Z" fill="#dfeaf0"/></g>
+</g>
+
+<!-- Foreground ripples -->
+<g fill="none" stroke="#ffffff" stroke-linecap="round">
+<path d="M40 720 Q160 710 280 720" stroke-width="2.5" opacity="0.32"/>
+<path d="M920 725 Q1050 715 1160 725" stroke-width="2.5" opacity="0.32"/>
+<path d="M120 765 Q300 752 480 765" stroke-width="2" opacity="0.22"/>
+<path d="M740 768 Q910 756 1080 768" stroke-width="2" opacity="0.22"/>
+</g>
+
+<rect x="0" y="0" width="1200" height="800" fill="url(#vignette)"/>
+</svg>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seaside Pier</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#8ec9e8;}
+  canvas{display:block;width:100vw;height:100vh;touch-action:none;}
+</style>
+<script type="importmap">
+{"imports":{"three":"./three.module.js"}}
+</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.setSize(1200,800,false);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.08;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87c6ea);
+
+const camera = new THREE.PerspectiveCamera(42,1200/800,0.1,400);
+
+const hemi = new THREE.HemisphereLight(0xcfeaff,0xe9d2a0,0.95);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff1cf,1.9);
+sun.position.set(38,48,28);
+sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-65; sun.shadow.camera.right=65;
+sun.shadow.camera.top=65; sun.shadow.camera.bottom=-65;
+sun.shadow.camera.near=5; sun.shadow.camera.far=140;
+sun.shadow.bias=-0.0006;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xbfe0ff,0.45);
+fill.position.set(-30,22,-20);
+scene.add(fill);
+
+const matCache=new Map();
+function std(color,rough=0.88,metal=0){
+  const k=color+'_'+rough+'_'+metal;
+  if(!matCache.has(k)) matCache.set(k,new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal}));
+  return matCache.get(k);
+}
+function box(w,h,d,color,x,y,z,parent=scene,ry=0){
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),std(color));
+  m.position.set(x,y,z); m.rotation.y=ry; parent.add(m); return m;
+}
+function cyl(rt,rb,h,color,x,y,z,parent=scene,seg=12){
+  const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),std(color));
+  m.position.set(x,y,z); parent.add(m); return m;
+}
+function beam(ax,ay,az,bx,by,bz,r,color,parent=scene){
+  const a=new THREE.Vector3(ax,ay,az), b=new THREE.Vector3(bx,by,bz);
+  const d=b.clone().sub(a); const len=d.length();
+  const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,len,10),std(color));
+  m.position.copy(a).add(b).multiplyScalar(0.5);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());
+  parent.add(m); return m;
+}
+
+/* ---------- Water ---------- */
+const waterGeo=new THREE.PlaneGeometry(180,95,52,26);
+{
+  const p=waterGeo.attributes.position;
+  for(let i=0;i<p.count;i++){
+    const x=p.getX(i), y=p.getY(i);
+    p.setZ(i, Math.sin(x*0.22)*0.22 + Math.cos(y*0.28)*0.18 + Math.sin((x+y)*0.12)*0.15);
+  }
+  waterGeo.computeVertexNormals();
+}
+const water=new THREE.Mesh(waterGeo,new THREE.MeshStandardMaterial({color:0x2178c8,roughness:0.38,metalness:0.05}));
+water.rotation.x=-Math.PI/2; water.position.set(0,0,-42); water.userData.noCast=true; scene.add(water);
+
+/* ---------- Sand beach ---------- */
+box(180,2.5,58,0xe9cf9a,0,-0.25,29);
+box(180,1.1,14,0xe2c48c,0,0.15,50);
+box(160,0.7,10,0xf0d8a6,0,0.55,44);
+
+/* ---------- Foam along shore and in waves ---------- */
+const foamGeo=new THREE.SphereGeometry(1,10,6);
+const foamMat=std(0xffffff,0.95);
+for(let i=0;i<28;i++){
+  const x=-62+i*4.6; const z=0.4+Math.sin(x*0.35)*0.9;
+  const f=new THREE.Mesh(foamGeo,foamMat); f.position.set(x,0.09,z); f.scale.set(2.6,0.16,0.85); f.userData.noCast=true; scene.add(f);
+  const f2=new THREE.Mesh(foamGeo,foamMat); f2.position.set(x+2,0.07,z-2.2); f2.scale.set(1.8,0.13,0.6); f2.userData.noCast=true; scene.add(f2);
+}
+for(let i=0;i<16;i++){
+  const x=-50+i*6.5, z=-6-(i%4)*5;
+  const f=new THREE.Mesh(foamGeo,foamMat); f.position.set(x,0.1,z+Math.sin(i*1.7)*1.2); f.scale.set(3.2,0.14,0.8); f.userData.noCast=true; scene.add(f);
+}
+const crestGeo=new THREE.TorusGeometry(2.8,0.2,6,18,Math.PI);
+[[-26,-16,0.4],[20,-24,1.2],[-8,-36,2.1],[32,-12,0.9],[-38,-28,1.6]].forEach(c=>{
+  const m=new THREE.Mesh(crestGeo,foamMat); m.position.set(c[0],0.12,c[1]); m.rotation.set(Math.PI/2,0,c[2]); m.userData.noCast=true; scene.add(m);
+});
+
+/* ---------- Pier deck, piles, railings ---------- */
+const DECK=3.2;
+box(9.5,0.6,62,0x7d5026,0,2.9,-18);
+box(31,0.6,21,0x7d5026,0,2.9,-40);
+for(let i=0;i<54;i++){
+  const z=11-i*1.12;
+  box(9.2,0.09,0.62,i%2?0x9a6b3a:0x8a5a30,0,DECK+0.05,z);
+}
+for(let i=0;i<18;i++){
+  const x=-14+i*1.65;
+  box(0.7,0.09,20.4,i%2?0xa87848:0x93653a,x,DECK+0.05,-40);
+}
+for(let i=0;i<9;i++){ const z=8-i*6.5; box(10.4,0.5,0.7,0x5f3d1f,0,2.45,z); }
+for(let i=0;i<4;i++){ const z=-33-i*5.5; box(31,0.5,0.7,0x5f3d1f,0,2.45,z); }
+
+const pileGeo=new THREE.CylinderGeometry(0.34,0.34,4.8,10);
+const pileMat=std(0x6b4423);
+function pile(x,z){
+  const m=new THREE.Mesh(pileGeo,pileMat); m.position.set(x,1.0,z); scene.add(m);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(0.85,0.1,6,14),foamMat);
+  ring.position.set(x,0.08,z); ring.rotation.x=Math.PI/2; ring.userData.noCast=true; scene.add(ring);
+}
+for(let i=0;i<9;i++){ const z=9-i*6.2; pile(-3.9,z); pile(3.9,z); }
+[-13.5,-6.5,6.5,13.5].forEach(x=>{ pile(x,-32); pile(x,-39); pile(x,-46); });
+
+function railing(x1,z1,x2,z2){
+  const dx=x2-x1, dz=z2-z1, len=Math.hypot(dx,dz), ry=Math.atan2(-dz,dx);
+  const mx=(x1+x2)/2, mz=(z1+z2)/2;
+  box(len,0.14,0.14,0x8a5a30,mx,DECK+1.08,mz,scene,ry);
+  box(len,0.1,0.1,0x8a5a30,mx,DECK+0.58,mz,scene,ry);
+  const n=Math.max(2,Math.round(len/3));
+  for(let i=0;i<=n;i++){
+    const t=i/n;
+    cyl(0.07,0.07,1.08,0x6b4423,x1+dx*t,DECK+0.54,z1+dz*t,scene,8);
+  }
+}
+railing(-4.6,11,-4.6,-49); railing(4.6,11,4.6,-49);
+railing(-15,-49.5,15,-49.5); railing(-15,-30.5,-15,-49.5); railing(15,-30.5,15,-49.5);
+railing(-15,-30.5,-4.8,-30.5); railing(4.8,-30.5,15,-30.5);
+
+/* steps to beach */
+[[2.75,13.6],[2.25,15.1],[1.75,16.6],[1.25,18.1]].forEach(s=>box(8,0.5,1.5,0x8a5a30,0,s[0],s[1]));
+
+/* life rings on rail */
+function lifeRing(x,z,ry){
+  const g=new THREE.Group(); g.position.set(x,DECK+1.15,z); g.rotation.y=ry; scene.add(g);
+  const t=new THREE.Mesh(new THREE.TorusGeometry(0.55,0.16,8,20),std(0xe94f37)); g.add(t);
+  for(let i=0;i<4;i++){ const a=i*Math.PI/2+0.4; const s=box(0.3,0.32,0.34,0xffffff,Math.cos(a)*0.55,Math.sin(a)*0.55,0,g); }
+}
+lifeRing(-4.7,-14,0); lifeRing(4.7,-26,0);
+
+/* ---------- Ferris wheel ---------- */
+box(10,0.18,4.5,0xf2e3c2,-7,DECK+0.09,-40);
+const hub=new THREE.Vector3(-7,11.6,-40);
+beam(-11,DECK,-40.8,-7,11.6,-40.8,0.26,0x1e5aa8); beam(-3,DECK,-40.8,-7,11.6,-40.8,0.26,0x1e5aa8);
+beam(-11,DECK,-39.2,-7,11.6,-39.2,0.26,0x1e5aa8); beam(-3,DECK,-39.2,-7,11.6,-39.2,0.26,0x1e5aa8);
+beam(-7,DECK,-40,-7,11.6,-40,0.3,0x1e5aa8);
+const rim=new THREE.Mesh(new THREE.TorusGeometry(8,0.24,10,72),std(0xe94f37)); rim.position.copy(hub); scene.add(rim);
+const rim2=new THREE.Mesh(new THREE.TorusGeometry(5.4,0.15,8,56),std(0x2ab7ca)); rim2.position.copy(hub); scene.add(rim2);
+const hubMesh=new THREE.Mesh(new THREE.CylinderGeometry(0.75,0.75,1.4,16),std(0xf6c344));
+hubMesh.rotation.x=Math.PI/2; hubMesh.position.copy(hub); scene.add(hubMesh);
+const cabinColors=[0xe94f37,0xf6c344,0x2ab7ca,0xff8c42,0x7bc950,0xe85d9e,0x5b8def,0xffd23f];
+for(let i=0;i<8;i++){
+  const a=i*Math.PI/4+0.35, px=hub.x+Math.cos(a)*8, py=hub.y+Math.sin(a)*8;
+  beam(hub.x,hub.y,-40,px,py,-40,0.12,0xffffff);
+  beam(hub.x,hub.y,-40,px,py,-40,0.12,0xffffff);
+  const cx=px, cy=py-1.15;
+  beam(px,py,-40,cx,cy+0.7,-40,0.08,0x333333);
+  box(1.55,1.25,1.55,cabinColors[i],cx,cy,-40);
+  box(1.75,0.22,1.75,0xffffff,cx,cy+0.72,-40);
+  box(1.1,0.55,0.08,0xbfeaff,cx,cy+0.05,-39.2);
+}
+
+/* ---------- Roller coaster ---------- */
+box(14,0.18,16,0xf2e3c2,8.5,DECK+0.09,-39.5);
+const trackPts=[
+  new THREE.Vector3(3.5,4.6,-34), new THREE.Vector3(8,5.2,-33), new THREE.Vector3(13,8,-35),
+  new THREE.Vector3(14.5,6,-40), new THREE.Vector3(12,5,-45), new THREE.Vector3(7,7,-46),
+  new THREE.Vector3(3,9,-44), new THREE.Vector3(2,6,-39)
+];
+const curve=new THREE.CatmullRomCurve3(trackPts,true,'catmullrom',0.6);
+const tube=new THREE.Mesh(new THREE.TubeGeometry(curve,90,0.2,8,true),std(0xffc914,0.55));
+scene.add(tube);
+const tube2=new THREE.Mesh(new THREE.TubeGeometry(curve,90,0.09,6,true),std(0xe0a800,0.6));
+tube2.position.y=-0.38; scene.add(tube2);
+for(let i=0;i<14;i++){
+  const p=curve.getPointAt(i/14);
+  cyl(0.16,0.16,Math.max(0.5,p.y-DECK),0x1e5aa8,p.x,(DECK+p.y-0.2)/2,p.z,scene,8);
+  box(0.7,0.18,0.7,0x1e5aa8,p.x,DECK+0.08,p.z);
+}
+/* coaster train */
+for(let i=0;i<3;i++){
+  const t=0.10+i*0.035, p=curve.getPointAt(t), tan=curve.getTangentAt(t);
+  const car=box(1.15,0.55,2.0,0xe94f37,p.x,p.y+0.45,p.z);
+  car.lookAt(p.x+tan.x,p.y+tan.y,p.z+tan.z);
+  box(0.95,0.35,1.4,0x333333,p.x,p.y+0.85,p.z);
+}
+
+/* ---------- Buildings ---------- */
+function building(x,y,z,w,d,h,base,roof,ry=0){
+  const g=new THREE.Group(); g.position.set(x,y,z); g.rotation.y=ry; scene.add(g);
+  box(w,h,d,base,0,h/2,0,g);
+  const shape=new THREE.Shape(); shape.moveTo(-w/2-0.35,0); shape.lineTo(w/2+0.35,0); shape.lineTo(0,1.5); shape.lineTo(-w/2-0.35,0);
+  const rg=new THREE.ExtrudeGeometry(shape,{depth:d+0.6,bevelEnabled:false});
+  const rm=new THREE.Mesh(rg,std(roof)); rm.position.set(0,h,-(d+0.6)/2); g.add(rm);
+  box(1.0,1.7,0.12,0x5a3a22,-w*0.22,0.85,d/2+0.07,g);
+  box(1.2,0.9,0.1,0xbfeaff,w*0.25,h*0.55,d/2+0.07,g);
+  box(0.9,0.8,0.1,0xbfeaff,-w*0.05,h*0.5,d/2+0.07,g);
+  return g;
+}
+building(-18,1,17,11,6.5,3.2,0xffffff,0xe94f37,0.08);
+building(17,1,20,9,6,3.0,0xfff3d6,0x2ab7ca,-0.06);
+building(-24,1,28,8,5.5,2.8,0xd9f0ff,0xff8c42,0.15);
+building(25,1,31,9,5.5,2.8,0xffe3e3,0x7bc950,-0.12);
+building(-10,1,34,7,5,2.6,0xfff8e6,0x5b8def,0.02);
+building(11,1,37,7,5,2.6,0xe9f7ff,0xe85d9e,-0.03);
+building(-13.5,DECK,-32.5,3.2,2.6,2.2,0xffd9c2,0xe94f37,0);
+building(13.5,DECK,-32.5,3.2,2.6,2.2,0xcdeeff,0x1e5aa8,0);
+building(0,DECK,-48.2,5,2.4,2.0,0xfff3d6,0x2ab7ca,0);
+
+/* ---------- Palm trees ---------- */
+const frondGeo=new THREE.BoxGeometry(0.55,0.07,3.6); frondGeo.translate(0,0,1.8);
+function palm(x,z,s,lean){
+  const g=new THREE.Group(); g.position.set(x,1,z); g.scale.setScalar(s); scene.add(g);
+  let tx=0, ty=0;
+  for(let i=0;i<5;i++){
+    const seg=cyl(0.2-i*0.02,0.24-i*0.02,1.15,0x8a5a30,tx,ty+0.55,0,g,8);
+    seg.rotation.z=-lean; tx+=lean*0.9; ty+=1.05;
+  }
+  const topY=ty+0.2;
+  for(let i=0;i<7;i++){
+    const a=i/7*Math.PI*2+0.3;
+    const f=new THREE.Mesh(frondGeo,std(i%2?0x2e9e4f:0x3cb95e,0.9));
+    f.position.set(tx,topY,0); f.rotation.order='YXZ'; f.rotation.y=a; f.rotation.x=0.72; g.add(f);
+    const f2=new THREE.Mesh(frondGeo,std(0x2e9e4f,0.9));
+    f2.position.set(tx,topY+0.15,0); f2.rotation.order='YXZ'; f2.rotation.y=a+0.4; f2.rotation.x=0.25; g.add(f2);
+  }
+  for(let i=0;i<3;i++){
+    const c=new THREE.Mesh(new THREE.SphereGeometry(0.22,8,6),std(0x6b4423));
+    c.position.set(tx+Math.cos(i*2)*0.3,topY-0.25,Math.sin(i*2)*0.3); g.add(c);
+  }
+}
+palm(-11,7,1.15,0.18); palm(12,8,1.0,-0.15); palm(-19,12,1.25,0.12); palm(20,14,1.2,-0.2);
+palm(-26,22,1.1,0.22); palm(26,24,1.05,-0.18); palm(14,30,0.95,0.1); palm(-15,30,0.9,-0.12);
+
+/* beach umbrellas */
+function umbrella(x,z,color){
+  cyl(0.06,0.06,2.4,0xeeeeee,x,2.2,z,scene,8);
+  const c=new THREE.Mesh(new THREE.ConeGeometry(1.7,0.7,10),std(color)); c.position.set(x,3.6,z); scene.add(c);
+}
+umbrella(-23,16,0xe94f37); umbrella(21,19,0xf6c344); umbrella(-14,24,0x2ab7ca); umbrella(18,30,0xe85d9e);
+
+/* ---------- Clouds, sun disc, gulls ---------- */
+const cloudMat=std(0xffffff,1);
+function cloud(x,y,z,s){
+  const g=new THREE.Group(); g.position.set(x,y,z); g.scale.setScalar(s); g.userData.noCast=true; scene.add(g);
+  [[0,0,0,2.2],[2,0.3,0,1.6],[-2,0.25,0,1.5],[0.6,0.7,0,1.4]].forEach(p=>{
+    const m=new THREE.Mesh(new THREE.SphereGeometry(p[3],10,8),cloudMat);
+    m.position.set(p[0],p[1],p[2]); m.scale.y=0.55; m.userData.noCast=true; g.add(m);
+  });
+}
+cloud(-34,38,-46,2.2); cloud(28,42,-38,2.6); cloud(2,46,-58,3.0); cloud(-8,36,18,1.8);
+const sunDisc=new THREE.Mesh(new THREE.SphereGeometry(4.5,16,12),new THREE.MeshBasicMaterial({color:0xffe9a0}));
+sunDisc.position.set(62,52,-78); sunDisc.userData.noCast=true; scene.add(sunDisc);
+function gull(x,y,z,ry){
+  const g=new THREE.Group(); g.position.set(x,y,z); g.rotation.y=ry; g.userData.noCast=true; scene.add(g);
+  const b=new THREE.Mesh(new THREE.SphereGeometry(0.35,8,6),cloudMat); b.scale.set(1.4,0.7,0.7); g.add(b);
+  const w1=box(1.6,0.07,0.35,0xffffff,-0.9,0.15,0,g); w1.rotation.z=0.4;
+  const w2=box(1.6,0.07,0.35,0xffffff,0.9,0.15,0,g); w2.rotation.z=-0.4;
+}
+gull(-20,26,-20,0.6); gull(14,29,-28,-0.4); gull(2,25,-8,1.1);
+
+scene.traverse(o=>{
+  if(o.isMesh){
+    if(o.userData.noCast){ o.castShadow=false; } else { o.castShadow=true; }
+    o.receiveShadow=true;
+  }
+});
+
+/* ---------- Orbit (pointer drag + wheel) ---------- */
+let theta=0.58, phi=1.18, radius=68;
+const target=new THREE.Vector3(0,6,-14);
+function updateCamera(){
+  const sp=Math.sin(phi), cp=Math.cos(phi);
+  camera.position.set(
+    target.x+radius*sp*Math.sin(theta),
+    target.y+radius*cp,
+    target.z+radius*sp*Math.cos(theta)
+  );
+  camera.lookAt(target);
+}
+function render(){ renderer.render(scene,camera); }
+
+let dragging=false,lastX=0,lastY=0;
+renderer.domElement.addEventListener('pointerdown',e=>{
+  dragging=true; lastX=e.clientX; lastY=e.clientY;
+  renderer.domElement.setPointerCapture(e.pointerId);
+});
+renderer.domElement.addEventListener('pointermove',e=>{
+  if(!dragging) return;
+  theta-=(e.clientX-lastX)*0.006;
+  phi-=(e.clientY-lastY)*0.006;
+  phi=Math.max(0.22,Math.min(1.48,phi));
+  lastX=e.clientX; lastY=e.clientY;
+  updateCamera(); render();
+});
+renderer.domElement.addEventListener('pointerup',()=>{ dragging=false; });
+renderer.domElement.addEventListener('pointercancel',()=>{ dragging=false; });
+renderer.domElement.addEventListener('wheel',e=>{
+  e.preventDefault();
+  radius=Math.max(32,Math.min(110,radius+e.deltaY*0.06));
+  updateCamera(); render();
+},{passive:false});
+
+window.addEventListener('resize',()=>{
+  const w=window.innerWidth,h=window.innerHeight;
+  camera.aspect=w/h; camera.updateProjectionMatrix();
+  renderer.setSize(w,h);
+  updateCamera(); render();
+});
+
+updateCamera(); render();
+window.sceneReady=true;
+</script>
+</body>
+</html>

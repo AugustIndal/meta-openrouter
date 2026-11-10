@@ -1,0 +1,39 @@
+{
+  "id": "transamerica-physical",
+  "location_id": "transamerica",
+  "effort": "minimal",
+  "description": "A very tall pale stone office tower shaped like a slender four-sided pyramid with a pointed spire. Dense horizontal rows of dark windows cover its tapering faces. Two narrow vertical fins project from opposite upper sides. Exposed triangular supports form a broad base, surrounded by much shorter city blocks and small trees.",
+  "expected": "allow",
+  "usage": {
+    "prompt_tokens": 397,
+    "completion_tokens": 60,
+    "total_tokens": 457,
+    "cost": 6.97e-05,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 6.97e-05,
+      "upstream_inference_prompt_cost": 3.97e-05,
+      "upstream_inference_completions_cost": 3e-05
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 21,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "schema_valid": true,
+  "response": {
+    "reason": "Visible physical description with no name, location, or non-visual clues; distinctive shape is permitted.",
+    "verdict": "allow"
+  },
+  "answer_leak": false,
+  "correct": true,
+  "elapsed_seconds": 0.905
+}

@@ -1,0 +1,39 @@
+{
+  "id": "golden-gate-physical",
+  "location_id": "golden-gate",
+  "effort": "xhigh",
+  "description": "A long vermilion suspension bridge crossing a wide ocean strait. Two tall rectangular steel towers have large openings and cross-braces. A straight road deck hangs from two sweeping main cables and many thin vertical hangers. Rocky green headlands sit at the ends, with cool blue water below and a little coastal haze.",
+  "expected": "allow",
+  "usage": {
+    "prompt_tokens": 402,
+    "completion_tokens": 599,
+    "total_tokens": 1001,
+    "cost": 0.0003397,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0003397,
+      "upstream_inference_prompt_cost": 4.02e-05,
+      "upstream_inference_completions_cost": 0.0002995
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 564,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "schema_valid": true,
+  "response": {
+    "reason": "Clear physical description of shape, structure, and setting with no identifying details.",
+    "verdict": "allow"
+  },
+  "answer_leak": false,
+  "correct": true,
+  "elapsed_seconds": 1.712
+}

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suspension Bridge Illustration</title>
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #c7e2ec; }
+  canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  canvas:active { cursor: grabbing; }
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xc7e2ec);
+scene.fog = new THREE.Fog(0xd4e8ee, 520, 1250);
+
+const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 3000);
+const target = new THREE.Vector3(0, 66, 0);
+let theta = 0.55;
+let phi = 1.18;
+let radius = 650;
+
+function updateCamera() {
+  const sp = Math.sin(phi), cp = Math.cos(phi);
+  camera.position.set(
+    target.x + radius * sp * Math.sin(theta),
+    target.y + radius * cp,
+    target.z + radius * sp * Math.cos(theta)
+  );
+  camera.lookAt(target);
+}
+
+function render() {
+  updateCamera();
+  renderer.render(scene, camera);
+}
+
+const hemi = new THREE.HemisphereLight(0xcfe9ff, 0x4d6f52, 0.95);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff0d6, 1.9);
+sun.position.set(220, 300, 180);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -340; sun.shadow.camera.right = 340;
+sun.shadow.camera.top = 300; sun.shadow.camera.bottom = -240;
+sun.shadow.camera.near = 40; sun.shadow.camera.far = 900;
+sun.shadow.bias = -0.0004;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xbfe0ff, 0.45);
+fill.position.set(-200, 160, -180);
+scene.add(fill);
+
+const vermilion = new THREE.MeshStandardMaterial({ color: 0xc13f23, roughness: 0.52, metalness: 0.18 });
+const vermilionDark = new THREE.MeshStandardMaterial({ color: 0x9e2f1a, roughness: 0.58, metalness: 0.15 });
+const steelDark = new THREE.MeshStandardMaterial({ color: 0x4a4d4f, roughness: 0.5, metalness: 0.55 });
+const asphalt = new THREE.MeshStandardMaterial({ color: 0x3c4146, roughness: 0.9, metalness: 0.02 });
+const concrete = new THREE.MeshStandardMaterial({ color: 0xb9b0a0, roughness: 0.9, metalness: 0.0 });
+const waterMat = new THREE.MeshStandardMaterial({ color: 0x2e6b9e, roughness: 0.32, metalness: 0.12 });
+const greenMat = new THREE.MeshStandardMaterial({ color: 0x4d7d4a, roughness: 0.95, metalness: 0.0 });
+const greenDark = new THREE.MeshStandardMaterial({ color: 0x3c633c, roughness: 0.95, metalness: 0.0 });
+const rockMat = new THREE.MeshStandardMaterial({ color: 0x7b7e78, roughness: 0.95, metalness: 0.0 });
+const rockDark = new THREE.MeshStandardMaterial({ color: 0x5f665f, roughness: 0.95, metalness: 0.0 });
+const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf4f6f2, roughness: 0.7, metalness: 0.0 });
+
+function addBox(w, h, d, mat, x, y, z, parent = scene, shadow = true) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.position.set(x, y, z);
+  m.castShadow = shadow; m.receiveShadow = true;
+  parent.add(m);
+  return m;
+}
+function seeded(i) { const v = Math.sin(i * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v); }
+
+// Water
+const water = new THREE.Mesh(new THREE.PlaneGeometry(1900, 1050), waterMat);
+water.rotation.x = -Math.PI / 2;
+water.position.y = 0;
+water.receiveShadow = true;
+scene.add(water);
+
+// Distant hills
+function distantHill(x, z, s, mat) {
+  const h = new THREE.Mesh(new THREE.SphereGeometry(110, 18, 12), mat);
+  h.scale.set(1.8, 0.42, 1.0);
+  h.position.set(x, 0, z);
+  h.receiveShadow = true;
+  scene.add(h);
+}
+distantHill(-520, -300, 1, new THREE.MeshStandardMaterial({ color: 0x87a5ad, roughness: 1 }));
+distantHill(540, -320, 1, new THREE.MeshStandardMaterial({ color: 0x7fa0a8, roughness: 1 }));
+distantHill(0, -520, 1, new THREE.MeshStandardMaterial({ color: 0x92b0b8, roughness: 1 }));
+
+// Clouds
+const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1 });
+function cloud(x, y, z, s) {
+  const g = new THREE.Group();
+  for (let i = 0; i < 4; i++) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(14 + i * 3, 12, 8), cloudMat);
+    m.scale.set(1.7, 0.55, 1.0);
+    m.position.set((i - 1.5) * 16, (i % 2) * 3, (i % 3) * 4);
+    g.add(m);
+  }
+  g.scale.setScalar(s); g.position.set(x, y, z); scene.add(g);
+}
+cloud(-260, 260, -180, 1.1); cloud(180, 285, -260, 1.3); cloud(360, 240, 80, 0.9); cloud(-380, 275, 60, 0.85);
+
+// Headlands
+function headland(sign) {
+  const g = new THREE.Group(); scene.add(g);
+  const main = new THREE.Mesh(new THREE.SphereGeometry(88, 22, 14), greenMat);
+  main.scale.set(1.35, 0.58, 1.05); main.position.set(sign * 262, 2, -18);
+  main.castShadow = true; main.receiveShadow = true; g.add(main);
+  const second = new THREE.Mesh(new THREE.SphereGeometry(58, 18, 12), greenDark);
+  second.scale.set(1.2, 0.5, 1.0); second.position.set(sign * 225, 2, 58);
+  second.castShadow = true; second.receiveShadow = true; g.add(second);
+  const third = new THREE.Mesh(new THREE.SphereGeometry(52, 16, 10), greenMat);
+  third.scale.set(1.1, 0.45, 1.1); third.position.set(sign * 305, 0, 42);
+  third.castShadow = true; third.receiveShadow = true; g.add(third);
+  for (let i = 0; i < 38; i++) {
+    const r = 4 + seeded(sign * 100 + i) * 10;
+    const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(r, 0), i % 3 ? rockMat : rockDark);
+    const a = seeded(sign * 200 + i * 3) * Math.PI * 2;
+    const dist = 35 + seeded(sign * 300 + i) * 95;
+    rock.position.set(sign * 262 + Math.cos(a) * dist * 1.25, 1 + seeded(i * 7) * 22, -18 + Math.sin(a) * dist * 0.82);
+    rock.rotation.set(seeded(i) * 3, seeded(i + 9) * 3, seeded(i + 4) * 3);
+    rock.castShadow = true; rock.receiveShadow = true; g.add(rock);
+  }
+  for (let i = 0; i < 22; i++) {
+    const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(3 + seeded(i * 11 + sign) * 7, 0), rockDark);
+    rock.position.set(sign * (150 + seeded(i * 5) * 70), 1, (seeded(i * 13) - 0.5) * 150);
+    rock.rotation.set(seeded(i) * 3, seeded(i + 2) * 3, 0);
+    rock.castShadow = true; rock.receiveShadow = true; g.add(rock);
+  }
+}
+headland(-1); headland(1);
+
+// Deck
+addBox(446, 5, 34, vermilion, 0, 36, 0);
+addBox(446, 0.9, 30, asphalt, 0, 39.1, 0);
+addBox(446, 4, 2, vermilionDark, 0, 33.5, 14.5);
+addBox(446, 4, 2, vermilionDark, 0, 33.5, -14.5);
+addBox(446, 1.2, 1.2, vermilion, 0, 44.2, 16.6);
+addBox(446, 1.2, 1.2, vermilion, 0, 44.2, -16.6);
+addBox(446, 0.9, 0.9, vermilionDark, 0, 41.2, 16.6);
+addBox(446, 0.9, 0.9, vermilionDark, 0, 41.2, -16.6);
+for (let x = -210; x <= 210; x += 21) {
+  addBox(2, 3.4, 33, vermilionDark, x, 31.5, 0, scene, false);
+  addBox(1.2, 5.2, 1.2, vermilion, x, 41.6, 16.6, scene, false);
+  addBox(1.2, 5.2, 1.2, vermilion, x, 41.6, -16.6, scene, false);
+}
+// Road dashes
+const dashGeo = new THREE.BoxGeometry(6, 0.25, 0.8);
+const dashMesh = new THREE.InstancedMesh(dashGeo, whiteMat, 36);
+const dm = new THREE.Matrix4();
+for (let i = 0; i < 36; i++) {
+  dm.makeTranslation(-210 + i * 12, 39.7, 0);
+  dashMesh.setMatrixAt(i, dm);
+}
+scene.add(dashMesh);
+// Lamp posts
+for (let i = 0, x = -200; x <= 200; x += 40, i++) {
+  const z = i % 2 ? 16.2 : -16.2;
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.45, 9, 6), steelDark);
+  pole.position.set(x, 43.5, z); pole.castShadow = true; scene.add(pole);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(1.1, 8, 6), new THREE.MeshStandardMaterial({ color: 0xfff3c0, emissive: 0x554411 }));
+  head.position.set(x, 48.2, z); scene.add(head);
+}
+
+// Towers
+function makeTower(xPos) {
+  const g = new THREE.Group(); scene.add(g);
+  addBox(21, 13, 54, concrete, xPos, 5, 0, g);
+  addBox(20, 6, 50, rockMat, xPos, 1, 0, g);
+  for (const z of [-18, 18]) {
+    addBox(13, 176, 9, vermilion, xPos, 88, z, g);
+    addBox(15, 5, 11, vermilionDark, xPos, 178, z, g);
+    addBox(14, 3, 10, vermilionDark, xPos, 4, z, g);
+  }
+  const beams = [16, 72, 114, 152];
+  for (const y of beams) addBox(10, 9, 38, vermilion, xPos, y, 0, g);
+  // X braces between beams
+  const braceLevels = [[76, 110], [118, 148]];
+  for (const [y0, y1] of braceLevels) {
+    const len = Math.hypot(y1 - y0, 36);
+    const ang = Math.atan2(36, y1 - y0);
+    for (const s of [1, -1]) {
+      const b = new THREE.Mesh(new THREE.BoxGeometry(5.5, len, 5.5), vermilionDark);
+      b.position.set(xPos, (y0 + y1) / 2 + 2, 0);
+      b.rotation.x = s * ang; b.castShadow = true; b.receiveShadow = true; g.add(b);
+    }
+  }
+  addBox(9, 8, 36, vermilionDark, xPos, 176, 0, g);
+}
+makeTower(-125); makeTower(125);
+
+// Anchorages
+for (const s of [-1, 1]) {
+  addBox(26, 30, 42, concrete, s * 238, 42, 0);
+  addBox(20, 10, 30, vermilionDark, s * 238, 60, 0);
+}
+
+// Main cables
+function cableCurve(z) {
+  const pts = [
+    [-238, 58, z], [-205, 70, z], [-168, 108, z], [-125, 174, z],
+    [-82, 110, z], [-42, 73, z], [0, 57, z], [42, 73, z], [82, 110, z],
+    [125, 174, z], [168, 108, z], [205, 70, z], [238, 58, z]
+  ].map(p => new THREE.Vector3(p[0], p[1], p[2]));
+  return new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0.35);
+}
+let sampled = null;
+for (const z of [-18, 18]) {
+  const curve = cableCurve(z);
+  const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 220, 1.45, 7, false), steelDark);
+  tube.castShadow = true; tube.receiveShadow = true; scene.add(tube);
+  if (z === -18) sampled = curve.getPoints(500);
+}
+function cableYAt(x) {
+  for (let i = 1; i < sampled.length; i++) {
+    if (sampled[i].x >= x) {
+      const a = sampled[i - 1], b = sampled[i];
+      const t = (x - a.x) / Math.max(0.001, b.x - a.x);
+      return a.y + (b.y - a.y) * t;
+    }
+  }
+  return sampled[sampled.length - 1].y;
+}
+// Hangers
+const hangerData = [];
+for (let x = -216; x <= 216; x += 7.2) {
+  const cy = cableYAt(x);
+  const h = cy - 39;
+  if (h > 4) for (const z of [-18, 18]) hangerData.push({ x, h, z });
+}
+const hangerGeo = new THREE.CylinderGeometry(0.34, 0.34, 1, 6);
+const hangers = new THREE.InstancedMesh(hangerGeo, steelDark, hangerData.length);
+const hm = new THREE.Matrix4(), hq = new THREE.Quaternion(), hs = new THREE.Vector3(), hp = new THREE.Vector3();
+hangerData.forEach((d, i) => {
+  hp.set(d.x, 39 + d.h / 2, d.z); hs.set(1, d.h, 1);
+  hm.compose(hp, hq, hs); hangers.setMatrixAt(i, hm);
+});
+scene.add(hangers);
+
+render();
+window.sceneReady = true;
+
+let dragging = false, lastX = 0, lastY = 0;
+const el = renderer.domElement;
+el.addEventListener('pointerdown', e => { dragging = true; lastX = e.clientX; lastY = e.clientY; el.setPointerCapture(e.pointerId); });
+el.addEventListener('pointermove', e => {
+  if (!dragging) return;
+  theta -= (e.clientX - lastX) * 0.0052;
+  phi = THREE.MathUtils.clamp(phi - (e.clientY - lastY) * 0.004, 0.35, 1.48);
+  lastX = e.clientX; lastY = e.clientY; render();
+});
+el.addEventListener('pointerup', () => dragging = false);
+el.addEventListener('pointercancel', () => dragging = false);
+el.addEventListener('wheel', e => {
+  e.preventDefault();
+  radius = THREE.MathUtils.clamp(radius * Math.exp(e.deltaY * 0.001), 300, 1050);
+  render();
+}, { passive: false });
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  render();
+});
+</script>
+</body>
+</html>

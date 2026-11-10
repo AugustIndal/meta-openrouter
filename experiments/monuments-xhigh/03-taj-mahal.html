@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Taj Mahal</title>
+<style>
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#f6d8c8}
+canvas{display:block;width:100%;height:100%}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.setSize(window.innerWidth||1200,window.innerHeight||800);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.08;
+document.body.appendChild(renderer.domElement);
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xf6d8c8);
+scene.fog=new THREE.Fog(0xf6d8c8,190,360);
+
+const camera=new THREE.PerspectiveCamera(38,(window.innerWidth||1200)/(window.innerHeight||800),0.1,700);
+
+const ivory=new THREE.MeshStandardMaterial({color:0xf3ead6,roughness:0.88});
+const ivory2=new THREE.MeshStandardMaterial({color:0xe8dcc0,roughness:0.92});
+const stone=new THREE.MeshStandardMaterial({color:0xdcccab,roughness:0.95});
+const dark=new THREE.MeshStandardMaterial({color:0x4d382a,roughness:0.95});
+const gold=new THREE.MeshStandardMaterial({color:0xd9ab4e,roughness:0.32,metalness:0.75});
+const water=new THREE.MeshStandardMaterial({color:0x8fbfc2,roughness:0.08,metalness:0.25});
+const grass=new THREE.MeshStandardMaterial({color:0x699a4f,roughness:1});
+const grass2=new THREE.MeshStandardMaterial({color:0x527f3d,roughness:1});
+const pathMat=new THREE.MeshStandardMaterial({color:0xe7ddc4,roughness:0.95});
+const trunkMat=new THREE.MeshStandardMaterial({color:0x6b4a30,roughness:1});
+const leafMat=new THREE.MeshStandardMaterial({color:0x4f7d39,roughness:1});
+const leaf2=new THREE.MeshStandardMaterial({color:0x679a44,roughness:1});
+const cypressMat=new THREE.MeshStandardMaterial({color:0x2f5d33,roughness:1});
+const groundMat=new THREE.MeshStandardMaterial({color:0xcdbb96,roughness:1});
+
+function box(parent,w,h,d,mat,x,y,z){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+ m.position.set(x,y,z); parent.add(m); return m;
+}
+function cyl(parent,rt,rb,h,mat,x,y,z,seg){
+ const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg||24),mat);
+ m.position.set(x,y,z); parent.add(m); return m;
+}
+function domeMesh(r,h,mat){
+ const ptsData=[[1,0],[1.05,0.08],[1.07,0.2],[1.03,0.38],[0.93,0.58],[0.75,0.75],[0.51,0.88],[0.29,0.96],[0.13,1],[0,1.03]];
+ const pts=ptsData.map(p=>new THREE.Vector2(Math.max(0.001,p[0]*r),p[1]*h));
+ const m=new THREE.Mesh(new THREE.LatheGeometry(pts,48),mat);
+ return m;
+}
+function archPath(target,w,h){
+ const hw=w/2;
+ target.moveTo(-hw,0);
+ target.lineTo(-hw,h*0.62);
+ target.quadraticCurveTo(-hw,h*0.9,0,h);
+ target.quadraticCurveTo(hw,h*0.9,hw,h*0.62);
+ target.lineTo(hw,0);
+ target.closePath();
+ return target;
+}
+function archShape(w,h){ return archPath(new THREE.Shape(),w,h); }
+function archMesh(w,h,mat){
+ const m=new THREE.Mesh(new THREE.ShapeGeometry(archShape(w,h),24),mat);
+ return m;
+}
+function finial(parent,x,y,z,s){
+ const g=new THREE.Group(); g.position.set(x,y,z); parent.add(g);
+ cyl(g,0.14*s,0.18*s,2.6*s,gold,0,1.3*s,0,10);
+ const sp=new THREE.Mesh(new THREE.SphereGeometry(0.55*s,16,12),gold); sp.position.y=3*s; g.add(sp);
+ const cone=new THREE.Mesh(new THREE.ConeGeometry(0.38*s,1.5*s,12),gold); cone.position.y=4.2*s; g.add(cone);
+ const tor=new THREE.Mesh(new THREE.TorusGeometry(0.75*s,0.11*s,8,20,Math.PI*1.45),gold); tor.position.y=5.1*s; tor.rotation.z=Math.PI*0.78; g.add(tor);
+ return g;
+}
+
+// Ground
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(420,420),groundMat);
+ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+
+// Sun disc in dawn sky
+const sun=new THREE.Mesh(new THREE.SphereGeometry(9,24,16),new THREE.MeshBasicMaterial({color:0xffe8c8}));
+sun.position.set(-85,38,-95); scene.add(sun);
+
+const taj=new THREE.Group(); scene.add(taj);
+
+// Plinth and main block
+box(taj,70,3,70,stone,0,1.5,0);
+box(taj,64,1.5,64,ivory2,0,3.75,0);
+box(taj,46,19,36,ivory,0,14,0);
+box(taj,48,1.2,38,ivory2,0,24.1,0);
+box(taj,47,0.7,37,stone,0,4.85,0);
+
+// Central portal
+function portal(){
+ const g=new THREE.Group();
+ const outer=archShape(19,26); outer.holes.push(archPath(new THREE.Path(),14,21.5));
+ const frame=new THREE.Mesh(new THREE.ExtrudeGeometry(outer,{depth:2.8,bevelEnabled:false}),ivory);
+ frame.position.z=0; g.add(frame);
+ const inner=archMesh(14,21.5,dark); inner.position.set(0,0.6,2.75); g.add(inner);
+ const inner2=archMesh(10,16,stone); inner2.position.set(0,0.6,2.78); g.add(inner2);
+ const door=archMesh(8.4,13,dark); door.position.set(0,0.6,2.8); g.add(door);
+ const trim=archMesh(20.2,27,ivory2); trim.position.set(0,0, -0.05); g.add(trim);
+ return g;
+}
+const pFront=portal(); pFront.position.set(0,4.5,18); taj.add(pFront);
+const pBack=portal(); pBack.position.set(0,4.5,-18); pBack.rotation.y=Math.PI; taj.add(pBack);
+
+// Facade arches front/back/sides
+function flatArch(parent,x,y,z,ry,w,h){
+ const border=archMesh(w+1.2,h+1,ivory2); border.position.set(x,y,z); border.rotation.y=ry; parent.add(border);
+ const a=archMesh(w,h,dark); a.position.set(x,y,z); a.rotation.y=ry; a.translateZ(0.04); parent.add(a);
+}
+for(const s of [-1,1]){
+ flatArch(taj,s*13.5,5,18.05,0,8,14);
+ flatArch(taj,s*13.5,5,-18.05,Math.PI,8,14);
+ flatArch(taj,s*23.05,5,9,s*Math.PI/2,8,14);
+ flatArch(taj,s*23.05,5,-9,s*Math.PI/2,8,14);
+ flatArch(taj,s*13.5,5,18.05,0,8,14);
+}
+// upper small arches
+for(const s of [-1,1]){
+ flatArch(taj,s*9,16,18.05,0,5,8);
+ flatArch(taj,s*9,16,-18.05,Math.PI,5,8);
+}
+
+// Drum and central dome
+cyl(taj,11.5,11.5,4.6,ivory2,0,27,0,36);
+const ring=new THREE.Mesh(new THREE.TorusGeometry(11.5,0.35,10,48),stone); ring.rotation.x=Math.PI/2; ring.position.y=24.9; taj.add(ring);
+const ring2=ring.clone(); ring2.position.y=29.2; taj.add(ring2);
+const dome=domeMesh(11,19,ivory); dome.position.set(0,29.3,0); taj.add(dome);
+finial(taj,0,48.4,0,1.25);
+
+// Small finials around drum
+for(let i=0;i<8;i++){
+ const a=i*Math.PI/4; const x=Math.cos(a)*10.2,z=Math.sin(a)*10.2;
+ const sp=new THREE.Mesh(new THREE.SphereGeometry(0.55,12,10),gold); sp.position.set(x,30,z); taj.add(sp);
+ cyl(taj,0.12,0.12,1.2,gold,x,29.4,z,8);
+}
+
+// Corner kiosks / chhatris
+for(const sx of [-1,1]) for(const sz of [-1,1]){
+ const x=sx*17,z=sz*13;
+ cyl(taj,3.2,3.4,1,ivory2,x,25.2,z,8);
+ cyl(taj,2.6,2.8,2.8,ivory,x,26.6,z,8);
+ const d=domeMesh(3.4,5.2,ivory); d.position.set(x,28,z); taj.add(d);
+ finial(taj,x,33.2,z,0.55);
+}
+
+// Minarets
+function minaret(x,z){
+ const g=new THREE.Group(); g.position.set(x,0,z); taj.add(g);
+ box(g,5,3.5,5,stone,0,6.25,0);
+ cyl(g,1.45,1.65,31,ivory,0,23.5,0,20);
+ cyl(g,2.05,2.05,0.7,ivory2,0,19,0,20);
+ cyl(g,2.05,2.05,0.7,ivory2,0,30,0,20);
+ cyl(g,1.7,1.85,2.2,ivory2,0,40.1,0,20);
+ const d=domeMesh(1.85,4.2,ivory); d.position.y=41.2; g.add(d);
+ finial(g,0,45.3,0,0.45);
+ const win=archMesh(1.2,2.4,dark); win.position.set(0,13,1.58); g.add(win);
+ return g;
+}
+minaret(-27,-27); minaret(27,-27); minaret(-27,27); minaret(27,27);
+
+// Reflecting pool, paths, gardens
+box(scene,12,0.5,58,water,0,0.25,48);
+box(scene,13.2,0.35,59.2,stone,0,0.12,48);
+box(scene,12,0.55,58,water,0,0.28,48);
+box(scene,3,0.35,58,pathMat,-7.6,0.18,48);
+box(scene,3,0.35,58,pathMat,7.6,0.18,48);
+box(scene,52,0.35,4,pathMat,0,0.18,21);
+box(scene,22,0.4,58,grass,-18.5,0.2,48);
+box(scene,22,0.4,58,grass,18.5,0.2,48);
+box(scene,44,0.35,3,pathMat,0,0.18,78.5);
+box(scene,1,1,58,grass2,-29,0.5,48);
+box(scene,1,1,58,grass2,29,0.5,48);
+// pool edge stones
+for(const z of [21,30,40,50,60,70]){ box(scene,12.6,0.6,1.2,stone,0,0.3,z); }
+
+// Cypress trees along pool
+function cypress(x,z,s){
+ const g=new THREE.Group(); g.position.set(x,0,z); g.scale.setScalar(s); scene.add(g);
+ cyl(g,0.28,0.35,1.4,trunkMat,0,0.7,0,8);
+ const c=new THREE.Mesh(new THREE.ConeGeometry(1.15,6.5,10),cypressMat); c.position.y=4.2; g.add(c);
+ const c2=new THREE.Mesh(new THREE.ConeGeometry(0.8,4,10),cypressMat); c2.position.y=7; g.add(c2);
+}
+for(const z of [26,35,44,53,62,71]){ cypress(-6.2,z,1); cypress(6.2,z,1); }
+
+// Round trees in gardens and background
+function tree(x,z,s,mat){
+ const g=new THREE.Group(); g.position.set(x,0,z); g.scale.setScalar(s); scene.add(g);
+ cyl(g,0.35,0.5,3,trunkMat,0,1.5,0,8);
+ const f=new THREE.Mesh(new THREE.IcosahedronGeometry(2.4,1),mat); f.position.y=4.4; g.add(f);
+ const f2=new THREE.Mesh(new THREE.IcosahedronGeometry(1.6,1),mat); f2.position.set(1.2,3.6,0.6); g.add(f2);
+ const f3=new THREE.Mesh(new THREE.IcosahedronGeometry(1.4,1),mat); f3.position.set(-1.1,3.8,-0.5); g.add(f3);
+}
+const treePos=[[-15,27,1,leafMat],[15,27,0.9,leaf2],[-22,34,1.1,leaf2],[22,34,1,leafMat],[-15,42,0.9,leaf2],[15,42,1.1,leafMat],[-22,52,1,leafMat],[22,52,0.95,leaf2],[-15,62,1.05,leafMat],[15,62,1,leaf2],[-22,70,0.9,leaf2],[22,70,1.05,leafMat],[-38,-42,1.4,leaf2],[38,-42,1.3,leafMat],[-48,-20,1.2,leafMat],[48,-18,1.4,leaf2],[-42,48,1.2,leafMat],[42,52,1.1,leaf2],[-14,-48,1.2,leafMat],[14,-48,1.3,leaf2]];
+for(const t of treePos) tree(t[0],t[1],t[2],t[3]);
+
+scene.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; } });
+water.castShadow=false; ground.castShadow=false;
+
+// Lights - soft dawn
+const hemi=new THREE.HemisphereLight(0xfbd9d0,0x8a7a5f,0.95); scene.add(hemi);
+const amb=new THREE.AmbientLight(0xffe8d8,0.35); scene.add(amb);
+const sunLight=new THREE.DirectionalLight(0xffe2c0,2.4);
+sunLight.position.set(-55,52,45); sunLight.castShadow=true;
+sunLight.shadow.mapSize.set(2048,2048);
+sunLight.shadow.camera.left=-80; sunLight.shadow.camera.right=80;
+sunLight.shadow.camera.top=80; sunLight.shadow.camera.bottom=-80;
+sunLight.shadow.camera.near=10; sunLight.shadow.camera.far=220;
+sunLight.shadow.bias=-0.0004;
+scene.add(sunLight);
+const fill=new THREE.DirectionalLight(0xf8d0c0,0.5); fill.position.set(40,30,-50); scene.add(fill);
+
+// Orbit controls (native pointer + wheel)
+const target=new THREE.Vector3(0,18,2);
+let radius=122, phi=1.45, theta=0.26;
+function updateCamera(){
+ const s=new THREE.Spherical(radius,phi,theta);
+ const v=new THREE.Vector3().setFromSpherical(s).add(target);
+ camera.position.copy(v); camera.lookAt(target);
+}
+function render(){ renderer.render(scene,camera); }
+
+let dragging=false,lastX=0,lastY=0;
+renderer.domElement.style.touchAction='none';
+renderer.domElement.addEventListener('pointerdown',e=>{
+ dragging=true; lastX=e.clientX; lastY=e.clientY;
+ renderer.domElement.setPointerCapture(e.pointerId);
+});
+renderer.domElement.addEventListener('pointermove',e=>{
+ if(!dragging) return;
+ const dx=e.clientX-lastX, dy=e.clientY-lastY; lastX=e.clientX; lastY=e.clientY;
+ theta-=dx*0.0045; phi-=dy*0.0045;
+ phi=Math.max(0.35,Math.min(1.52,phi));
+ updateCamera(); render();
+});
+renderer.domElement.addEventListener('pointerup',()=>{ dragging=false; });
+renderer.domElement.addEventListener('pointercancel',()=>{ dragging=false; });
+renderer.domElement.addEventListener('wheel',e=>{
+ e.preventDefault();
+ radius*=Math.exp(e.deltaY*0.001);
+ radius=Math.max(50,Math.min(195,radius));
+ updateCamera(); render();
+},{passive:false});
+
+window.addEventListener('resize',()=>{
+ const w=window.innerWidth||1200, h=window.innerHeight||800;
+ camera.aspect=w/h; camera.updateProjectionMatrix();
+ renderer.setSize(w,h); render();
+});
+
+updateCamera(); render();
+window.sceneReady=true;
+</script>
+</body>
+</html>

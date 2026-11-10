@@ -1,0 +1,29 @@
+[
+  {
+    "format": "three",
+    "mean_score": 7.25,
+    "cost": 0.0678194,
+    "mean_seconds": 25.4907,
+    "prompt_tokens": 2879,
+    "completion_tokens": 135063,
+    "reasoning_tokens": 95028
+  },
+  {
+    "format": "canvas",
+    "mean_score": 6.5,
+    "cost": 0.0990564,
+    "mean_seconds": 39.4211,
+    "prompt_tokens": 2639,
+    "completion_tokens": 197585,
+    "reasoning_tokens": 149197
+  },
+  {
+    "format": "svg",
+    "mean_score": 7.0,
+    "cost": 0.09246839999999999,
+    "mean_seconds": 34.7402,
+    "prompt_tokens": 2739,
+    "completion_tokens": 184389,
+    "reasoning_tokens": 130524
+  }
+]

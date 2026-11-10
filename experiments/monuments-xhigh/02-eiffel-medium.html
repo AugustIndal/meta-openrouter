@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eiffel Tower Diorama</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#ece3d1}canvas{display:block;width:100%;height:100%}</style>
+<script type="importmap">{"imports":{"three":"./three.module.js"}}</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.setSize(window.innerWidth||1200,window.innerHeight||800);
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.05;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xece3d1);
+const camera=new THREE.PerspectiveCamera(38,(window.innerWidth||1200)/(window.innerHeight||800),0.1,200);
+const target=new THREE.Vector3(0,8.4,0);
+let theta=0.72, phi=1.18, radius=31;
+function updateCamera(){ const sp=Math.sin(phi); camera.position.set(target.x+radius*sp*Math.sin(theta),target.y+radius*Math.cos(phi),target.z+radius*sp*Math.cos(theta)); camera.lookAt(target); }
+updateCamera();
+
+scene.add(new THREE.HemisphereLight(0xfff6e0,0x8a7a5f,0.95));
+const sun=new THREE.DirectionalLight(0xffe8c0,2.0); sun.position.set(12,22,10); sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048); sun.shadow.camera.left=-14; sun.shadow.camera.right=14; sun.shadow.camera.top=20; sun.shadow.camera.bottom=-8; sun.shadow.camera.near=4; sun.shadow.camera.far=55; sun.shadow.bias=-0.0004; scene.add(sun);
+const fill=new THREE.DirectionalLight(0xdde8ff,0.55); fill.position.set(-10,8,-9); scene.add(fill);
+const rim=new THREE.DirectionalLight(0xffd9a0,0.7); rim.position.set(-6,14,12); scene.add(rim);
+
+const brass=new THREE.MeshStandardMaterial({color:0xb28c4e,metalness:0.68,roughness:0.34});
+const brassBright=new THREE.MeshStandardMaterial({color:0xd0a95e,metalness:0.75,roughness:0.26});
+const iron=new THREE.MeshStandardMaterial({color:0x5d472d,metalness:0.55,roughness:0.48});
+const ironDark=new THREE.MeshStandardMaterial({color:0x3f3324,metalness:0.45,roughness:0.55});
+const stone=new THREE.MeshStandardMaterial({color:0xcdbfa3,roughness:0.92,metalness:0.02});
+const stoneDark=new THREE.MeshStandardMaterial({color:0x9a8a6e,roughness:0.95});
+const grass=new THREE.MeshStandardMaterial({color:0x61814c,roughness:0.95});
+const grassDark=new THREE.MeshStandardMaterial({color:0x4f6d3f,roughness:0.95});
+const pathMat=new THREE.MeshStandardMaterial({color:0xd9c9a3,roughness:0.9});
+const trunkMat=new THREE.MeshStandardMaterial({color:0x5b4128,roughness:0.9});
+const leafMat=new THREE.MeshStandardMaterial({color:0x4a6b3a,roughness:0.9});
+const leafMat2=new THREE.MeshStandardMaterial({color:0x5d7f42,roughness:0.9});
+const goldMat=new THREE.MeshStandardMaterial({color:0xe0b65a,metalness:0.8,roughness:0.22,emissive:0x332200});
+
+function sh(m){m.castShadow=true;m.receiveShadow=true;return m;}
+const boxGeo=new THREE.BoxGeometry(1,1,1);
+function beam(ax,ay,az,bx,by,bz,t,mat){
+  const a=new THREE.Vector3(ax,ay,az), b=new THREE.Vector3(bx,by,bz);
+  const d=new THREE.Vector3().subVectors(b,a); const len=d.length();
+  const m=new THREE.Mesh(boxGeo,mat||brass); m.castShadow=true; m.receiveShadow=true;
+  m.position.copy(a).addScaledVector(d,0.5); m.scale.set(t,len,t);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());
+  scene.add(m); return m;
+}
+function box(w,h,d,x,y,z,mat,ry){ const m=sh(new THREE.Mesh(boxGeo,mat)); m.scale.set(w,h,d); m.position.set(x,y,z); if(ry)m.rotation.y=ry; scene.add(m); return m; }
+function cyl(rt,rb,h,seg,x,y,z,mat){ const m=sh(new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),mat)); m.position.set(x,y,z); scene.add(m); return m; }
+
+// studio ground
+const ground=sh(new THREE.Mesh(new THREE.CircleGeometry(60,64),new THREE.MeshStandardMaterial({color:0xe2d7c2,roughness:1})));
+ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+
+// circular landscaped base
+cyl(8.3,8.7,0.55,72,0,0.27,0,stoneDark);
+cyl(8.1,8.3,0.22,72,0,0.62,0,stone);
+cyl(7.55,7.55,0.32,72,0,0.84,0,grass);
+// brass rim
+const rimRing=sh(new THREE.Mesh(new THREE.TorusGeometry(8.15,0.08,10,90),brassBright)); rimRing.rotation.x=Math.PI/2; rimRing.position.y=0.68; scene.add(rimRing);
+// paths
+const ringPath=sh(new THREE.Mesh(new THREE.RingGeometry(5.15,6.05,72),pathMat)); ringPath.rotation.x=-Math.PI/2; ringPath.position.y=1.01; scene.add(ringPath);
+for(let i=0;i<4;i++){ const a=Math.PI/4+i*Math.PI/2; const p=box(0.72,0.05,6.4,Math.sin(a)*3.6,1.02,Math.cos(a)*3.6,pathMat); p.rotation.y=a; }
+// center plaza
+const plaza=sh(new THREE.Mesh(new THREE.CircleGeometry(1.55,48),pathMat)); plaza.rotation.x=-Math.PI/2; plaza.position.y=1.015; scene.add(plaza);
+
+// tower geometry
+const baseY=1.0, H=17.0;
+function halfW(y){ return 0.22 + 3.68*Math.pow(Math.max(0,1-y/H),1.48); }
+function legPoint(sx,sz,y){ const w=halfW(y); return [sx*w, baseY+y, sz*w]; }
+const corners=[[1,1],[1,-1],[-1,-1],[-1,1]];
+// legs segmented following curve
+const segY=[0,0.7,1.4,2.1,2.8,3.5,4.2,4.8,5.7,6.6,7.5,8.4,9.3,9.6,10.6,11.6,12.6,13.6,14.6,15.6,16.4];
+for(const [sx,sz] of corners){
+  for(let i=0;i<segY.length-1;i++){
+    const y0=segY[i], y1=segY[i+1]; const a=legPoint(sx,sz,y0), b=legPoint(sx,sz,y1);
+    const t=0.30*(1-y0/H)+0.09; beam(a[0],a[1],a[2],b[0],b[1],b[2],t,brass);
+  }
+  // foot pad
+  const f=legPoint(sx,sz,0); box(0.62,0.22,0.62,f[0],baseY+0.08,f[2],ironDark,Math.PI/4);
+}
+// levels, rings and diagonals
+const levels=[0,1.2,2.4,3.6,4.8,6.0,7.2,8.4,9.6,11.2,12.8,14.4,15.8];
+for(let li=0;li<levels.length;li++){
+  const y=levels[li]; const pts=corners.map(([sx,sz])=>legPoint(sx,sz,y));
+  for(let i=0;i<4;i++){ const a=pts[i], b=pts[(i+1)%4]; beam(a[0],a[1],a[2],b[0],b[1],b[2],0.11,iron); }
+  if(li<levels.length-1){
+    const y2=levels[li+1]; const pts2=corners.map(([sx,sz])=>legPoint(sx,sz,y2));
+    for(let i=0;i<4;i++){
+      const a=pts[i], b=pts2[(i+1)%4]; const c=pts[(i+1)%4], d=pts2[i];
+      // alternate diagonals, X in lower two bands
+      if(li<2){ beam(a[0],a[1],a[2],b[0],b[1],b[2],0.07,iron); beam(c[0],c[1],c[2],d[0],d[1],d[2],0.07,iron); }
+      else if((li+i)%2===0){ beam(a[0],a[1],a[2],b[0],b[1],b[2],0.065,iron); }
+      else { beam(c[0],c[1],c[2],d[0],d[1],d[2],0.065,iron); }
+    }
+  }
+}
+// wide arches at base (four faces)
+for(let face=0;face<4;face++){
+  const c1=corners[face], c2=corners[(face+1)%4];
+  const a=legPoint(c1[0],c1[1],0), b=legPoint(c2[0],c2[1],0);
+  const N=14; let prev=null;
+  for(let i=0;i<=N;i++){
+    const t=i/N; const x=a[0]+(b[0]-a[0])*t, z=a[2]+(b[2]-a[2])*t;
+    const y=baseY+0.15+Math.sin(Math.PI*t)*2.05;
+    if(prev) beam(prev[0],prev[1],prev[2],x,y,z,0.16,brassBright);
+    prev=[x,y,z];
+  }
+  // arch inner thin brace
+  let prev2=null;
+  for(let i=0;i<=N;i++){
+    const t=i/N; const x=a[0]+(b[0]-a[0])*t, z=a[2]+(b[2]-a[2])*t;
+    const y=baseY+0.55+Math.sin(Math.PI*t)*1.55;
+    if(prev2) beam(prev2[0],prev2[1],prev2[2],x,y,z,0.06,iron);
+    prev2=[x,y,z];
+  }
+}
+// platforms
+function platform(y,size){
+  const cy=baseY+y;
+  box(size+0.45,0.18,size+0.45,0,cy-0.08,0,ironDark);
+  box(size,0.28,size,0,cy+0.10,0,brass);
+  box(size+0.12,0.10,size+0.12,0,cy+0.27,0,brassBright);
+  // railing top and mid
+  const h=size/2, ry=cy+0.82;
+  const rail=(x1,z1,x2,z2)=>{ beam(x1,ry,z1,x2,ry,z2,0.06,brassBright); beam(x1,cy+0.52,z1,x2,cy+0.52,z2,0.045,iron); };
+  rail(-h,-h,h,-h); rail(h,-h,h,h); rail(h,h,-h,h); rail(-h,h,-h,-h);
+  for(let i=-1;i<=1;i++){ for(const s of [-h,h]){ box(0.06,0.55,0.06,i*h,s,cy+0.55,s===h?0:0,iron); box(0.06,0.55,0.06,s,cy+0.55,i*h,iron);} }
+  // diagonal supports under
+  for(const [sx,sz] of corners){ const a=legPoint(sx,sz,y-1.1); beam(a[0],a[1],a[2],sx*h*0.85,cy-0.15,sz*h*0.85,0.09,iron); }
+}
+platform(4.8,5.9);
+platform(9.6,3.1);
+// spire cap above second platform - legs already continue, add cross rings near top
+for(const y of [13.2,14.8,16.0]){
+  const pts=corners.map(([sx,sz])=>legPoint(sx,sz,y));
+  for(let i=0;i<4;i++){ const a=pts[i], b=pts[(i+1)%4]; beam(a[0],a[1],a[2],b[0],b[1],b[2],0.07,brass); }
+}
+cyl(0.14,0.30,0.55,16,0,baseY+16.55,0,brassBright);
+cyl(0.05,0.10,1.25,12,0,baseY+17.35,0,brassBright);
+const tip=sh(new THREE.Mesh(new THREE.SphereGeometry(0.22,20,14),goldMat)); tip.position.set(0,baseY+18.05,0); scene.add(tip);
+const tipCone=sh(new THREE.Mesh(new THREE.ConeGeometry(0.14,0.55,16),goldMat)); tipCone.position.set(0,baseY+18.35,0); scene.add(tipCone);
+
+// trees deterministic
+const treePos=[[6.55,0.4,1.05],[5.9,2.6,0.9],[-1.2,6.7,1.0],[-4.2,5.4,0.85],[-6.6,0.8,1.1],[-6.2,-2.8,0.9],[0.6,-6.75,1.0],[4.8,-5.0,0.85],[6.7,-1.8,0.9],[-3.6,-5.9,0.8],[2.2,4.9,0.75],[-5.2,3.8,0.75]];
+for(let i=0;i<treePos.length;i++){
+  const [x,z,s]=treePos[i]; const mat=i%2?leafMat:leafMat2;
+  cyl(0.07*s,0.10*s,0.45*s,8,x,1.22*s,z,trunkMat);
+  const c1=sh(new THREE.Mesh(new THREE.ConeGeometry(0.48*s,1.05*s,10),mat)); c1.position.set(x,1.55*s,z); scene.add(c1);
+  const c2=sh(new THREE.Mesh(new THREE.ConeGeometry(0.34*s,0.75*s,10),mat)); c2.position.set(x,1.95*s,z); scene.add(c2);
+}
+// bushes
+const bushPos=[[3.2,3.4],[-3.4,3.2],[3.5,-3.1],[-3.1,-3.6],[0,4.6],[4.6,0],[-4.7,-0.4],[0.4,-4.8]];
+for(const [x,z] of bushPos){ const b=sh(new THREE.Mesh(new THREE.SphereGeometry(0.42,12,9),leafMat2)); b.scale.y=0.65; b.position.set(x,1.15,z); scene.add(b); }
+// lamps
+for(let i=0;i<6;i++){ const a=i*Math.PI/3+0.35; const x=Math.cos(a)*4.55, z=Math.sin(a)*4.55;
+  cyl(0.035,0.05,0.95,8,x,1.48,z,ironDark);
+  const g=sh(new THREE.Mesh(new THREE.SphereGeometry(0.16,14,10),new THREE.MeshStandardMaterial({color:0xffe9a8,emissive:0x664d12,roughness:0.3}))); g.position.set(x,2.02,z); scene.add(g);
+  cyl(0.02,0.20,0.12,10,x,2.18,z,brassBright);
+}
+// benches
+for(let i=0;i<4;i++){ const a=i*Math.PI/2+0.15; const x=Math.cos(a)*5.6, z=Math.sin(a)*5.6; box(0.85,0.09,0.28,x,1.28,z,ironDark,-a); box(0.85,0.09,0.07,x,1.55,z,ironDark,-a); }
+
+function render(){ renderer.render(scene,camera); }
+render(); window.sceneReady=true;
+
+// orbit controls
+let dragging=false,lastX=0,lastY=0;
+const el=renderer.domElement;
+el.style.touchAction='none';
+el.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;el.setPointerCapture(e.pointerId);});
+el.addEventListener('pointermove',e=>{ if(!dragging)return; theta-=(e.clientX-lastX)*0.005; phi-=(e.clientY-lastY)*0.005; phi=Math.max(0.25,Math.min(1.45,phi)); lastX=e.clientX; lastY=e.clientY; updateCamera(); render(); });
+el.addEventListener('pointerup',()=>dragging=false);
+el.addEventListener('pointercancel',()=>dragging=false);
+el.addEventListener('wheel',e=>{ e.preventDefault(); radius=Math.max(14,Math.min(48,radius+e.deltaY*0.02)); updateCamera(); render(); },{passive:false});
+
+window.addEventListener('resize',()=>{ const w=window.innerWidth||1200,h=window.innerHeight||800; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h); render(); });
+</script>
+</body>
+</html>

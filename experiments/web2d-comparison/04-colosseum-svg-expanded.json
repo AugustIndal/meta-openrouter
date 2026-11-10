@@ -1,0 +1,43 @@
+{
+  "slug": "04-colosseum",
+  "name": "Colosseum",
+  "approach": "Architectural cutaway",
+  "format": "svg",
+  "prompt": "Build a recognizable Colosseum as a detailed architectural cutaway: elliptical amphitheater, three stacked rings of repeated open arches, a partially broken upper wall and visible stepped seating surrounding the exposed arena. Warm travertine stone, sparse Roman ground context, elevated three-quarter view. Make openings genuine empty spaces between columns and arch segments.\n\nReturn only one complete standalone SVG document without Markdown fences. Use xmlns=\"http://www.w3.org/2000/svg\", width=\"1200\", height=\"800\", viewBox=\"0 0 1200 800\". Build the entire artwork with native SVG paths, shapes, gradients, masks and filters. No scripts or embedded HTML. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+  "scene_brief": "Build a recognizable Colosseum as a detailed architectural cutaway: elliptical amphitheater, three stacked rings of repeated open arches, a partially broken upper wall and visible stepped seating surrounding the exposed arena. Warm travertine stone, sparse Roman ground context, elevated three-quarter view. Make openings genuine empty spaces between columns and arch segments.",
+  "requested_model": "meta/muse-ember",
+  "requested_effort": "xhigh",
+  "max_tokens": 128000,
+  "variant": "expanded-cap",
+  "original_stem": "04-colosseum-svg",
+  "model": "meta/muse-ember",
+  "provider": "Meta",
+  "usage": {
+    "prompt_tokens": 270,
+    "completion_tokens": 30819,
+    "total_tokens": 31089,
+    "cost": 0.0154365,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0154365,
+      "upstream_inference_prompt_cost": 2.7e-05,
+      "upstream_inference_completions_cost": 0.0154095
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 24732,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "bytes": 14148,
+  "generation_id": "gen-1794280613-2THZM0DnUhK72tcmlDqW",
+  "file": "04-colosseum-svg-expanded.svg",
+  "elapsed_seconds": 59.875
+}

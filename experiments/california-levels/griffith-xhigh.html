@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Observatory</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#dfe9ee;}
+  canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab;}
+  canvas:active{cursor:grabbing;}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.08;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xdde8ec, 85, 190);
+
+const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 500);
+
+const skyGeo = new THREE.SphereGeometry(230, 32, 16);
+const skyMat = new THREE.ShaderMaterial({
+  side: THREE.BackSide,
+  depthWrite: false,
+  uniforms: {
+    topColor: { value: new THREE.Color(0x5f9fd0) },
+    bottomColor: { value: new THREE.Color(0xe9f0ef) }
+  },
+  vertexShader: `varying vec3 vPos; void main(){ vPos = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: `uniform vec3 topColor; uniform vec3 bottomColor; varying vec3 vPos; void main(){ float h = normalize(vPos).y * 0.5 + 0.5; gl_FragColor = vec4(mix(bottomColor, topColor, pow(max(h, 0.0), 0.75)), 1.0); }`
+});
+scene.add(new THREE.Mesh(skyGeo, skyMat));
+
+const hemi = new THREE.HemisphereLight(0xcfe8ff, 0x8a7a5a, 0.85);
+scene.add(hemi);
+
+const sun = new THREE.DirectionalLight(0xfff0d0, 2.1);
+sun.position.set(24, 34, 20);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -34;
+sun.shadow.camera.right = 34;
+sun.shadow.camera.top = 34;
+sun.shadow.camera.bottom = -34;
+sun.shadow.camera.near = 1;
+sun.shadow.camera.far = 100;
+sun.shadow.bias = -0.0005;
+sun.target.position.set(0, 6, 0);
+scene.add(sun);
+scene.add(sun.target);
+
+const fill = new THREE.DirectionalLight(0xd8ecff, 0.45);
+fill.position.set(-20, 14, -18);
+scene.add(fill);
+
+function hillHeight(r){
+  if (r <= 20) return 6;
+  if (r >= 38) return 0;
+  const t = (r - 20) / 18;
+  return 6 * (0.5 + 0.5 * Math.cos(Math.PI * t));
+}
+
+function seededRandom(seed){
+  let s = seed >>> 0;
+  return function(){
+    s = (s * 1664525 + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+}
+
+const hillGeo = new THREE.PlaneGeometry(170, 170, 96, 96);
+hillGeo.rotateX(-Math.PI / 2);
+{
+  const pos = hillGeo.attributes.position;
+  const colors = new Float32Array(pos.count * 3);
+  const cTop = new THREE.Color(0x7d8a4a);
+  const cSlope = new THREE.Color(0x8f8152);
+  const cLow = new THREE.Color(0xa49d7d);
+  const tmp = new THREE.Color();
+  for (let i = 0; i < pos.count; i++){
+    const x = pos.getX(i);
+    const z = pos.getZ(i);
+    const r = Math.hypot(x, z);
+    const h = hillHeight(r);
+    pos.setY(i, h);
+    if (r <= 20) tmp.copy(cTop);
+    else if (r < 38) tmp.copy(cTop).lerp(cSlope, (r - 20) / 18);
+    else tmp.copy(cLow);
+    const v = 0.035 * Math.sin(x * 0.75 + z * 0.55) + 0.02 * Math.cos(x * 0.31 - z * 0.48);
+    colors[i * 3] = tmp.r + v;
+    colors[i * 3 + 1] = tmp.g + v;
+    colors[i * 3 + 2] = tmp.b + v;
+  }
+  hillGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  hillGeo.computeVertexNormals();
+}
+const hill = new THREE.Mesh(hillGeo, new THREE.MeshStandardMaterial({vertexColors:true, roughness:0.95, metalness:0.0}));
+hill.receiveShadow = true;
+scene.add(hill);
+
+const unitBox = new THREE.BoxGeometry(1, 1, 1);
+const matCream = new THREE.MeshStandardMaterial({color:0xf1e3bf, roughness:0.82});
+const matCreamDark = new THREE.MeshStandardMaterial({color:0xd9c69b, roughness:0.85});
+const matWhite = new THREE.MeshStandardMaterial({color:0xf8f1dc, roughness:0.78});
+const matStone = new THREE.MeshStandardMaterial({color:0xcabfa3, roughness:0.9});
+const matStoneDark = new THREE.MeshStandardMaterial({color:0xb3a586, roughness:0.92});
+const matCopper = new THREE.MeshStandardMaterial({color:0x54362b, roughness:0.48, metalness:0.48});
+const matCopperDark = new THREE.MeshStandardMaterial({color:0x453027, roughness:0.55, metalness:0.42});
+const matGlass = new THREE.MeshStandardMaterial({color:0x273843, roughness:0.28, metalness:0.35});
+const matWood = new THREE.MeshStandardMaterial({color:0x5d3f2a, roughness:0.8});
+const matGold = new THREE.MeshStandardMaterial({color:0xc8a44a, roughness:0.32, metalness:0.8});
+const matLawn = new THREE.MeshStandardMaterial({color:0x6d8140, roughness:0.95});
+const matPath = new THREE.MeshStandardMaterial({color:0xd6cbb0, roughness:0.9});
+const matTrunk = new THREE.MeshStandardMaterial({color:0x6b4f33, roughness:0.95});
+const matLeaf1 = new THREE.MeshStandardMaterial({color:0x5f7038, roughness:0.9, flatShading:true});
+const matLeaf2 = new THREE.MeshStandardMaterial({color:0x718342, roughness:0.9, flatShading:true});
+const matLeaf3 = new THREE.MeshStandardMaterial({color:0x7d8a4a, roughness:0.9, flatShading:true});
+
+function makeBox(w, h, d, mat, x, y, z, ry = 0){
+  const m = new THREE.Mesh(unitBox, mat);
+  m.scale.set(w, h, d);
+  m.position.set(x, y, z);
+  m.rotation.y = ry;
+  m.castShadow = true;
+  m.receiveShadow = true;
+  scene.add(m);
+  return m;
+}
+
+const baseY = 6.3;
+const terraceTop = 6.6;
+
+/* Observatory plinth and terrace */
+makeBox(24, 0.3, 8.6, matStoneDark, 0, 6.15, 0.4);
+makeBox(22, 0.6, 6.0, matStone, 0, 6.3, 6.5);
+makeBox(2.4, 0.05, 5.6, matPath, 0, 6.63, 6.2);
+
+/* Central block */
+makeBox(10, 4.8, 7, matCream, 0, baseY + 2.4, 0);
+makeBox(10.8, 0.35, 7.8, matCreamDark, 0, baseY + 4.97, 0);
+makeBox(10.2, 0.28, 7.2, matWhite, 0, baseY + 0.18, 0);
+
+/* Wings */
+makeBox(6.5, 3.0, 6, matCream, -8.2, baseY + 1.5, 0.2);
+makeBox(6.5, 3.0, 6, matCream,  8.2, baseY + 1.5, 0.2);
+makeBox(7.1, 0.3, 6.6, matCreamDark, -8.2, baseY + 3.15, 0.2);
+makeBox(7.1, 0.3, 6.6, matCreamDark,  8.2, baseY + 3.15, 0.2);
+
+/* Pilasters */
+[-4.2, -1.7, 1.7, 4.2].forEach(x => makeBox(0.42, 4.8, 0.18, matCreamDark, x, baseY + 2.4, 3.56));
+[-10.9, -5.5, 5.5, 10.9].forEach(x => makeBox(0.38, 3.0, 0.16, matCreamDark, x, baseY + 1.5, 3.26));
+
+/* Door */
+makeBox(1.5, 2.15, 0.16, matCreamDark, 0, terraceTop + 1.07, 3.56);
+makeBox(1.12, 1.9, 0.18, matWood, 0, terraceTop + 0.95, 3.58);
+makeBox(2.0, 0.3, 0.45, matStone, 0, terraceTop + 2.32, 3.6);
+makeBox(0.35, 0.18, 0.35, matStoneDark, -0.55, terraceTop + 2.05, 3.62);
+makeBox(0.35, 0.18, 0.35, matStoneDark,  0.55, terraceTop + 2.05, 3.62);
+
+/* Windows */
+function addWindow(x, y, z, front = true){
+  const s = front ? 1 : -1;
+  makeBox(0.98, 1.38, 0.08, matWhite, x, y, z + s * 0.02);
+  makeBox(0.78, 1.18, 0.1, matGlass, x, y, z + s * 0.04);
+}
+[-2.8, 0, 2.8].forEach(x => addWindow(x, 9.85, 3.54, true));
+[-2.8, 2.8].forEach(x => addWindow(x, 8.05, 3.54, true));
+[-6.6, -9.8, 6.6, 9.8].forEach(x => addWindow(x, 8.05, 3.24, true));
+[-2.8, 0, 2.8].forEach(x => addWindow(x, 9.85, -3.54, false));
+[-2.8, 2.8].forEach(x => addWindow(x, 8.05, -3.54, false));
+[-6.6, -9.8, 6.6, 9.8].forEach(x => addWindow(x, 8.05, -2.84, false));
+[-5.06].forEach(x => { makeBox(0.1, 1.2, 0.8, matGlass, x, 8.8, 0); makeBox(0.1, 1.2, 0.8, matGlass, -x, 8.8, 0); });
+[-11.46].forEach(x => { makeBox(0.1, 1.0, 0.8, matGlass, x, 7.9, 0.2); makeBox(0.1, 1.0, 0.8, matGlass, -x, 7.9, 0.2); });
+
+/* Domes */
+function addDome(cx, drumR, drumH, drumY, domeR, baseYd){
+  const drum = new THREE.Mesh(new THREE.CylinderGeometry(drumR, drumR, drumH, 28), matCream);
+  drum.position.set(cx, drumY, 0);
+  drum.castShadow = true;
+  drum.receiveShadow = true;
+  scene.add(drum);
+
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(domeR * 0.98, 0.12, 8, 36), matCopperDark);
+  rim.rotation.x = Math.PI / 2;
+  rim.position.set(cx, baseYd + 0.05, 0);
+  rim.castShadow = true;
+  scene.add(rim);
+
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(domeR, 30, 15, 0, Math.PI * 2, 0, Math.PI / 2), matCopper);
+  dome.scale.y = 1.12;
+  dome.position.set(cx, baseYd, 0);
+  dome.castShadow = true;
+  dome.receiveShadow = true;
+  scene.add(dome);
+
+  for (let i = 0; i < 8; i++){
+    const a = (i / 8) * Math.PI * 2 + Math.PI / 8;
+    const rx = cx + Math.cos(a) * (drumR + 0.02);
+    const rz = Math.sin(a) * (drumR + 0.02);
+    const ry = Math.atan2(Math.cos(a), Math.sin(a));
+    makeBox(0.48, 0.52, 0.12, matGlass, rx, drumY, rz, ry);
+  }
+
+  const slit = makeBox(0.5, domeR * 0.55, 0.16, matCopperDark, cx, baseYd + domeR * 0.5, domeR * 0.88);
+  slit.rotation.x = -0.18;
+  return dome;
+}
+
+addDome(0, 3.0, 0.95, 11.9, 3.3, 12.32);
+addDome(-8.2, 1.6, 0.7, 9.95, 2.0, 10.28);
+addDome( 8.2, 1.6, 0.7, 9.95, 2.0, 10.28);
+
+/* Finials */
+function addFinial(x, y){
+  const c = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.85, 8), matGold);
+  c.position.set(x, y + 0.4, 0);
+  c.castShadow = true;
+  scene.add(c);
+  const s = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 8), matGold);
+  s.position.set(x, y + 0.95, 0);
+  s.castShadow = true;
+  scene.add(s);
+}
+addFinial(0, 16.0);
+addFinial(-8.2, 12.45);
+addFinial( 8.2, 12.45);
+
+/* Balustrades */
+function addBalustrade(x1, z1, x2, z2){
+  const dx = x2 - x1;
+  const dz = z2 - z1;
+  const len = Math.hypot(dx, dz);
+  const count = Math.max(2, Math.floor(len / 1.05));
+  for (let i = 0; i <= count; i++){
+    const t = i / count;
+    makeBox(0.16, 0.62, 0.16, matStone, x1 + dx * t, terraceTop + 0.31, z1 + dz * t);
+  }
+  const cx = (x1 + x2) / 2;
+  const cz = (z1 + z2) / 2;
+  const ry = -Math.atan2(dz, dx);
+  makeBox(len, 0.14, 0.3, matStoneDark, cx, terraceTop + 0.7, cz, ry);
+}
+addBalustrade(-10.8, 9.35, -3.7, 9.35);
+addBalustrade( 3.7, 9.35, 10.8, 9.35);
+addBalustrade(-10.8, 9.35, -10.8, 3.7);
+addBalustrade( 10.8, 9.35, 10.8, 3.7);
+[[-10.8, 9.35], [10.8, 9.35], [-10.8, 3.7], [10.8, 3.7]].forEach(p => {
+  makeBox(0.52, 0.95, 0.52, matStone, p[0], terraceTop + 0.47, p[1]);
+  makeBox(0.68, 0.16, 0.68, matStoneDark, p[0], terraceTop + 1.0, p[1]);
+});
+
+/* Wide central steps */
+for (let i = 0; i < 3; i++){
+  const top = terraceTop - 0.18 * (i + 1);
+  const h = top - 6.06;
+  makeBox(6.8, h, 0.72, matStone, 0, 6.06 + h / 2, 9.86 + i * 0.72);
+}
+
+/* Planters and benches on terrace */
+[-8.8, 8.8].forEach(x => {
+  makeBox(1.5, 0.5, 0.65, matStoneDark, x, terraceTop + 0.25, 4.6);
+  const bush = new THREE.Mesh(new THREE.SphereGeometry(0.55, 10, 8), matLeaf2);
+  bush.scale.y = 0.75;
+  bush.position.set(x, terraceTop + 0.75, 4.6);
+  bush.castShadow = true;
+  scene.add(bush);
+});
+[-6.2, 6.2].forEach(x => makeBox(1.6, 0.4, 0.55, matWood, x, terraceTop + 0.2, 5.8));
+
+/* Front lawn, path and low walls */
+makeBox(16, 0.12, 8, matLawn, 0, 6.06, 15.5);
+makeBox(2.4, 0.06, 7.8, matPath, 0, 6.15, 15.4);
+
+function addLowWall(x1, z1, x2, z2){
+  const dx = x2 - x1;
+  const dz = z2 - z1;
+  const len = Math.hypot(dx, dz);
+  const ry = -Math.atan2(dz, dx);
+  makeBox(len, 0.65, 0.35, matCream, (x1 + x2) / 2, 6.12 + 0.32, (z1 + z2) / 2, ry);
+  makeBox(len, 0.12, 0.48, matStoneDark, (x1 + x2) / 2, 6.12 + 0.7, (z1 + z2) / 2, ry);
+}
+addLowWall(-8, 11.5, -8, 19.5);
+addLowWall( 8, 11.5,  8, 19.5);
+addLowWall(-8, 19.5, -1.4, 19.5);
+addLowWall( 1.4, 19.5,  8, 19.5);
+[[-8, 11.5], [-8, 19.5], [8, 11.5], [8, 19.5], [-1.4, 19.5], [1.4, 19.5]].forEach(p => {
+  makeBox(0.55, 0.9, 0.55, matStone, p[0], 6.12 + 0.45, p[1]);
+  makeBox(0.7, 0.16, 0.7, matStoneDark, p[0], 6.12 + 0.98, p[1]);
+});
+
+/* Obelisk monument */
+{
+  const ox = 0, oz = 18.3, oy = 6.18;
+  makeBox(2.6, 0.22, 2.6, matStoneDark, ox, oy + 0.11, oz);
+  makeBox(1.9, 0.28, 1.9, matStone, ox, oy + 0.36, oz);
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.5, 2.9, 4), matWhite);
+  shaft.rotation.y = Math.PI / 4;
+  shaft.position.set(ox, oy + 0.5 + 1.45, oz);
+  shaft.castShadow = true;
+  shaft.receiveShadow = true;
+  scene.add(shaft);
+  const cap = new THREE.Mesh(new THREE.ConeGeometry(0.45, 0.65, 4), matGold);
+  cap.rotation.y = Math.PI / 4;
+  cap.position.set(ox, oy + 0.5 + 2.9 + 0.32, oz);
+  cap.castShadow = true;
+  scene.add(cap);
+}
+
+/* Trees on the hill slopes */
+{
+  const rng = seededRandom(12345);
+  const trunkGeo = new THREE.CylinderGeometry(0.12, 0.18, 0.9, 7);
+  const coneGeo = new THREE.ConeGeometry(1.15, 2.4, 9);
+  const ballGeo = new THREE.IcosahedronGeometry(1.05, 1);
+  const leafMats = [matLeaf1, matLeaf2, matLeaf3];
+  for (let i = 0; i < 30; i++){
+    const a = rng() * Math.PI * 2;
+    const r = 22.5 + rng() * 11;
+    const x = Math.cos(a) * r;
+    const z = Math.sin(a) * r;
+    const y = hillHeight(r);
+    const s = 0.85 + rng() * 0.65;
+    const trunk = new THREE.Mesh(trunkGeo, matTrunk);
+    trunk.scale.setScalar(s);
+    trunk.position.set(x, y + 0.45 * s, z);
+    trunk.castShadow = true;
+    scene.add(trunk);
+    const foliage = new THREE.Mesh(i % 3 === 0 ? ballGeo : coneGeo, leafMats[i % 3]);
+    foliage.scale.setScalar(s * (0.9 + rng() * 0.35));
+    foliage.position.set(x, y + (i % 3 === 0 ? 1.75 : 2.0) * s, z);
+    foliage.castShadow = true;
+    foliage.receiveShadow = true;
+    scene.add(foliage);
+  }
+}
+
+/* City below the hill */
+{
+  const rng = seededRandom(987654);
+  const palette = [0xd8cdb8, 0xc9b8a0, 0xb8c0b8, 0xe0d6c0, 0xaab4b0, 0xcfc4ae].map(c => new THREE.MeshStandardMaterial({color:c, roughness:0.9}));
+  for (let i = 0; i < 150; i++){
+    const a = rng() * Math.PI * 2;
+    const r = 43 + rng() * 36;
+    const x = Math.cos(a) * r;
+    const z = Math.sin(a) * r;
+    const w = 2 + rng() * 2.4;
+    const d = 2 + rng() * 2.4;
+    const h = 1.4 + rng() * 3.8;
+    const b = new THREE.Mesh(unitBox, palette[i % palette.length]);
+    b.scale.set(w, h, d);
+    b.position.set(x, h / 2, z);
+    b.rotation.y = rng() * Math.PI;
+    b.castShadow = true;
+    b.receiveShadow = true;
+    scene.add(b);
+    if (i % 19 === 0){
+      const roof = new THREE.Mesh(new THREE.ConeGeometry(Math.max(w, d) * 0.55, 1.4, 4), matCopperDark);
+      roof.rotation.y = b.rotation.y + Math.PI / 4;
+      roof.position.set(x, h + 0.7, z);
+      roof.castShadow = true;
+      scene.add(roof);
+    }
+  }
+  const mountainMat = new THREE.MeshStandardMaterial({color:0x8a927c, roughness:0.95, flatShading:true});
+  [[-62, -52, 11, 8], [56, -60, 13, 9], [-72, 8, 10, 7], [72, 18, 12, 8]].forEach(m => {
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(m[2], m[3], 7), mountainMat);
+    cone.position.set(m[0], m[3] / 2 - 0.3, m[1]);
+    cone.receiveShadow = true;
+    scene.add(cone);
+  });
+}
+
+/* Orbit controls: pointer drag + wheel zoom */
+const target = new THREE.Vector3(0, 9.2, 2.5);
+let azimuth = 0;
+let polar = 1.22;
+let distance = 52;
+
+function updateCamera(){
+  const sp = Math.sin(polar);
+  camera.position.set(
+    target.x + distance * sp * Math.sin(azimuth),
+    target.y + distance * Math.cos(polar),
+    target.z + distance * sp * Math.cos(azimuth)
+  );
+  camera.lookAt(target);
+}
+
+function render(){
+  renderer.render(scene, camera);
+  if (!window.sceneReady) window.sceneReady = true;
+}
+
+let dragging = false;
+let lastX = 0;
+let lastY = 0;
+const el = renderer.domElement;
+
+el.addEventListener('pointerdown', e => {
+  dragging = true;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  el.setPointerCapture(e.pointerId);
+});
+el.addEventListener('pointermove', e => {
+  if (!dragging) return;
+  const dx = e.clientX - lastX;
+  const dy = e.clientY - lastY;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  azimuth -= dx * 0.005;
+  polar -= dy * 0.005;
+  polar = Math.max(0.35, Math.min(1.48, polar));
+  updateCamera();
+  render();
+});
+function endDrag(e){
+  dragging = false;
+  try { el.releasePointerCapture(e.pointerId); } catch(err) {}
+}
+el.addEventListener('pointerup', endDrag);
+el.addEventListener('pointercancel', endDrag);
+el.addEventListener('wheel', e => {
+  e.preventDefault();
+  distance *= (1 + e.deltaY * 0.001);
+  distance = Math.max(26, Math.min(82, distance));
+  updateCamera();
+  render();
+}, {passive:false});
+
+function handleResize(){
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  camera.aspect = w / h;
+  camera.fov = camera.aspect < 0.9 ? 58 : (camera.aspect < 1.3 ? 47 : 40);
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+  updateCamera();
+  render();
+}
+window.addEventListener('resize', handleResize);
+
+handleResize();
+</script>
+</body>
+</html>

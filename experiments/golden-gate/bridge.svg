@@ -1,0 +1,229 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#8EB9DC"/>
+<stop offset="0.32" stop-color="#C9D9E8"/>
+<stop offset="0.55" stop-color="#F6D9A6"/>
+<stop offset="0.78" stop-color="#FFB57E"/>
+<stop offset="1" stop-color="#FF9A6B"/>
+</linearGradient>
+<linearGradient id="ocean" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#4AA99E"/>
+<stop offset="0.25" stop-color="#2E8A96"/>
+<stop offset="0.6" stop-color="#1D6490"/>
+<stop offset="1" stop-color="#123E66"/>
+</linearGradient>
+<linearGradient id="orangeTower" x1="0" y1="0" x2="1" y2="0">
+<stop offset="0" stop-color="#F06A3B"/>
+<stop offset="0.5" stop-color="#D94A2A"/>
+<stop offset="1" stop-color="#A9321E"/>
+</linearGradient>
+<linearGradient id="orangeTower2" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#EA6740"/>
+<stop offset="1" stop-color="#9E2F1D"/>
+</linearGradient>
+<linearGradient id="farHill" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#9B8FB0"/>
+<stop offset="1" stop-color="#6E7396"/>
+</linearGradient>
+<linearGradient id="midHill" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#7A8A8E"/>
+<stop offset="1" stop-color="#4E6068"/>
+</linearGradient>
+<linearGradient id="fgHill" x1="0" y1="0" x2="0.7" y2="1">
+<stop offset="0" stop-color="#7A6A3E"/>
+<stop offset="0.45" stop-color="#55603A"/>
+<stop offset="1" stop-color="#2E3524"/>
+</linearGradient>
+<radialGradient id="sunGlow" cx="0.5" cy="0.5" r="0.5">
+<stop offset="0" stop-color="#FFF3B8" stop-opacity="0.95"/>
+<stop offset="0.25" stop-color="#FFD98A" stop-opacity="0.75"/>
+<stop offset="0.6" stop-color="#FF9E6B" stop-opacity="0.28"/>
+<stop offset="1" stop-color="#FF9E6B" stop-opacity="0"/>
+</radialGradient>
+<radialGradient id="sunCore" cx="0.5" cy="0.5" r="0.5">
+<stop offset="0" stop-color="#FFF8D0"/>
+<stop offset="0.7" stop-color="#FFE29A"/>
+<stop offset="1" stop-color="#FFC36B"/>
+</radialGradient>
+<filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="9"/></filter>
+<filter id="soft2" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="18"/></filter>
+<filter id="softSmall" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+</defs>
+
+<!-- SKY -->
+<rect width="1200" height="800" fill="url(#sky)"/>
+<circle cx="455" cy="395" r="265" fill="url(#sunGlow)"/>
+<circle cx="455" cy="395" r="52" fill="url(#sunCore)" opacity="0.95"/>
+
+<!-- Clouds -->
+<g opacity="0.85" filter="url(#soft)">
+<ellipse cx="180" cy="130" rx="190" ry="28" fill="#FFFFFF" opacity="0.55"/>
+<ellipse cx="260" cy="115" rx="140" ry="20" fill="#FFEED0" opacity="0.7"/>
+<ellipse cx="820" cy="95" rx="230" ry="26" fill="#FFFFFF" opacity="0.5"/>
+<ellipse cx="1020" cy="165" rx="190" ry="22" fill="#FFD9B8" opacity="0.55"/>
+<ellipse cx="600" cy="180" rx="180" ry="18" fill="#FFF1D6" opacity="0.55"/>
+<ellipse cx="90" cy="250" rx="150" ry="18" fill="#FFFFFF" opacity="0.35"/>
+</g>
+<g opacity="0.6" filter="url(#softSmall)">
+<path d="M120 210 Q260 190 380 205 Q520 188 650 202" stroke="#FFE8C8" stroke-width="5" fill="none" stroke-linecap="round"/>
+<path d="M760 260 Q900 240 1080 255" stroke="#FFD2A8" stroke-width="4" fill="none" stroke-linecap="round"/>
+<path d="M40 310 Q200 295 350 305" stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.7"/>
+</g>
+
+<!-- Distant San Francisco hills - left and centre -->
+<path d="M0 430 L0 360 L70 335 L140 355 L210 330 L290 350 L360 340 L430 365 L500 385 L580 400 L650 415 L700 430 L0 430 Z" fill="url(#farHill)" opacity="0.9"/>
+<path d="M0 445 L0 395 L90 375 L180 390 L260 370 L350 385 L470 410 L620 430 L800 445 L0 445 Z" fill="url(#midHill)" opacity="0.85"/>
+<!-- Far right hills -->
+<path d="M820 440 L900 390 L980 405 L1060 380 L1150 400 L1200 390 L1200 445 L820 445 Z" fill="#7C8690" opacity="0.75"/>
+<path d="M0 0" fill="none"/>
+
+<!-- OCEAN -->
+<path d="M0 425 C180 415 340 425 520 435 C750 448 980 470 1200 495 L1200 800 L0 800 Z" fill="url(#ocean)"/>
+<!-- Sun reflection on water -->
+<g opacity="0.75">
+<path d="M380 445 L540 452 L560 460 L400 455 Z" fill="#FFD98A" opacity="0.6"/>
+<path d="M350 475 L600 485 L620 495 L370 488 Z" fill="#FFC36B" opacity="0.45"/>
+<path d="M300 520 L650 535 L670 548 L320 535 Z" fill="#FFE29A" opacity="0.3"/>
+</g>
+<g stroke="#FFFFFF" stroke-linecap="round" opacity="0.35">
+<path d="M80 470 H240" stroke-width="3"/><path d="M650 490 H830" stroke-width="3"/>
+<path d="M120 545 H300" stroke-width="2.5"/><path d="M700 560 H920" stroke-width="2.5"/>
+<path d="M60 610 H260" stroke-width="2"/><path d="M620 630 H880" stroke-width="2"/>
+<path d="M180 680 H420" stroke-width="2"/><path d="M150 730 H380" stroke-width="1.8"/>
+<path d="M540 700 H760" stroke-width="1.8"/><path d="M880 610 H1080" stroke-width="2"/>
+</g>
+<g stroke="#A8E6DE" stroke-linecap="round" opacity="0.4">
+<path d="M420 500 H520" stroke-width="2"/><path d="M250 570 H380" stroke-width="2"/>
+<path d="M750 520 H860" stroke-width="2"/><path d="M420 600 H560" stroke-width="2"/>
+</g>
+
+<!-- Low fog over water -->
+<g filter="url(#soft2)" opacity="0.55">
+<ellipse cx="320" cy="435" rx="360" ry="28" fill="#FFFFFF"/>
+<ellipse cx="760" cy="455" rx="420" ry="32" fill="#FFF4E0"/>
+<ellipse cx="520" cy="470" rx="300" ry="20" fill="#FFFFFF" opacity="0.7"/>
+</g>
+
+<!-- Bridge - main cables behind towers -->
+<g fill="none" stroke="#7A2415" stroke-linecap="round">
+<path d="M-20 372 Q160 255 342 260 Q600 362 872 176 Q1055 260 1220 475" stroke-width="7" opacity="0.95"/>
+<path d="M-20 380 Q160 265 342 268 Q600 368 872 184 Q1055 268 1220 482" stroke-width="3.5" opacity="0.7"/>
+</g>
+
+<!-- Hangers -->
+<g stroke="#8A2E1E" stroke-width="2.2" opacity="0.92">
+<path d="M45 342 V424"/><path d="M95 316 V427"/><path d="M145 292 V430"/>
+<path d="M195 276 V433"/><path d="M245 267 V435"/><path d="M295 262 V437"/>
+<path d="M382 271 V440"/><path d="M422 286 V442"/><path d="M462 302 V444"/>
+<path d="M502 317 V446"/><path d="M542 329 V448"/><path d="M582 338 V450"/>
+<path d="M622 341 V452"/><path d="M662 332 V454"/><path d="M702 313 V456"/>
+<path d="M742 287 V458"/><path d="M782 257 V460"/><path d="M822 222 V462"/>
+<path d="M910 202 V470"/><path d="M950 232 V474"/><path d="M1000 272 V483"/>
+<path d="M1050 317 V490"/><path d="M1100 367 V497"/><path d="M1150 422 V504"/>
+</g>
+<g stroke="#5E1E14" stroke-width="1" opacity="0.5">
+<path d="M70 330 V425"/><path d="M120 304 V428"/><path d="M170 284 V431"/><path d="M220 272 V434"/>
+<path d="M270 264 V436"/><path d="M402 278 V441"/><path d="M442 294 V443"/><path d="M482 310 V445"/>
+<path d="M522 323 V447"/><path d="M562 333 V449"/><path d="M602 339 V451"/><path d="M642 337 V453"/>
+<path d="M682 322 V455"/><path d="M722 300 V457"/><path d="M762 272 V459"/><path d="M802 240 V461"/>
+<path d="M930 217 V472"/><path d="M975 252 V478"/><path d="M1025 295 V486"/><path d="M1075 342 V493"/><path d="M1125 392 V500"/>
+</g>
+
+<!-- Deck -->
+<path d="M0 414 L1200 502 L1200 528 L0 440 Z" fill="#9E3422"/>
+<path d="M0 410 L1200 498 L1200 506 L0 420 Z" fill="#3E3430"/>
+<path d="M0 418 L1200 505" stroke="#E86A42" stroke-width="3" fill="none"/>
+<path d="M0 434 L1200 522" stroke="#6E2318" stroke-width="3" fill="none"/>
+<!-- Deck truss verticals -->
+<g stroke="#7A281A" stroke-width="2" opacity="0.8">
+<path d="M60 426 V446"/><path d="M140 432 V452"/><path d="M220 437 V457"/><path d="M300 442 V462"/>
+<path d="M380 447 V467"/><path d="M460 452 V472"/><path d="M540 457 V477"/><path d="M620 462 V482"/>
+<path d="M700 467 V487"/><path d="M780 471 V491"/><path d="M860 476 V496"/><path d="M940 482 V502"/>
+<path d="M1020 488 V508"/><path d="M1100 494 V514"/>
+</g>
+<!-- Road centre line and lights -->
+<path d="M20 416 L1180 503" stroke="#FFD98A" stroke-width="1.8" stroke-dasharray="18 14" opacity="0.8"/>
+<g fill="#FFF2B8">
+<circle cx="180" cy="428" r="2.5"/><circle cx="420" cy="444" r="2.5"/><circle cx="640" cy="458" r="2.5"/>
+<circle cx="880" cy="474" r="2.5"/><circle cx="1080" cy="490" r="2.5"/>
+</g>
+<!-- tiny cars -->
+<g>
+<rect x="255" y="430" width="18" height="5" rx="2" fill="#FFE8A8"/><rect x="590" y="452" width="20" height="5" rx="2" fill="#FFFFFF" opacity="0.9"/>
+<rect x="760" y="464" width="18" height="5" rx="2" fill="#FFB0A0"/><rect x="1020" y="482" width="20" height="5" rx="2" fill="#FFE8A8"/>
+</g>
+
+<!-- SOUTH TOWER (distant) -->
+<g>
+<path d="M321 266 L333 262 L333 450 L321 450 Z" fill="url(#orangeTower)"/>
+<path d="M347 262 L359 266 L359 450 L347 450 Z" fill="url(#orangeTower)"/>
+<rect x="320" y="283" width="40" height="11" fill="url(#orangeTower2)"/>
+<rect x="320" y="338" width="40" height="11" fill="url(#orangeTower2)"/>
+<rect x="320" y="392" width="40" height="11" fill="url(#orangeTower2)"/>
+<path d="M333 294 L347 338 M347 294 L333 338" stroke="#8A2A1A" stroke-width="2.5"/>
+<path d="M333 349 L347 392 M347 349 L333 392" stroke="#8A2A1A" stroke-width="2.5"/>
+<path d="M319 262 L361 262 L361 268 L319 268 Z" fill="#F07A4D"/>
+</g>
+
+<!-- NORTH TOWER (near, Battery Spencer side) -->
+<g>
+<path d="M843 184 L861 178 L861 498 L843 498 Z" fill="url(#orangeTower)"/>
+<path d="M879 178 L897 184 L897 498 L879 498 Z" fill="url(#orangeTower)"/>
+<!-- openings shading -->
+<rect x="861" y="194" width="18" height="18" fill="#7A2415" opacity="0.85"/>
+<rect x="861" y="232" width="18" height="56" fill="#2E4A5A" opacity="0.55"/>
+<rect x="861" y="320" width="18" height="58" fill="#7A2415" opacity="0.9"/>
+<rect x="861" y="410" width="18" height="42" fill="#2E4A5A" opacity="0.5"/>
+<!-- cross beams -->
+<rect x="842" y="202" width="56" height="16" fill="url(#orangeTower2)"/>
+<rect x="842" y="302" width="56" height="16" fill="url(#orangeTower2)"/>
+<rect x="842" y="392" width="56" height="16" fill="url(#orangeTower2)"/>
+<rect x="842" y="462" width="56" height="18" fill="url(#orangeTower2)"/>
+<!-- X bracing -->
+<g stroke="#8A2A1A" stroke-width="3.2">
+<path d="M861 218 L879 302 M879 218 L861 302"/>
+<path d="M861 318 L879 392 M879 318 L861 392"/>
+<path d="M861 408 L879 462 M879 408 L861 462"/>
+</g>
+<path d="M840 176 L900 176 L900 186 L840 186 Z" fill="#F07A4D"/>
+<path d="M843 184 L861 178 L861 498 L843 498 Z" fill="none" stroke="#7A2415" stroke-width="1.2" opacity="0.6"/>
+<path d="M879 178 L897 184 L897 498 L879 498 Z" fill="none" stroke="#7A2415" stroke-width="1.2" opacity="0.6"/>
+</g>
+
+<!-- Anchorage right -->
+<path d="M1120 470 L1200 495 L1200 530 L1135 510 Z" fill="#8A2E1E"/>
+<path d="M860 498 L900 498 L900 530 L860 530 Z" fill="#8A2E1E" opacity="0.9"/>
+
+<!-- Foreground Battery Spencer hill -->
+<path d="M620 800 L760 620 L860 540 L980 515 L1110 520 L1200 545 L1200 800 Z" fill="url(#fgHill)"/>
+<path d="M0 800 L0 760 L120 745 L260 760 L380 800 Z" fill="#3A4030" opacity="0.9"/>
+<path d="M760 620 L860 540 L980 515 L1020 530 L880 580 L800 650 Z" fill="#8A7A4A" opacity="0.45"/>
+<!-- Rocks foreground -->
+<g fill="#6B6255">
+<path d="M820 700 L870 680 L890 710 L850 730 Z"/><path d="M930 740 L990 720 L1010 750 L950 770 Z"/>
+<path d="M720 750 L770 730 L790 760 L740 780 Z"/><path d="M1050 680 L1100 665 L1120 690 L1070 705 Z"/>
+</g>
+<g fill="#4A4036">
+<path d="M850 720 L880 705 L895 725 L865 740 Z"/><path d="M960 760 L995 745 L1010 765 L975 780 Z"/>
+</g>
+<!-- Grass strokes foreground -->
+<g stroke="#8A9A5A" stroke-width="2" stroke-linecap="round" opacity="0.7">
+<path d="M700 720 Q720 690 740 720"/><path d="M780 680 Q800 650 820 680"/><path d="M900 650 Q920 620 940 650"/>
+<path d="M1020 620 Q1040 590 1060 620"/><path d="M1100 660 Q1120 630 1140 660"/><path d="M660 770 Q680 740 700 770"/>
+</g>
+<g stroke="#5A6B3A" stroke-width="1.6" stroke-linecap="round" opacity="0.8">
+<path d="M730 740 Q750 715 770 740"/><path d="M860 700 Q880 675 900 700"/><path d="M980 700 Q1000 675 1020 700"/>
+</g>
+<!-- Path on hill -->
+<path d="M860 545 Q920 600 880 670 Q850 720 870 800" stroke="#C9B78A" stroke-width="10" fill="none" opacity="0.35" stroke-linecap="round"/>
+
+<!-- Birds -->
+<g stroke="#3A3A4A" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.7">
+<path d="M620 150 Q630 142 640 150 Q650 142 660 150"/><path d="M680 175 Q688 168 696 175 Q704 168 712 175"/>
+<path d="M540 200 Q547 194 554 200 Q561 194 568 200"/>
+</g>
+
+<!-- Final warm light overlay -->
+<rect width="1200" height="800" fill="#FF9A5A" opacity="0.06"/>
+</svg>

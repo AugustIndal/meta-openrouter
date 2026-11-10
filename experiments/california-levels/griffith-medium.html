@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hilltop Illustration</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#bcd7e8;}
+  canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab;}
+  canvas:active{cursor:grabbing;}
+</style>
+<script type="importmap">{"imports":{"three":"./three.module.js"}}</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xbcd7e8);
+
+const camera = new THREE.PerspectiveCamera(42, window.innerWidth/window.innerHeight, 0.1, 300);
+
+const hemi = new THREE.HemisphereLight(0xd8ecff, 0x8a7a58, 0.95);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff0d0, 2.0);
+sun.position.set(20, 28, 16);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-28; sun.shadow.camera.right=28;
+sun.shadow.camera.top=28; sun.shadow.camera.bottom=-28;
+sun.shadow.camera.near=1; sun.shadow.camera.far=80;
+sun.shadow.bias=-0.0004;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xbcd8ff, 0.35);
+fill.position.set(-18,12,-14);
+scene.add(fill);
+
+const mat = (c,r=0.85,m=0)=> new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
+const cream = mat(0xefe3c2,0.9);
+const cream2 = mat(0xe6d6ae,0.9);
+const stone = mat(0xd8cbb0,0.95);
+const stoneDark = mat(0xb8a888,0.95);
+const copper = mat(0x2f4f4a,0.42,0.45);
+const copperDark = mat(0x243e3a,0.5,0.4);
+const darkWin = mat(0x2b3a44,0.3,0.2);
+const brass = mat(0xc9a94e,0.35,0.6);
+const grass = mat(0x6f7f3e,1.0);
+const grass2 = mat(0x7d8c46,1.0);
+const hillSide = mat(0x6a6b3d,1.0);
+const trunk = mat(0x5d4630,1.0);
+const leaf = mat(0x4f7036,1.0);
+const leaf2 = mat(0x648544,1.0);
+const white = mat(0xffffff,1.0);
+
+function box(w,h,d,material,x,y,z,shadow=true){
+  const ms=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+  ms.position.set(x,y,z); ms.castShadow=shadow; ms.receiveShadow=true; scene.add(ms); return ms;
+}
+function cyl(rt,rb,h,seg,material,x,y,z,shadow=true){
+  const ms=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),material);
+  ms.position.set(x,y,z); ms.castShadow=shadow; ms.receiveShadow=true; scene.add(ms); return ms;
+}
+function sph(r,material,x,y,z,sx=1,sy=1,sz=1){
+  const ms=new THREE.Mesh(new THREE.SphereGeometry(r,24,16),material);
+  ms.position.set(x,y,z); ms.scale.set(sx,sy,sz); ms.castShadow=true; ms.receiveShadow=true; scene.add(ms); return ms;
+}
+
+// Distant valley ground and city silhouettes
+const valley = new THREE.Mesh(new THREE.PlaneGeometry(260,180), mat(0x8a9a8a,1));
+valley.rotation.x=-Math.PI/2; valley.position.set(0,-8.2,-20); valley.receiveShadow=true; scene.add(valley);
+
+const cityMat1=mat(0x9fb0bd,0.9), cityMat2=mat(0xb8c2c6,0.9), cityMat3=mat(0x8fa3b5,0.9);
+const cityMats=[cityMat1,cityMat2,cityMat3];
+for(let i=0;i<42;i++){
+  const x=-62+i*3.1+((i*37)%10)/6;
+  const z=-48-((i*53)%22)*0.55 - Math.abs(x)*0.08;
+  const h=2+((i*29)%50)/10;
+  const w=1.6+((i*17)%10)/6;
+  box(w,h,w,cityMats[i%3],x,-8.2+h/2,z,false);
+  if(i%3===0) box(w*0.5,0.5,w*0.5,cityMat2,x,-8.2+h+0.25,z,false);
+}
+for(let i=0;i<10;i++){
+  const x=-58+i*12+((i*19)%5);
+  box(3,2+((i*23)%30)/10,3,cityMats[i%3],x,-8.2+1.2,-38-((i*31)%16),false);
+}
+
+// Hill
+const hill=new THREE.Mesh(new THREE.CylinderGeometry(19,36,7.5,56,1), hillSide);
+hill.position.y=-3.75; hill.receiveShadow=true; hill.castShadow=true; scene.add(hill);
+const hillTop=new THREE.Mesh(new THREE.CylinderGeometry(19,19,0.35,56), grass2);
+hillTop.position.y=0.08; hillTop.receiveShadow=true; scene.add(hillTop);
+
+// Main building - central block
+box(11,4.2,6,cream,0,2.1,-2);
+box(11.6,0.45,6.6,cream2,0,4.35,-2);
+box(11.6,0.35,6.6,stone,0,0.35,-2);
+// Wings
+box(6.6,3.2,5,cream,-9.1,1.6,-2);
+box(6.6,3.2,5,cream,9.1,1.6,-2);
+box(7.1,0.4,5.5,cream2,-9.1,3.35,-2);
+box(7.1,0.4,5.5,cream2,9.1,3.35,-2);
+// Connectors
+box(4,2.6,4.6,cream,-5.9,1.3,-2);
+box(4,2.6,4.6,cream,5.9,1.3,-2);
+// Plinth bands
+box(11.2,0.6,6.2,stoneDark,0,0.6,-2);
+box(6.8,0.5,5.2,stoneDark,-9.1,0.5,-2);
+box(6.8,0.5,5.2,stoneDark,9.1,0.5,-2);
+
+// Windows and door - front faces z=1 for central, 0.5 for wings (front = -2+3 / -2+2.5)
+for(let i=-2;i<=2;i++){ if(i===0) continue; box(0.75,1.15,0.12,darkWin,i*2.2,2.4,1.02); box(0.85,0.12,0.14,stoneDark,i*2.2,3.02,1.02); }
+for(const s of [-1,1]){
+  for(let i=-1;i<=1;i++){ box(0.7,1.0,0.12,darkWin, s*9.1 + i*1.9, 1.9, 0.52); }
+  box(0.7,0.9,0.12,darkWin, s*9.1, 0.85, 0.52);
+  // small side window on connector
+  box(0.6,0.9,0.12,darkWin, s*5.9, 1.5, 0.32);
+}
+// Door and columns
+box(1.4,2.4,0.15,mat(0x3a2d20,0.7),0,1.35,1.02);
+box(1.8,0.25,0.3,stone,0,2.65,1.05);
+cyl(0.16,0.18,2.5,10,cream2,-1.1,1.35,1.15);
+cyl(0.16,0.18,2.5,10,cream2,1.1,1.35,1.15);
+sph(0.22,cream2,-1.1,2.75,1.15); sph(0.22,cream2,1.1,2.75,1.15);
+
+// Domes
+function dome(r,x,baseY,drumH){
+  cyl(r*0.94,r*0.98,drumH,32,cream2,x,baseY+drumH/2,-2);
+  const d=new THREE.Mesh(new THREE.SphereGeometry(r,36,20,0,Math.PI*2,0,Math.PI/2),copper);
+  d.position.set(x,baseY+drumH,-2); d.scale.y=0.92; d.castShadow=true; d.receiveShadow=true; scene.add(d);
+  cyl(0.07,0.07,0.9,8,copperDark,x,baseY+drumH+r*0.92+0.3,-2);
+  sph(0.22,brass,x,baseY+drumH+r*0.92+0.78,-2);
+  sph(0.14,brass,x,baseY+drumH+r*0.92+0.5,-2);
+}
+dome(3.05,0,4.55,1.0);
+dome(1.85,-9.1,3.5,0.75);
+dome(1.85,9.1,3.5,0.75);
+
+// Terrace
+box(24,0.7,5,stone,0,0.35,3.9);
+box(24.4,0.18,5.3,cream2,0,0.78,3.9);
+// Steps
+for(let i=0;i<5;i++){
+  box(7,0.16,0.85, i%2? stone:cream2, 0, 0.62-i*0.13, 6.85+i*0.72);
+}
+// Path and lawn in front
+box(3.2,0.08,7,stone,0,0.32,10.2,false);
+box(34,0.12,9,grass,0,0.36,11.5,false);
+box(34.4,0.08,0.4,stoneDark,0,0.36,16.1,false);
+
+// Low geometric walls / hedges on lawn
+box(7,0.55,0.35,stone,-8.5,0.62,9.5);
+box(0.35,0.55,4.5,stone,-11.8,0.62,11.5);
+box(7,0.55,0.35,stone,8.5,0.62,9.5);
+box(0.35,0.55,4.5,stone,11.8,0.62,11.5);
+box(5,0.45,0.3,stoneDark,-8.5,0.58,13.5);
+box(5,0.45,0.3,stoneDark,8.5,0.58,13.5);
+
+// Balustrades via instancing
+const balusterPos=[];
+for(let x=-11.6;x<=11.61;x+=0.65){ if(Math.abs(x)<3.6) continue; balusterPos.push([x,6.15]); }
+for(let z=1.7;z<=6.15;z+=0.65){ balusterPos.push([-11.6,z]); balusterPos.push([11.6,z]); }
+// rails
+box(8.4,0.14,0.32,cream2,-8.2,1.18,6.15);
+box(8.4,0.14,0.32,cream2,8.2,1.18,6.15);
+box(0.32,0.14,4.7,cream2,-11.6,1.18,3.9);
+box(0.32,0.14,4.7,cream2,11.6,1.18,3.9);
+box(8.4,0.12,0.36,stoneDark,-8.2,0.92,6.15);
+box(8.4,0.12,0.36,stoneDark,8.2,0.92,6.15);
+const balGeo=new THREE.CylinderGeometry(0.07,0.09,0.5,8);
+const balMesh=new THREE.InstancedMesh(balGeo,cream2,balusterPos.length);
+const m4=new THREE.Matrix4();
+balusterPos.forEach((p,i)=>{ m4.makeTranslation(p[0],0.95,p[1]); balMesh.setMatrixAt(i,m4); });
+balMesh.castShadow=true; balMesh.receiveShadow=true; scene.add(balMesh);
+
+// Obelisk monument on front lawn
+const obelisk=new THREE.Group(); obelisk.position.set(6.6,0.42,12.8); scene.add(obelisk);
+function addTo(g,ms){g.add(ms);return ms;}
+const obBase=new THREE.Mesh(new THREE.BoxGeometry(1.3,0.45,1.3),stone); obBase.position.y=0.22; obBase.castShadow=true; obBase.receiveShadow=true; addTo(obelisk,obBase);
+const obBase2=new THREE.Mesh(new THREE.BoxGeometry(0.95,0.35,0.95),cream2); obBase2.position.y=0.62; obBase2.castShadow=true; addTo(obelisk,obBase2);
+const shaft=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.42,2.3,4),cream); shaft.position.y=1.95; shaft.rotation.y=Math.PI/4; shaft.castShadow=true; addTo(obelisk,shaft);
+const cap=new THREE.Mesh(new THREE.ConeGeometry(0.28,0.5,4),copper); cap.position.y=3.35; cap.rotation.y=Math.PI/4; cap.castShadow=true; addTo(obelisk,cap);
+const obBall=new THREE.Mesh(new THREE.SphereGeometry(0.11,12,10),brass); obBall.position.y=3.68; addTo(obelisk,obBall);
+
+// Trees
+function tree(x,z,s=1){
+  cyl(0.14*s,0.2*s,1.1*s,8,trunk,x,0.85*s,z);
+  sph(0.95*s,leaf,x,1.9*s,z);
+  sph(0.7*s,leaf2,x+0.45*s,1.5*s,z+0.2*s);
+  sph(0.65*s,leaf2,x-0.4*s,1.55*s,z-0.15*s);
+}
+tree(-14.5,7,1.1); tree(14.5,7,1.1); tree(-16,-2,1.2); tree(16,-2,1.2);
+tree(-13,13.5,0.9); tree(13.5,13.8,0.9); tree(-5.5,14.5,0.8); tree(11,-5,0.9);
+// shrubs along terrace
+for(const x of [-10,-7,7,10]){ sph(0.5,leaf2,x,0.9,6.6,1,0.6,1); }
+
+// Clouds
+function cloud(x,y,z,s){
+  sph(2.2*s,white,x,y,z,1,0.45,1); sph(1.6*s,white,x+1.8*s,y+0.2*s,z,1,0.5,1); sph(1.4*s,white,x-1.7*s,y+0.1*s,z,1,0.45,1);
+}
+cloud(-24,18,-28,1.4); cloud(22,21,-34,1.6); cloud(-8,24,-42,1.2); cloud(30,16,8,1.0);
+
+// Orbit control (native)
+let target=new THREE.Vector3(0,2.8,0);
+let radius=34, theta=0.38, phi=1.16;
+function updateCamera(){
+  const sp=Math.sin(phi), cp=Math.cos(phi);
+  camera.position.set(target.x+radius*sp*Math.sin(theta), target.y+radius*cp, target.z+radius*sp*Math.cos(theta));
+  camera.lookAt(target);
+}
+updateCamera();
+let dragging=false,lastX=0,lastY=0;
+const el=renderer.domElement;
+el.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;el.setPointerCapture(e.pointerId);});
+el.addEventListener('pointermove',e=>{
+  if(!dragging) return;
+  theta -= (e.clientX-lastX)*0.006;
+  phi -= (e.clientY-lastY)*0.005;
+  phi=Math.max(0.55,Math.min(1.45,phi));
+  lastX=e.clientX; lastY=e.clientY; updateCamera(); renderer.render(scene,camera);
+});
+el.addEventListener('pointerup',()=>{dragging=false;});
+el.addEventListener('pointercancel',()=>{dragging=false;});
+el.addEventListener('wheel',e=>{e.preventDefault(); radius=Math.max(14,Math.min(58,radius+e.deltaY*0.03)); updateCamera(); renderer.render(scene,camera);},{passive:false});
+
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  updateCamera(); renderer.render(scene,camera);
+});
+
+renderer.render(scene,camera);
+window.sceneReady=true;
+</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{
+  "id": "painted-ladies",
+  "name": "Painted Ladies",
+  "region": "San Francisco",
+  "description": "A row of seven narrow ornate Victorian houses on a sloping city street. Each house has a different pastel color, steep gabled roof, tall bay windows, front steps and elaborate white wood trim. A grassy hillside is in the foreground. A distant cluster of modern high-rise buildings rises behind the rooftops.",
+  "slug": "painted-ladies-max",
+  "effort": "max",
+  "prompt": "A row of seven narrow ornate Victorian houses on a sloping city street. Each house has a different pastel color, steep gabled roof, tall bay windows, front steps and elaborate white wood trim. A grassy hillside is in the foreground. A distant cluster of modern high-rise buildings rises behind the rooftops.\n\nCreate a polished 3D illustration solely from this visual description. The private location name is deliberately withheld. Return only a complete HTML document without Markdown fences. Use real procedural Three.js geometry, import * as THREE from './three.module.js', and use no other imports or external assets, images, fonts, network calls or text labels. Do not put any landmark name or place name in the HTML title or visible scene. Use deterministic geometry. Render initially at 1200x800, responsive to window resizing, with device pixel ratio at most 1.5. Include native pointer drag orbit and wheel zoom; update projection, size and rendered frame on resize. Frame the whole subject with generous margins around top, sides and base. Use attractive coherent lighting and clear recognizable silhouettes. Render immediately and set window.sceneReady=true after the first rendered frame. Keep geometry efficient; avoid a continuous animation loop. No transparent flat fog planes.",
+  "max_tokens": 32000,
+  "model": "meta/muse-ember",
+  "provider": "Meta",
+  "usage": {
+    "prompt_tokens": 260,
+    "completion_tokens": 32212,
+    "total_tokens": 32472,
+    "cost": 0.016132,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.016132,
+      "upstream_inference_prompt_cost": 2.6e-05,
+      "upstream_inference_completions_cost": 0.016106
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 31998,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "length",
+  "bytes": 0,
+  "generation_id": "gen-1794280324-Keto7xcLxVqEe5JHls0h",
+  "elapsed_seconds": 64.052
+}

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Statue of Liberty</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#8ec3e6}canvas{display:block;width:100%;height:100%}</style></head><body><script type="module">
+import * as THREE from './three.module.js';
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.08;
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x8ec3e6);
+const camera=new THREE.PerspectiveCamera(40,window.innerWidth/window.innerHeight,0.1,120);
+const target=new THREE.Vector3(0,4.8,0);
+let radius=19.5,theta=0.48,phi=1.22;
+function updateCamera(){
+  const sp=Math.sin(phi),cp=Math.cos(phi);
+  camera.position.set(target.x+radius*sp*Math.sin(theta),target.y+radius*cp,target.z+radius*sp*Math.cos(theta));
+  camera.lookAt(target);
+}
+function render(){updateCamera();renderer.render(scene,camera);}
+// lights - strong side lighting
+scene.add(new THREE.HemisphereLight(0xd8ecff,0x5e7057,0.75));
+const sun=new THREE.DirectionalLight(0xfff0d0,3.1);
+sun.position.set(-12,15,9);sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-14;sun.shadow.camera.right=14;sun.shadow.camera.top=16;sun.shadow.camera.bottom=-8;sun.shadow.camera.far=45;sun.shadow.bias=-0.0004;
+scene.add(sun);
+const fill=new THREE.DirectionalLight(0xbfe0ff,0.65);fill.position.set(10,6,-8);scene.add(fill);
+// materials
+const M={
+ copper:new THREE.MeshStandardMaterial({color:0x3f9d8a,roughness:0.58,metalness:0.28,flatShading:true}),
+ copperDark:new THREE.MeshStandardMaterial({color:0x2c7164,roughness:0.66,metalness:0.22,flatShading:true}),
+ copperLight:new THREE.MeshStandardMaterial({color:0x5cb6a2,roughness:0.5,metalness:0.3,flatShading:true}),
+ stone:new THREE.MeshStandardMaterial({color:0xc4bca9,roughness:0.92,flatShading:true}),
+ stoneDark:new THREE.MeshStandardMaterial({color:0x9f9685,roughness:0.95,flatShading:true}),
+ dark:new THREE.MeshStandardMaterial({color:0x39423f,roughness:0.9,flatShading:true}),
+ gold:new THREE.MeshStandardMaterial({color:0xd9a441,roughness:0.32,metalness:0.65,flatShading:true,emissive:0xcf8a00,emissiveIntensity:0.28}),
+ flame:new THREE.MeshStandardMaterial({color:0xffb52e,roughness:0.35,flatShading:true,emissive:0xff7b00,emissiveIntensity:1.25}),
+ flameInner:new THREE.MeshStandardMaterial({color:0xffe08a,roughness:0.3,flatShading:true,emissive:0xffc400,emissiveIntensity:1.4}),
+ water:new THREE.MeshStandardMaterial({color:0x256aa8,roughness:0.32,metalness:0.15,flatShading:true}),
+ grass:new THREE.MeshStandardMaterial({color:0x4d7d5a,roughness:0.95,flatShading:true}),
+ trunk:new THREE.MeshStandardMaterial({color:0x6b4a2f,roughness:0.95,flatShading:true}),
+ cloud:new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,flatShading:true}),
+ white:new THREE.MeshStandardMaterial({color:0xe8ecee,roughness:0.7,flatShading:true}),
+ red:new THREE.MeshStandardMaterial({color:0xb84a3a,roughness:0.75,flatShading:true})
+};
+function mesh(geo,mat,x=0,y=0,z=0,rx=0,ry=0,rz=0,parent=scene){
+ const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.rotation.set(rx,ry,rz);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;
+}
+function box(w,h,d,mat,x,y,z,rx=0,ry=0,rz=0,parent=scene){return mesh(new THREE.BoxGeometry(w,h,d),mat,x,y,z,rx,ry,rz,parent);}
+function limb(a,b,r,mat,parent){
+ const av=new THREE.Vector3(...a),bv=new THREE.Vector3(...b);
+ const dir=new THREE.Vector3().subVectors(bv,av),len=dir.length();
+ const m=mesh(new THREE.CylinderGeometry(r*0.82,r,len,8),mat,0,0,0,0,0,0,parent);
+ m.position.copy(av).add(bv).multiplyScalar(0.5);
+ m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());
+ return m;
+}
+// harbor water
+const water=mesh(new THREE.CircleGeometry(36,48),M.water,0,0,0,-Math.PI/2,0,0);water.castShadow=false;
+// star-shaped island foundation (11 points)
+function starShape(points,outer,inner){
+ const s=new THREE.Shape();
+ for(let i=0;i<points*2;i++){
+  const r=i%2===0?outer:inner,a=(i/(points*2))*Math.PI*2-Math.PI/2;
+  const x=Math.cos(a)*r,y=Math.sin(a)*r;
+  if(i===0)s.moveTo(x,y);else s.lineTo(x,y);
+ }
+ s.closePath();return s;
+}
+const islandGeo=new THREE.ExtrudeGeometry(starShape(11,6.6,5.45),{depth:0.55,bevelEnabled:true,bevelThickness:0.08,bevelSize:0.08,bevelSegments:1});
+const island=mesh(islandGeo,M.grass,0,0,0,-Math.PI/2,0,0);
+// inner stone foundation
+mesh(new THREE.CylinderGeometry(3.35,3.6,0.32,12),M.stoneDark,0,0.7,0);
+// stepped stone pedestal
+box(5.0,0.6,5.0,M.stone,0,1.15,0);
+box(4.0,0.65,4.0,M.stone,0,1.8,0);
+box(3.2,0.7,3.2,M.stone,0,2.5,0);
+box(2.5,0.6,2.5,M.stone,0,3.1,0);
+box(1.85,0.45,1.85,M.stoneDark,0,3.62,0);
+box(1.2,0.5,0.08,M.dark,0,2.52,1.62); // pedestal opening
+box(0.65,0.9,0.08,M.dark,0,1.82,2.02);
+box(0.9,0.42,0.06,M.gold,0,3.62,0.96); // plaque
+// trees on island, away from monument
+const treePos=[[4.3,-2.6],[-4.2,-2.0],[3.2,-3.8],[-3.6,3.0],[4.6,2.4]];
+for(const [tx,tz] of treePos){
+ mesh(new THREE.CylinderGeometry(0.09,0.12,0.5,6),M.trunk,tx,0.8,tz);
+ mesh(new THREE.ConeGeometry(0.55,1.15,7),M.grass,tx,1.55,tz);
+}
+// distant boat on far side of harbor
+const boat=new THREE.Group();boat.position.set(12,0.28,-11);boat.rotation.y=-0.7;scene.add(boat);
+box(2.4,0.55,0.85,M.red,0,0.28,0,0,0,0,boat);
+box(1.1,0.55,0.65,M.white,-0.2,0.8,0,0,0,0,boat);
+box(0.08,1.0,0.08,M.trunk,0.7,1.0,0,0,0,0,boat);
+// clouds far away
+for(const [cx,cy,cz,sc] of [[-13,13,-12,1.15],[12,14,-14,1.35],[-10,15,-16,0.9]]){
+ const c=new THREE.Group();c.position.set(cx,cy,cz);c.scale.setScalar(sc);scene.add(c);
+ const s1=mesh(new THREE.SphereGeometry(1.2,8,6),M.cloud,0,0,0,0,0,0,c);s1.scale.set(1.6,0.55,1);s1.castShadow=false;
+ const s2=mesh(new THREE.SphereGeometry(0.85,8,6),M.cloud,0.9,0.15,0.2,0,0,0,c);s2.scale.set(1.3,0.5,0.9);s2.castShadow=false;
+}
+// ---- Statue of Liberty ----
+const st=new THREE.Group();scene.add(st);
+const baseY=3.85;
+// robe (lathe silhouette)
+const robePts=[[1.08,0],[1.04,0.35],[0.92,1.1],[0.76,1.9],[0.62,2.5],[0.54,2.9]].map(p=>new THREE.Vector2(p[0],p[1]));
+mesh(new THREE.LatheGeometry(robePts,12),M.copper,0,baseY,0,0,0,0,st);
+// robe hem and folds
+mesh(new THREE.TorusGeometry(0.98,0.09,6,12),M.copperDark,0,baseY+0.16,0,Math.PI/2,0,0,st);
+for(let i=0;i<6;i++){
+ const a=(i/6)*Math.PI*2+0.4,r=0.84;
+ const f=box(0.13,1.9,0.16,M.copperLight,Math.sin(a)*r,baseY+1.35,Math.cos(a)*r,0,-a,0,st);
+ f.rotation.x=Math.cos(a)*0.08;f.rotation.z=-Math.sin(a)*0.08;
+}
+// feet and chain
+box(0.3,0.15,0.5,M.copperDark,-0.32,baseY+0.07,0.68,0,0,0,st);
+box(0.3,0.15,0.5,M.copperDark,0.34,baseY+0.07,0.66,0,0,0,st);
+for(let i=0;i<3;i++) mesh(new THREE.TorusGeometry(0.17,0.05,6,10),M.dark,-0.15+i*0.18,baseY+0.14,0.95,0.6,0.3*i,0,st);
+// torso
+mesh(new THREE.CylinderGeometry(0.48,0.58,1.15,10),M.copper,0,baseY+3.25,0,0,0,0,st);
+mesh(new THREE.TorusGeometry(0.52,0.06,6,12),M.copperDark,0,baseY+2.85,0,Math.PI/2,0,0,st);
+// diagonal sash / drapery
+box(0.22,2.3,0.1,M.copperLight,0.12,baseY+2.9,0.52, -0.12,0,0.55,st);
+box(0.18,1.8,0.08,M.copperDark,-0.3,baseY+2.6,0.48,0.1,0,-0.4,st);
+// neck and head
+mesh(new THREE.CylinderGeometry(0.16,0.2,0.42,8),M.copper,0,baseY+3.95,0,0,0,0,st);
+const headY=baseY+4.45;
+mesh(new THREE.SphereGeometry(0.43,8,6),M.copper,0,headY,0,0,0,0,st).scale.set(0.92,1.05,0.95);
+// hair bun / back hair
+mesh(new THREE.SphereGeometry(0.34,7,5),M.copperDark,0,headY+0.06,-0.22,0,0,0,st).scale.set(0.9,0.9,0.7);
+// nose
+const nose=mesh(new THREE.ConeGeometry(0.07,0.22,6),M.copperDark,0,headY-0.02,0.42,Math.PI/2,0,0,st);
+// seven-point crown
+mesh(new THREE.CylinderGeometry(0.46,0.48,0.24,10),M.copperDark,0,headY+0.32,0,0,0,0,st);
+for(let i=0;i<7;i++){
+ const a=(i/7)*Math.PI*2-Math.PI/2;
+ const dir=new THREE.Vector3(Math.cos(a)*0.55,1,Math.sin(a)*0.55).normalize();
+ const spike=mesh(new THREE.ConeGeometry(0.085,0.58,6),M.copper,Math.cos(a)*0.34,headY+0.55,Math.sin(a)*0.34,0,0,0,st);
+ spike.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir);
+}
+// right arm (statue's right) raised with torch
+limb([-0.42,baseY+3.55,0],[-1.12,baseY+4.35,0.05],0.16,M.copper,st);
+limb([-1.12,baseY+4.35,0.05],[-1.12,baseY+5.15,0.1],0.13,M.copper,st);
+mesh(new THREE.SphereGeometry(0.14,7,5),M.copper,-1.12,baseY+5.15,0.1,0,0,0,st);
+// torch - gold handle, cup and flame
+mesh(new THREE.CylinderGeometry(0.085,0.1,0.65,8),M.gold,-1.12,baseY+5.45,0.1,0,0,0,st);
+mesh(new THREE.CylinderGeometry(0.28,0.12,0.28,8),M.gold,-1.12,baseY+5.88,0.1,0,0,0,st);
+const flame=mesh(new THREE.SphereGeometry(0.27,8,6),M.flame,-1.12,baseY+6.22,0.1,0,0,0,st);flame.scale.set(0.9,1.45,0.9);
+const flameTip=mesh(new THREE.ConeGeometry(0.16,0.42,7),M.flameInner,-1.12,baseY+6.62,0.1,0,0,0,st);
+// left arm bent holding tablet
+limb([0.42,baseY+3.55,0],[0.92,baseY+2.95,0.2],0.15,M.copper,st);
+limb([0.92,baseY+2.95,0.2],[0.62,baseY+3.28,0.62],0.12,M.copper,st);
+mesh(new THREE.SphereGeometry(0.13,7,5),M.copper,0.62,baseY+3.28,0.62,0,0,0,st);
+// tablet
+const tablet=new THREE.Group();tablet.position.set(0.68,baseY+3.35,0.72);tablet.rotation.set(-0.18,-0.25,0.08);st.add(tablet);
+box(1.0,1.3,0.07,M.copperDark,0,0,0,0,0,0,tablet);
+box(0.82,1.12,0.09,M.copperLight,0,0,0.01,0,0,0,tablet);
+box(0.5,0.06,0.02,M.copperDark,0,0.28,0.06,0,0,0,tablet);
+box(0.5,0.06,0.02,M.copperDark,0,0.1,0.06,0,0,0,tablet);
+box(0.5,0.06,0.02,M.copperDark,0,-0.08,0.06,0,0,0,tablet);
+// controls: native pointer drag orbit + wheel zoom
+let dragging=false,lastX=0,lastY=0;
+const el=renderer.domElement;
+el.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;el.setPointerCapture(e.pointerId);});
+el.addEventListener('pointermove',e=>{
+ if(!dragging)return;
+ const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;
+ theta-=dx*0.0055;phi=Math.max(0.35,Math.min(1.45,phi-dy*0.0055));render();
+});
+el.addEventListener('pointerup',e=>{dragging=false;try{el.releasePointerCapture(e.pointerId);}catch(_){}});
+el.addEventListener('pointercancel',()=>{dragging=false;});
+el.addEventListener('wheel',e=>{e.preventDefault();radius=Math.max(9,Math.min(38,radius*(1+e.deltaY*0.0011)));render();},{passive:false});
+window.addEventListener('resize',()=>{
+ camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();
+ renderer.setSize(window.innerWidth,window.innerHeight);render();
+});
+render();
+window.sceneReady=true;
+</script></body></html>

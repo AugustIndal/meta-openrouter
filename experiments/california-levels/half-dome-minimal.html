@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Granite Dome</title>
+<style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#7db6e8}canvas{display:block;width:100%;height:100%}</style>
+<script type="importmap">{"imports":{"three":"./three.module.js"}}</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.setSize(1200,800);
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x69aee6);
+const camera=new THREE.PerspectiveCamera(42,1200/800,0.1,500);
+let theta=-0.55, phi=1.08, radius=52;
+function updateCamera(){ const x=radius*Math.sin(phi)*Math.sin(theta), y=radius*Math.cos(phi)+8, z=radius*Math.sin(phi)*Math.cos(theta); camera.position.set(x,y,z); camera.lookAt(0,7,0); camera.aspect=renderer.domElement.clientWidth/renderer.domElement.clientHeight; camera.updateProjectionMatrix(); }
+updateCamera();
+scene.add(new THREE.HemisphereLight(0xcfe8ff,0x6a7a5a,1.15));
+const sun=new THREE.DirectionalLight(0xfff2d8,2.4); sun.position.set(28,42,18); sun.castShadow=true; sun.shadow.mapSize.set(2048,2048); sun.shadow.camera.left=-40; sun.shadow.camera.right=40; sun.shadow.camera.top=40; sun.shadow.camera.bottom=-40; sun.shadow.bias=-0.0004; scene.add(sun);
+const fill=new THREE.DirectionalLight(0xbcd8ff,0.5); fill.position.set(-25,20,-20); scene.add(fill);
+// procedural granite texture
+function makeTexture(){ const c=document.createElement('canvas'); c.width=1024; c.height=1024; const g=c.getContext('2d'); g.fillStyle='#d9d4c8'; g.fillRect(0,0,1024,1024); for(let i=0;i<9000;i++){ const x=Math.random()*1024,y=Math.random()*1024,r=Math.random()*3+0.5; g.fillStyle=Math.random()<0.5?'rgba(170,160,145,0.25)':'rgba(240,236,226,0.25)'; g.beginPath(); g.arc(x,y,r,0,7); g.fill(); } // vertical streaks
+ for(let i=0;i<140;i++){ const x=Math.random()*1024, w=2+Math.random()*14, h=200+Math.random()*700, y=Math.random()*300; const grad=g.createLinearGradient(0,y,0,y+h); grad.addColorStop(0,'rgba(70,65,55,0.45)'); grad.addColorStop(1,'rgba(70,65,55,0)'); g.fillStyle=grad; g.fillRect(x,y,w,h); }
+ for(let i=0;i<60;i++){ const x=Math.random()*1024; g.fillStyle='rgba(60,58,50,0.18)'; g.fillRect(x,Math.random()*400,3+Math.random()*6,400+Math.random()*400); }
+ const t=new THREE.CanvasTexture(c); t.wrapS=t.wrapT=THREE.RepeatWrapping; t.colorSpace=THREE.SRGBColorSpace; return t; }
+const graniteMat=new THREE.MeshStandardMaterial({map:makeTexture(),roughness:0.92,metalness:0.02,color:0xffffff});
+const graniteDark=new THREE.MeshStandardMaterial({color:0xcac2b0,roughness:0.95});
+// main dome sliced vertically: flat face toward +Z, rounded back -Z
+const group=new THREE.Group(); scene.add(group);
+// half sphere: phiStart 0 phiLength PI gives half; rotate so flat side faces camera
+const domeGeo=new THREE.SphereGeometry(16,72,36,0,Math.PI,0,Math.PI*0.62);
+const dome=new THREE.Mesh(domeGeo,graniteMat);
+dome.scale.set(1.15,1.05,1.0); dome.rotation.y=-Math.PI/2; dome.position.y=0; dome.castShadow=true; dome.receiveShadow=true; group.add(dome);
+// flat sheer cliff face - half disc (shape)
+const shape=new THREE.Shape(); shape.moveTo(0,0); shape.absarc(0,0,16,0,Math.PI,false); shape.lineTo(0,0);
+const cliffGeo=new THREE.ShapeGeometry(shape,48);
+const cliff=new THREE.Mesh(cliffGeo,new THREE.MeshStandardMaterial({map:makeTexture(),roughness:0.9,color:0xe8e2d4}));
+cliff.scale.set(1.15,1.02,1); cliff.position.set(0,0.2,0.01); cliff.receiveShadow=true; cliff.castShadow=true; group.add(cliff);
+// base apron / talus
+const base=new THREE.Mesh(new THREE.CylinderGeometry(19,24,2.2,64),graniteDark); base.position.y=-0.6; base.receiveShadow=true; group.add(base);
+// foreground ground
+const ground=new THREE.Mesh(new THREE.CircleGeometry(90,64),new THREE.MeshStandardMaterial({color:0x6f8a52,roughness:1})); ground.rotation.x=-Math.PI/2; ground.position.y=-1.7; ground.receiveShadow=true; scene.add(ground);
+// smaller granite ridges deterministic
+const ridgeMat=new THREE.MeshStandardMaterial({color:0xcfc8b8,roughness:0.95});
+for(let i=0;i<14;i++){ const a=i/14*Math.PI*2+0.3; if(Math.abs(Math.sin(a))<0.3 && Math.cos(a)>0) continue; const r=24+ (i%3)*4; const h=4+((i*7)%5); const m=new THREE.Mesh(new THREE.ConeGeometry(5+((i*3)%3),h,6),ridgeMat); m.position.set(Math.cos(a)*r,h/2-1.5,Math.sin(a)*r); m.rotation.set(((i%3)-1)*0.15, i, ((i%2)-0.5)*0.2); m.castShadow=true; m.receiveShadow=true; scene.add(m); }
+// evergreen trees instanced
+const trunkGeo=new THREE.CylinderGeometry(0.12,0.18,0.8,6); const trunkMat=new THREE.MeshStandardMaterial({color:0x5a4030});
+const leafGeo=new THREE.ConeGeometry(0.85,2.4,8); const leafMat=new THREE.MeshStandardMaterial({color:0x2e5d33,roughness:0.9});
+const N=260; const trunks=new THREE.InstancedMesh(trunkGeo,trunkMat,N); const leaves=new THREE.InstancedMesh(leafGeo,leafMat,N);
+const dummy=new THREE.Object3D(); let idx=0;
+for(let i=0;i<N;i++){ let a=(i*2.39996)%(Math.PI*2); let r=20+((i*37)%38)+Math.random()*2; if(Math.sin(a)>0.7 && Math.cos(a)>0) r+=6; if(Math.abs(Math.cos(a))<0.2 && Math.sin(a)>0) continue; const x=Math.cos(a)*r, z=Math.sin(a)*r, s=0.7+((i*13)%10)/12; dummy.position.set(x,-0.9,z); dummy.scale.setScalar(s); dummy.rotation.set(0,i*1.7,0); dummy.updateMatrix(); trunks.setMatrixAt(idx,dummy.matrix); dummy.position.y+1.4*s; dummy.updateMatrix(); leaves.setMatrixAt(idx,dummy.matrix); idx++; }
+trunks.count=idx; leaves.count=idx; leaves.castShadow=true; trunks.castShadow=true; scene.add(trunks,leaves);
+// rocks
+for(let i=0;i<28;i++){ const a=i*0.63; const r=18+((i*11)%14); const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(0.7+((i*5)%7)/6,0),graniteDark); rock.position.set(Math.cos(a)*r,-1.2,Math.sin(a)*r); rock.rotation.set(i,i*2,i*3); rock.castShadow=true; rock.receiveShadow=true; scene.add(rock); }
+function render(){ renderer.render(scene,camera); }
+render(); window.sceneReady=true;
+let dragging=false,lx=0,ly=0;
+renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;lx=e.clientX;ly=e.clientY;});
+window.addEventListener('pointerup',()=>dragging=false);
+window.addEventListener('pointermove',e=>{ if(!dragging) return; theta-=(e.clientX-lx)*0.005; phi=Math.max(0.4,Math.min(1.45,phi-(e.clientY-ly)*0.004)); lx=e.clientX; ly=e.clientY; updateCamera(); render(); });
+renderer.domElement.addEventListener('wheel',e=>{ e.preventDefault(); radius=Math.max(28,Math.min(85,radius+e.deltaY*0.05)); updateCamera(); render(); },{passive:false});
+window.addEventListener('resize',()=>{ const w=window.innerWidth,h=window.innerHeight; renderer.setSize(w,h); renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5)); camera.aspect=w/h; camera.updateProjectionMatrix(); render(); });
+</script>
+</body>
+</html>

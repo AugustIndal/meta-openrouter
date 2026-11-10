@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stone Pyramid Tower</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#dfe8ee}canvas{display:block;width:100%;height:100%}</style>
+<script type="importmap">{"imports":{"three":"./three.module.js"}}</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xcfe0ea);
+scene.fog = new THREE.Fog(0xcfe0ea, 90, 210);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.setSize(1200,800);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+document.body.appendChild(renderer.domElement);
+
+const camera = new THREE.PerspectiveCamera(38, 1200/800, 0.1, 500);
+const target = new THREE.Vector3(0, 18, 0);
+let spherical = new THREE.Spherical(72, 1.18, 0.65);
+function updateCamera(){
+  camera.position.setFromSpherical(spherical).add(target);
+  camera.lookAt(target);
+}
+updateCamera();
+
+// Lights
+scene.add(new THREE.HemisphereLight(0xeaf4ff, 0x8a9478, 1.1));
+const sun = new THREE.DirectionalLight(0xfff2d8, 2.2);
+sun.position.set(38, 62, 28);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-55; sun.shadow.camera.right=55; sun.shadow.camera.top=70; sun.shadow.camera.bottom=-20;
+sun.shadow.camera.near=5; sun.shadow.camera.far=160;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xbcd8ff, 0.55);
+fill.position.set(-30, 25, -35);
+scene.add(fill);
+
+// Materials
+const stone = new THREE.MeshStandardMaterial({color:0xe9e2d4, roughness:0.82, metalness:0.02});
+const stoneDark = new THREE.MeshStandardMaterial({color:0xd8cfbc, roughness:0.9});
+const glass = new THREE.MeshStandardMaterial({color:0x182838, roughness:0.32, metalness:0.35});
+const concrete = new THREE.MeshStandardMaterial({color:0xcabfa8, roughness:0.95});
+const blockMat = new THREE.MeshStandardMaterial({color:0xb8b0a0, roughness:0.92});
+const blockMat2 = new THREE.MeshStandardMaterial({color:0x9fb0b8, roughness:0.88});
+const trunkMat = new THREE.MeshStandardMaterial({color:0x6b4f36, roughness:1});
+const leafMat = new THREE.MeshStandardMaterial({color:0x4d7a3f, roughness:0.95});
+const leafMat2 = new THREE.MeshStandardMaterial({color:0x5f8f4a, roughness:0.95});
+
+// Ground
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(240,240), new THREE.MeshStandardMaterial({color:0xaeb9a8, roughness:1}));
+ground.rotation.x = -Math.PI/2; ground.receiveShadow = true; scene.add(ground);
+const plaza = new THREE.Mesh(new THREE.CircleGeometry(26, 48), new THREE.MeshStandardMaterial({color:0xd6d0c2, roughness:1}));
+plaza.rotation.x=-Math.PI/2; plaza.position.y=0.02; plaza.receiveShadow=true; scene.add(plaza);
+
+// Helper tapered 4-sided tower
+function taperedBox(wBottom, wTop, h, mat){
+  const geo = new THREE.CylinderGeometry(wTop/Math.sqrt(2), wBottom/Math.sqrt(2), h, 4, 1, false);
+  geo.rotateY(Math.PI/4);
+  const m = new THREE.Mesh(geo, mat);
+  m.castShadow=true; m.receiveShadow=true;
+  return m;
+}
+
+const tower = new THREE.Group();
+scene.add(tower);
+
+// Main pyramid body - slender tapered
+const H = 46;
+const body = taperedBox(13, 5.2, H, stone);
+body.position.y = 6 + H/2;
+tower.add(body);
+
+// Slight stepped base plinth
+const plinth = taperedBox(16, 13.5, 6, stoneDark);
+plinth.position.y = 3;
+tower.add(plinth);
+
+// Spire - pointed 4-sided cone
+const spireGeo = new THREE.CylinderGeometry(0.05, 3.7/Math.sqrt(2), 12, 4, 1, false);
+spireGeo.rotateY(Math.PI/4);
+const spire = new THREE.Mesh(spireGeo, stone);
+spire.position.y = 6 + H + 6;
+spire.castShadow=true;
+tower.add(spire);
+
+// Fin tip
+const tip = new THREE.Mesh(new THREE.ConeGeometry(0.35,3,4), stoneDark);
+tip.rotation.y=Math.PI/4; tip.position.y=6+H+13.2; tower.add(tip);
+
+// Two narrow vertical fins on opposite upper sides (north/south faces)
+function makeFin(zSign){
+  const g = new THREE.Group();
+  const fin = new THREE.Mesh(new THREE.BoxGeometry(0.9, 18, 1.1), stone);
+  fin.castShadow=true; fin.receiveShadow=true;
+  // place on face: face width at that height approx 7.5, half ~3.75
+  fin.position.set(0, 38, zSign*3.9);
+  g.add(fin);
+  const cap = new THREE.Mesh(new THREE.BoxGeometry(1.0,0.7,1.2), stoneDark);
+  cap.position.set(0,47.2,zSign*3.9); g.add(cap);
+  return g;
+}
+tower.add(makeFin(1));
+tower.add(makeFin(-1));
+
+// Horizontal floor lines - thin boxes around taper approximated by 4-sided rings using cylinder 4 seg low height
+for(let i=0;i<22;i++){
+  const t=i/21;
+  const y=7.5 + t*43;
+  const w = THREE.MathUtils.lerp(12.2,5.4,t);
+  const ringGeo = new THREE.CylinderGeometry(w/Math.sqrt(2)+0.06, w/Math.sqrt(2)+0.06, 0.22, 4, 1, true);
+  ringGeo.rotateY(Math.PI/4);
+  const ring = new THREE.Mesh(ringGeo, stoneDark);
+  ring.position.y=y;
+  tower.add(ring);
+}
+
+// Windows - instanced dark rectangles on all 4 faces, dense rows
+const winGeo = new THREE.PlaneGeometry(0.62,0.55);
+const rows=22, colsPerFace=7;
+const winMesh = new THREE.InstancedMesh(winGeo, glass, rows*colsPerFace*4);
+const dummy = new THREE.Object3D();
+let idx=0;
+for(let r=0;r<rows;r++){
+  const t=(r+0.5)/rows;
+  const y=8.2 + t*42;
+  const halfW = THREE.MathUtils.lerp(12.2,5.6,t)/2;
+  // taper slant: need outward slightly; face plane offset
+  for(let f=0;f<4;f++){
+    for(let c=0;c<colsPerFace;c++){
+      const u = (c+0.5)/colsPerFace*2-1; // -1..1
+      const uVal = u*halfW*0.82;
+      dummy.position.set(0,0,0);
+      dummy.rotation.set(0,0,0);
+      if(f===0){ dummy.position.set(uVal, y, halfW+0.07); dummy.rotation.y=0; }
+      else if(f===1){ dummy.position.set(uVal, y, -halfW-0.07); dummy.rotation.y=Math.PI; }
+      else if(f===2){ dummy.position.set(halfW+0.07, y, uVal); dummy.rotation.y=Math.PI/2; }
+      else { dummy.position.set(-halfW-0.07, y, uVal); dummy.rotation.y=-Math.PI/2; }
+      // tilt to match taper (approx 7 degrees)
+      dummy.rotateX(-0.12);
+      dummy.updateMatrix();
+      winMesh.setMatrixAt(idx++, dummy.matrix);
+    }
+  }
+}
+winMesh.instanceMatrix.needsUpdate=true;
+tower.add(winMesh);
+
+// Exposed triangular supports at broad base - 4 triangular wedges
+function triangularSupport(rotY){
+  const shape = new THREE.Shape();
+  shape.moveTo(0,0); shape.lineTo(9,0); shape.lineTo(0,6); shape.lineTo(0,0);
+  const geo = new THREE.ExtrudeGeometry(shape,{depth:1.2, bevelEnabled:false});
+  const m = new THREE.Mesh(geo, concrete);
+  m.castShadow=true; m.receiveShadow=true;
+  m.rotation.y=rotY;
+  // position so extrusion outward from tower base
+  // After shape, extrude along z; rotate group
+  const g=new THREE.Group();
+  m.position.set(5.5,0,-0.6);
+  g.add(m);
+  g.rotation.y=rotY;
+  g.position.y=0.1;
+  return g;
+}
+for(let i=0;i<4;i++) tower.add(triangularSupport(i*Math.PI/2));
+
+// Corner buttress columns at base
+for(let i=0;i<4;i++){
+  const a=i*Math.PI/2+Math.PI/4;
+  const col=new THREE.Mesh(new THREE.BoxGeometry(1.4,7,1.4), stoneDark);
+  col.position.set(Math.cos(a)*6.8,3.5,Math.sin(a)*6.8);
+  col.castShadow=true; col.receiveShadow=true;
+  tower.add(col);
+}
+
+// Surrounding shorter city blocks - deterministic instanced
+const blockGeo = new THREE.BoxGeometry(1,1,1);
+const blocks = new THREE.InstancedMesh(blockGeo, blockMat, 55);
+const blocks2 = new THREE.InstancedMesh(blockGeo, blockMat2, 30);
+let seed=7;
+function rnd(){ seed=(seed*16807)%2147483647; return seed/2147483647; }
+let bi=0, bj=0;
+for(let i=0;i<85;i++){
+  const ang=rnd()*Math.PI*2;
+  const rad=24+rnd()*55;
+  const x=Math.cos(ang)*rad, z=Math.sin(ang)*rad;
+  if(Math.abs(x)<20 && Math.abs(z)<20) continue;
+  const w=5+rnd()*7, d=5+rnd()*7, h=3+rnd()*10;
+  dummy.position.set(x,h/2,z);
+  dummy.rotation.set(0, Math.round(rnd()*4)*Math.PI/2,0);
+  dummy.scale.set(w,h,d);
+  dummy.updateMatrix();
+  if(bi<55) blocks.setMatrixAt(bi++, dummy.matrix); else blocks2.setMatrixAt(bj++, dummy.matrix);
+}
+blocks.count=bi; blocks2.count=bj;
+blocks.castShadow=true; blocks.receiveShadow=true; blocks2.castShadow=true; blocks2.receiveShadow=true;
+scene.add(blocks); scene.add(blocks2);
+
+// Trees - small
+const trunkGeo=new THREE.CylinderGeometry(0.18,0.24,1.6,6);
+const leafGeo=new THREE.IcosahedronGeometry(1.15,0);
+const trunks=new THREE.InstancedMesh(trunkGeo,trunkMat,40);
+const leaves=new THREE.InstancedMesh(leafGeo,leafMat,28);
+const leaves2=new THREE.InstancedMesh(leafGeo,leafMat2,12);
+let ti=0, li=0, lj=0;
+for(let i=0;i<40;i++){
+  const ang=(i/40)*Math.PI*2 + rnd()*0.15;
+  const rad=15+rnd()*18;
+  const x=Math.cos(ang)*rad, z=Math.sin(ang)*rad;
+  dummy.position.set(x,0.8,z); dummy.rotation.set(0,rnd()*3,0); dummy.scale.set(1,1,1); dummy.updateMatrix();
+  trunks.setMatrixAt(ti++,dummy.matrix);
+  dummy.position.y=2.3+rnd()*0.5; const s=0.8+rnd()*0.9; dummy.scale.set(s,s,s); dummy.updateMatrix();
+  if(li<28) leaves.setMatrixAt(li++,dummy.matrix); else leaves2.setMatrixAt(lj++,dummy.matrix);
+}
+trunks.castShadow=true; leaves.castShadow=true; leaves2.castShadow=true;
+scene.add(trunks); scene.add(leaves); scene.add(leaves2);
+
+// Orbit controls native pointer drag + wheel
+let dragging=false, px=0, py=0;
+renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;px=e.clientX;py=e.clientY;renderer.domElement.setPointerCapture(e.pointerId);});
+renderer.domElement.addEventListener('pointermove',e=>{
+  if(!dragging) return;
+  const dx=e.clientX-px, dy=e.clientY-py; px=e.clientX; py=e.clientY;
+  spherical.theta -= dx*0.006;
+  spherical.phi = THREE.MathUtils.clamp(spherical.phi - dy*0.006, 0.25, 1.5);
+  updateCamera(); render();
+});
+renderer.domElement.addEventListener('pointerup',()=>dragging=false);
+renderer.domElement.addEventListener('wheel',e=>{
+  e.preventDefault();
+  spherical.radius = THREE.MathUtils.clamp(spherical.radius + e.deltaY*0.08, 38, 130);
+  updateCamera(); render();
+},{passive:false});
+
+function render(){ renderer.render(scene,camera); }
+function onResize(){
+  const w=window.innerWidth, h=window.innerHeight;
+  camera.aspect=w/h; camera.updateProjectionMatrix();
+  renderer.setSize(w,h);
+  render();
+}
+window.addEventListener('resize',onResize);
+// Initial size to 1200x800 if window larger? Use window size but maintain framing; set to window
+onResize();
+renderer.setSize(window.innerWidth, window.innerHeight);
+render();
+window.sceneReady=true;
+</script>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Golden Gate Bridge at Golden Hour</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#f2b879;}
+  canvas{display:block;width:100vw;height:100vh;}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(1200,800,false);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xf6c79a, 170, 520);
+
+const camera = new THREE.PerspectiveCamera(44, 1200/800, 0.1, 2000);
+const target = new THREE.Vector3(0, 24, 0);
+camera.position.set(-118, 48, 118);
+camera.lookAt(target);
+
+/* Warm sunset sky dome */
+const skyMat = new THREE.ShaderMaterial({
+  side: THREE.BackSide,
+  depthWrite:false,
+  uniforms:{
+    topColor:{value:new THREE.Color(0x8fb8dd)},
+    midColor:{value:new THREE.Color(0xf7c98b)},
+    botColor:{value:new THREE.Color(0xff9a5c)}
+  },
+  vertexShader:`varying vec3 vP; void main(){ vP=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+  fragmentShader:`uniform vec3 topColor; uniform vec3 midColor; uniform vec3 botColor; varying vec3 vP;
+    void main(){ float h=normalize(vP).y; vec3 c = h>0.18 ? mix(midColor,topColor,smoothstep(0.18,0.65,h)) : mix(botColor,midColor,smoothstep(-0.05,0.18,h)); gl_FragColor=vec4(c,1.0); }`
+});
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(800,32,18), skyMat));
+
+/* Lights */
+scene.add(new THREE.HemisphereLight(0xffd9a8, 0x3d6b6a, 1.05));
+const sun = new THREE.DirectionalLight(0xffb066, 2.4);
+sun.position.set(-160, 90, -120);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-160; sun.shadow.camera.right=160; sun.shadow.camera.top=120; sun.shadow.camera.bottom=-80;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0x9fc8e8, 0.55);
+fill.position.set(120,70,140);
+scene.add(fill);
+const glow = new THREE.PointLight(0xff9a4a, 1.2, 600);
+glow.position.set(-220,70,-180);
+scene.add(glow);
+
+/* Sun disc low on horizon */
+const sunDisc = new THREE.Mesh(new THREE.CircleGeometry(28,32), new THREE.MeshBasicMaterial({color:0xffe3a0, fog:false}));
+sunDisc.position.set(-320,62,-300); sunDisc.lookAt(camera.position); scene.add(sunDisc);
+const sunHalo = new THREE.Mesh(new THREE.CircleGeometry(55,32), new THREE.MeshBasicMaterial({color:0xffb26b, transparent:true, opacity:0.35, fog:false}));
+sunHalo.position.set(-320,62,-301); sunHalo.lookAt(camera.position); scene.add(sunHalo);
+
+/* Materials */
+const orange = new THREE.MeshStandardMaterial({color:0xc73f22, roughness:0.55, metalness:0.25});
+const orangeDark = new THREE.MeshStandardMaterial({color:0xa8341c, roughness:0.6, metalness:0.2});
+const cableMat = new THREE.MeshStandardMaterial({color:0xb33a20, roughness:0.5, metalness:0.35});
+const deckMat = new THREE.MeshStandardMaterial({color:0x3a3f42, roughness:0.85, metalness:0.05});
+const concrete = new THREE.MeshStandardMaterial({color:0x9a8f82, roughness:0.9});
+const waterMat = new THREE.MeshStandardMaterial({color:0x247f95, roughness:0.25, metalness:0.35});
+const hillFar = new THREE.MeshStandardMaterial({color:0x6d8470, roughness:1, flatShading:true});
+const hillMid = new THREE.MeshStandardMaterial({color:0x5a7358, roughness:1, flatShading:true});
+const hillNear = new THREE.MeshStandardMaterial({color:0x7a7a4f, roughness:1, flatShading:true});
+const fogHillMat = new THREE.MeshStandardMaterial({color:0x9aa88f, roughness:1, flatShading:true});
+
+function beam(p1,p2,r,mat){
+  const dir = new THREE.Vector3().subVectors(p2,p1);
+  const len = dir.length();
+  const geo = new THREE.CylinderGeometry(r,r,len,6);
+  const mesh = new THREE.Mesh(geo,mat);
+  mesh.position.copy(p1).addScaledVector(dir,0.5);
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.clone().normalize());
+  mesh.castShadow = true;
+  return mesh;
+}
+function box(w,h,d,mat,x,y,z){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+  m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true; return m;
+}
+
+/* Ocean */
+const ocean = new THREE.Mesh(new THREE.PlaneGeometry(1400,900), waterMat);
+ocean.rotation.x = -Math.PI/2; ocean.position.y = 0; ocean.receiveShadow = true; scene.add(ocean);
+const ocean2 = new THREE.Mesh(new THREE.PlaneGeometry(1400,900), new THREE.MeshStandardMaterial({color:0x2f9aa8, roughness:0.2, metalness:0.3, transparent:true, opacity:0.55}));
+ocean2.rotation.x = -Math.PI/2; ocean2.position.y = 0.12; scene.add(ocean2);
+
+/* Layered distant hills */
+function hill(x,z,sx,sy,sz,mat){
+  const m = new THREE.Mesh(new THREE.ConeGeometry(1,1,7), mat);
+  m.scale.set(sx,sy,sz); m.position.set(x,sy*0.35,z); m.rotation.y = (x+z)*0.01; m.receiveShadow=true; scene.add(m); return m;
+}
+hill(-260,-260, 260, 95, 130, fogHillMat);
+hill(-60,-300, 320, 110, 150, fogHillMat);
+hill(180,-280, 280, 85, 140, fogHillMat);
+hill(-300,-140, 220, 62, 110, hillFar);
+hill(40,-190, 260, 70, 120, hillFar);
+hill(300,-150, 220, 58, 110, hillMid);
+hill(-340,40, 200, 50, 140, hillMid);
+hill(330,80, 200, 45, 130, hillMid);
+hill(-250,220, 240, 55, 130, hillNear);
+hill(280,230, 260, 50, 140, hillNear);
+
+/* Foreground Marin Headlands hill (Battery Spencer viewpoint) */
+const fg = new THREE.Mesh(new THREE.SphereGeometry(1,24,16), hillNear);
+fg.scale.set(180,42,130); fg.position.set(-150,-8,165); fg.receiveShadow=true; scene.add(fg);
+const fg2 = new THREE.Mesh(new THREE.SphereGeometry(1,20,14), new THREE.MeshStandardMaterial({color:0x8a8455, roughness:1, flatShading:true}));
+fg2.scale.set(130,28,90); fg2.position.set(150,-6,210); scene.add(fg2);
+
+/* Bridge group */
+const bridge = new THREE.Group(); scene.add(bridge);
+const DECK_Y = 19;
+const TOWER_X = [-62, 62];
+
+/* Deck */
+const deck = box(176, 2.2, 11.5, deckMat, 0, DECK_Y, 0); bridge.add(deck);
+const deckUnder = box(176, 1.2, 9, orangeDark, 0, DECK_Y-1.6, 0); bridge.add(deckUnder);
+/* road centre lines */
+for(let x=-84;x<=84;x+=6){
+  bridge.add(box(3.2,0.12,0.45, new THREE.MeshStandardMaterial({color:0xf2d16b}), x, DECK_Y+1.16, 0));
+  bridge.add(box(3.2,0.12,0.35, new THREE.MeshStandardMaterial({color:0xe8e8e8}), x, DECK_Y+1.16, -3.4));
+  bridge.add(box(3.2,0.12,0.35, new THREE.MeshStandardMaterial({color:0xe8e8e8}), x, DECK_Y+1.16, 3.4));
+}
+/* railings */
+bridge.add(box(176,1.1,0.35, orange, 0, DECK_Y+1.6, -5.7));
+bridge.add(box(176,1.1,0.35, orange, 0, DECK_Y+1.6, 5.7));
+/* under-deck truss diagonals */
+for(let x=-80;x<80;x+=8){
+  bridge.add(beam(new THREE.Vector3(x,DECK_Y-1.8,-4), new THREE.Vector3(x+8,DECK_Y-1.8,4), 0.28, orangeDark));
+  bridge.add(beam(new THREE.Vector3(x,DECK_Y-1.8,4), new THREE.Vector3(x+8,DECK_Y-1.8,-4), 0.28, orangeDark));
+}
+/* lamps */
+const lampMat = new THREE.MeshStandardMaterial({color:0xffd98a, emissive:0xffaa33, emissiveIntensity:1.6});
+for(let x=-80;x<=80;x+=16){
+  const s1 = new THREE.Mesh(new THREE.SphereGeometry(0.45,10,8), lampMat); s1.position.set(x,DECK_Y+3.2,-5.7); bridge.add(s1);
+  const s2 = s1.clone(); s2.position.z=5.7; bridge.add(s2);
+  bridge.add(beam(new THREE.Vector3(x,DECK_Y+1.8,-5.7), new THREE.Vector3(x,DECK_Y+3.0,-5.7),0.12,orangeDark));
+  bridge.add(beam(new THREE.Vector3(x,DECK_Y+1.8,5.7), new THREE.Vector3(x,DECK_Y+3.0,5.7),0.12,orangeDark));
+}
+
+/* Towers with openings and cross-bracing */
+function makeTower(tx){
+  const g = new THREE.Group();
+  /* piers in water */
+  g.add(box(9,5,20, concrete, tx, 1, 0));
+  /* two pillars */
+  for(const pz of [-5,5]){
+    const pillar = box(4.6, 76, 3.2, orange, tx, 38, pz);
+    g.add(pillar);
+    const inner = box(3.0, 76, 1.2, orangeDark, tx, 38, pz*0.72);
+    g.add(inner);
+  }
+  /* horizontal struts creating openings */
+  const levels = [15, 30, 45, 60, 72];
+  for(const y of levels){
+    g.add(box(3.6, 4.2, 13.2, orange, tx, y, 0));
+  }
+  /* top cap */
+  g.add(box(5.2, 3.2, 14.5, orangeDark, tx, 77.5, 0));
+  /* X cross-bracing between struts (in Z-Y plane) */
+  for(let i=0;i<levels.length-1;i++){
+    const y1=levels[i]+2, y2=levels[i+1]-2;
+    g.add(beam(new THREE.Vector3(tx,y1,-5), new THREE.Vector3(tx,y2,5), 0.55, orangeDark));
+    g.add(beam(new THREE.Vector3(tx,y1,5), new THREE.Vector3(tx,y2,-5), 0.55, orangeDark));
+  }
+  /* side diagonal braces on outer faces */
+  for(let i=0;i<levels.length-1;i++){
+    const y1=levels[i]+2, y2=levels[i+1]-2;
+    g.add(beam(new THREE.Vector3(tx-2.4,y1,-5), new THREE.Vector3(tx+2.4,y2,-5), 0.32, orangeDark));
+    g.add(beam(new THREE.Vector3(tx+2.4,y1,5), new THREE.Vector3(tx-2.4,y2,5), 0.32, orangeDark));
+  }
+  bridge.add(g);
+}
+makeTower(-62); makeTower(62);
+
+/* Anchorages */
+bridge.add(box(14,16,16, concrete, -92, 14, 0));
+bridge.add(box(14,18,16, concrete, 92, 15, 0));
+bridge.add(box(18,8,20, concrete, -104, 8, 0));
+bridge.add(box(18,8,20, concrete, 104, 8, 0));
+
+/* Main suspension cables */
+function cableCurve(z){
+  const pts = [
+    new THREE.Vector3(-96, 26, z),
+    new THREE.Vector3(-88, 36, z),
+    new THREE.Vector3(-62, 76, z),
+    new THREE.Vector3(-32, 48, z),
+    new THREE.Vector3(0, 35, z),
+    new THREE.Vector3(32, 48, z),
+    new THREE.Vector3(62, 76, z),
+    new THREE.Vector3(88, 36, z),
+    new THREE.Vector3(96, 26, z)
+  ];
+  return new THREE.CatmullRomCurve3(pts);
+}
+for(const z of [-6.2, 6.2]){
+  const curve = cableCurve(z);
+  const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 120, 0.65, 8, false), cableMat);
+  tube.castShadow = true; bridge.add(tube);
+  /* vertical hangers - many */
+  for(let i=0;i<=72;i++){
+    const t = i/72;
+    const p = curve.getPoint(t);
+    if(p.y > DECK_Y+2 && Math.abs(p.x) < 86){
+      /* skip very close to towers shafts visual clutter reduction at exact tower */
+      if(Math.abs(Math.abs(p.x)-62) < 1.2) continue;
+      bridge.add(beam(new THREE.Vector3(p.x, DECK_Y+1.2, z*0.92), new THREE.Vector3(p.x, p.y-0.4, z), 0.09, cableMat));
+    }
+  }
+  /* secondary side cable hangers to anchorage */
+  for(let x=-86;x<=-66;x+=4){
+    const p = curve.getPoint((x+96)/192);
+    if(p.y>DECK_Y+1) bridge.add(beam(new THREE.Vector3(x,DECK_Y+1.2,z*0.9), new THREE.Vector3(x,p.y,z),0.08,cableMat));
+  }
+  for(let x=66;x<=86;x+=4){
+    const p = curve.getPoint((x+96)/192);
+    if(p.y>DECK_Y+1) bridge.add(beam(new THREE.Vector3(x,DECK_Y+1.2,z*0.9), new THREE.Vector3(x,p.y,z),0.08,cableMat));
+  }
+}
+
+/* Subtle low fog layer over water */
+const fogLayer = new THREE.Mesh(new THREE.PlaneGeometry(500,160), new THREE.MeshBasicMaterial({color:0xffe8d0, transparent:true, opacity:0.22, depthWrite:false}));
+fogLayer.rotation.x = -Math.PI/2; fogLayer.position.set(0,6,0); scene.add(fogLayer);
+const fogLayer2 = new THREE.Mesh(new THREE.PlaneGeometry(420,120), new THREE.MeshBasicMaterial({color:0xffffff, transparent:true, opacity:0.14, depthWrite:false}));
+fogLayer2.rotation.x = -Math.PI/2; fogLayer2.position.set(0,10,-40); scene.add(fogLayer2);
+
+/* Orbit controls (native pointer) */
+let theta = Math.atan2(camera.position.x-target.x, camera.position.z-target.z);
+let phi = Math.acos(THREE.MathUtils.clamp((camera.position.y-target.y)/camera.position.distanceTo(target), -1, 1));
+let radius = camera.position.distanceTo(target);
+function updateCamera(){
+  phi = THREE.MathUtils.clamp(phi, 0.35, 1.45);
+  radius = THREE.MathUtils.clamp(radius, 70, 320);
+  camera.position.set(
+    target.x + radius*Math.sin(phi)*Math.sin(theta),
+    target.y + radius*Math.cos(phi),
+    target.z + radius*Math.sin(phi)*Math.cos(theta)
+  );
+  camera.lookAt(target);
+  renderer.render(scene,camera);
+}
+let dragging=false, lastX=0, lastY=0;
+renderer.domElement.addEventListener('pointerdown', e=>{dragging=true; lastX=e.clientX; lastY=e.clientY; renderer.domElement.setPointerCapture(e.pointerId);});
+renderer.domElement.addEventListener('pointermove', e=>{
+  if(!dragging) return;
+  theta -= (e.clientX-lastX)*0.005;
+  phi -= (e.clientY-lastY)*0.005;
+  lastX=e.clientX; lastY=e.clientY;
+  updateCamera();
+});
+renderer.domElement.addEventListener('pointerup', ()=>{dragging=false;});
+renderer.domElement.addEventListener('wheel', e=>{e.preventDefault(); radius += e.deltaY*0.25; updateCamera();}, {passive:false});
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+});
+
+/* First render */
+updateCamera();
+window.sceneReady = true;
+</script>
+</body>
+</html>

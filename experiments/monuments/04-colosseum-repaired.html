@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Colosseum</title>
+<style>
+ html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#bfd9e8}
+ canvas{display:block;width:100%;height:100%}
+</style>
+<script type="importmap">{"imports":{"three":"./three.module.js"}}</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true, powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.setSize(1200,800);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.08;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xbfd9e8);
+scene.fog = new THREE.Fog(0xbfd9e8, 260, 520);
+
+const camera = new THREE.PerspectiveCamera(40, 1200/800, 0.5, 1000);
+
+const hemi = new THREE.HemisphereLight(0xdfeaf5, 0x9a8a72, 1.05);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff1d6, 2.35);
+sun.position.set(95, 130, 55);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-90; sun.shadow.camera.right=90;
+sun.shadow.camera.top=90; sun.shadow.camera.bottom=-90;
+sun.shadow.camera.near=20; sun.shadow.camera.far=340;
+sun.shadow.bias=-0.0004;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xcfe0ef, 0.45);
+fill.position.set(-80,55,-70);
+scene.add(fill);
+
+const MAT = {
+  stone: new THREE.MeshStandardMaterial({color:0xd8bf9a, roughness:0.92, metalness:0.0}),
+  stone2: new THREE.MeshStandardMaterial({color:0xcdb18e, roughness:0.94}),
+  stone3: new THREE.MeshStandardMaterial({color:0xe0cba9, roughness:0.9}),
+  dark: new THREE.MeshStandardMaterial({color:0xb09a7d, roughness:0.96}),
+  inner: new THREE.MeshStandardMaterial({color:0x9d8b71, roughness:0.97}),
+  sand: new THREE.MeshStandardMaterial({color:0xc7ad82, roughness:1.0}),
+  ground: new THREE.MeshStandardMaterial({color:0xa99a7f, roughness:1.0}),
+  plaza: new THREE.MeshStandardMaterial({color:0xbfb096, roughness:0.98}),
+  leaf: new THREE.MeshStandardMaterial({color:0x4a6642, roughness:1.0}),
+  trunk: new THREE.MeshStandardMaterial({color:0x6f5a44, roughness:1.0}),
+  window: new THREE.MeshStandardMaterial({color:0x3d3428, roughness:1.0})
+};
+// fix second material colour (kept deterministic, no external assets)
+MAT.stone2.color.set(0xcdb18e);
+
+const RX=44, RZ=31.5;
+function add(mesh){ mesh.castShadow=true; mesh.receiveShadow=true; scene.add(mesh); return mesh; }
+
+function ringGeometry(rxO,rzO,rxI,rzI,h){
+  const s=new THREE.Shape();
+  s.absellipse(0,0,rxO,rzO,0,Math.PI*2,false,0);
+  const hole=new THREE.Path();
+  hole.absellipse(0,0,rxI,rzI,0,Math.PI*2,true,0);
+  s.holes.push(hole);
+  const g=new THREE.ExtrudeGeometry(s,{depth:h,bevelEnabled:false,curveSegments:96,steps:1});
+  g.rotateX(-Math.PI/2);
+  return g;
+}
+function ring(rxO,rzO,rxI,rzI,h,y,mat){
+  const m=new THREE.Mesh(ringGeometry(rxO,rzO,rxI,rzI,h),mat);
+  m.position.y=y; add(m); return m;
+}
+function segmentGeometry(rxO,rzO,rxI,rzI,h,w0,w1){
+  // world angles w0..w1 ; shape y maps to -z, so invert angles
+  const s=new THREE.Shape();
+  s.absellipse(0,0,rxO,rzO,-w1,-w0,false,0);
+  s.absellipse(0,0,rxI,rzI,-w0,-w1,true,0);
+  s.closePath();
+  const g=new THREE.ExtrudeGeometry(s,{depth:h,bevelEnabled:false,curveSegments:20,steps:1});
+  g.rotateX(-Math.PI/2);
+  return g;
+}
+function segment(w0,w1,y,h,mat,rxO=RX+0.4,rzO=RZ+0.4,rxI=RX-2.7,rzI=RZ-2.7){
+  const m=new THREE.Mesh(segmentGeometry(rxO,rzO,rxI,rzI,h,w0,w1),mat);
+  m.position.y=y; add(m); return m;
+}
+
+/* ---------- ground & plaza ---------- */
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(360,360),MAT.ground);
+ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+ring(60,44,45.5,32.5,0.28,0.02,MAT.plaza);
+ring(45.5,32.5,44.4,31.6,0.5,0.02,MAT.dark);
+ring(47,33.6,46.4,33.0,0.18,0.02,MAT.stone3);
+
+/* ---------- arena & seating ---------- */
+ring(26.8,19.0,23.8,16.6,3.9,0.3,MAT.dark);
+const arenaShape=new THREE.Shape(); arenaShape.absellipse(0,0,23.8,16.6,0,Math.PI*2,false,0);
+const arenaGeo=new THREE.ExtrudeGeometry(arenaShape,{depth:0.45,bevelEnabled:false,curveSegments:72});
+arenaGeo.rotateX(-Math.PI/2);
+const arena=new THREE.Mesh(arenaGeo,MAT.sand); arena.position.y=0.35; arena.receiveShadow=true; scene.add(arena);
+
+// stepped seating (maeniana): concentric elliptical steps rising outwards
+for(let i=0;i<13;i++){
+  const rxO=27.2+i*1.28, rzO=18.8+i*0.98;
+  const rxI=rxO-2.35, rzI=rzO-1.8;
+  const y=4.15+i*1.32;
+  const m=ring(rxO,rzO,rxI,rzI,1.32,y, i%2?MAT.stone2:MAT.stone3);
+  m.castShadow=false;
+}
+// radial division lines on steps: thin boxes following slope (sparse, deterministic)
+const divGeo=new THREE.BoxGeometry(1.5,0.9,0.32);
+for(let k=0;k<28;k++){
+  const t=k/28*Math.PI*2;
+  for(let s=0;s<6;s++){
+    const r=0.18+s*0.13;
+    const x=Math.cos(t)*(27+r*16), z=Math.sin(t)*(19+r*11.5);
+    const y=4.6+s*1.32;
+    const d=new THREE.Mesh(divGeo,MAT.dark);
+    d.position.set(x,y,z); d.rotation.y=Math.PI/2-t; d.castShadow=false; d.receiveShadow=true; scene.add(d);
+  }
+}
+
+/* ---------- base podium ---------- */
+ring(RX+1.1,RZ+1.1,RX-3.2,RZ-3.2,2.6,0,MAT.dark);
+ring(RX+0.5,RZ+0.5,RX-2.9,RZ-2.9,0.7,2.55,MAT.stone);
+
+/* ---------- arcade levels ---------- */
+function arcade(yBase, pierH, count, missing){
+  const pierGeo=new THREE.BoxGeometry(1.95,pierH,2.55);
+  const colGeo=new THREE.CylinderGeometry(0.40,0.47,pierH*0.62,10);
+  const capGeo=new THREE.BoxGeometry(1.25,0.38,1.15);
+  const baseGeo=new THREE.BoxGeometry(1.35,0.36,1.35);
+  const mats=[MAT.stone,MAT.stone2,MAT.stone3];
+  const dTh=Math.PI*2/count;
+  for(let i=0;i<count;i++){
+    const th=i*dTh + dTh*0.5;
+    if(missing && missing(th)) continue;
+    const x=Math.cos(th)*RX, z=Math.sin(th)*RZ;
+    const rot=Math.PI/2-th;
+    const mat=mats[i%3];
+    const pier=new THREE.Mesh(pierGeo,mat);
+    pier.position.set(x,yBase+pierH/2,z); pier.rotation.y=rot; add(pier);
+    // engaged column on outer face of pier
+    const ox=Math.cos(th)*(RX+1.45), oz=Math.sin(th)*(RZ+1.45);
+    const col=new THREE.Mesh(colGeo, MAT.stone3);
+    col.position.set(ox,yBase+pierH*0.42,oz); col.rotation.y=rot; add(col);
+    const cap=new THREE.Mesh(capGeo,mat);
+    cap.position.set(ox,yBase+pierH*0.74,oz); cap.rotation.y=rot; add(cap);
+    const bs=new THREE.Mesh(baseGeo,mat);
+    bs.position.set(ox,yBase+pierH*0.11,oz); bs.rotation.y=rot; add(bs);
+  }
+  // arch segments: genuine toroidal half-arches spanning pier-to-pier gaps
+  const spring=yBase+pierH*0.72;
+  for(let i=0;i<count;i++){
+    const th=i*dTh; // midpoint between piers
+    if(missing && missing(th)) continue;
+    const spacing=Math.sqrt(Math.pow(RX*Math.sin(th),2)+Math.pow(RZ*Math.cos(th),2))*dTh;
+    const archR=Math.max(0.85,(spacing-1.95)/2);
+    const geo=new THREE.TorusGeometry(archR,0.52,8,14,Math.PI);
+    const arch=new THREE.Mesh(geo, MAT.stone3);
+    arch.position.set(Math.cos(th)*RX, spring, Math.sin(th)*RZ);
+    arch.rotation.y=Math.PI/2-th; add(arch);
+  }
+}
+
+const MISS3 = (th)=>{ const n=((th%(Math.PI*2))+Math.PI*2)%(Math.PI*2); return n>0.55 && n<1.85; };
+const MISS2 = (th)=>{ const n=((th%(Math.PI*2))+Math.PI*2)%(Math.PI*2); return n>1.15 && n<1.75; };
+
+arcade(3.25, 7.6, 52, null);                    // level 1
+ring(RX+0.45,RZ+0.45,RX-2.85,RZ-2.85,1.45,10.85,MAT.stone3);
+arcade(12.30, 7.8, 52, MISS2);                  // level 2 (small cut on north side)
+ring(RX+0.45,RZ+0.45,RX-2.85,RZ-2.85,1.45,20.10,MAT.stone3);
+arcade(21.55, 7.4, 48, MISS3);                  // level 3 (larger broken sector)
+segment(0, Math.PI*2, 28.95, 1.35, MAT.stone3); // entablature above level 3
+// cut the entablature over the missing sector by overlaying a gap is not possible on a full ring,
+// so rebuild upper band as segments instead: remove last by covering logic - we keep full band as
+// entablature (it bridges the ruin, as in the real monument where the outer wall top survives in parts).
+// Attic: partially broken, varied heights
+const atticSegs=22;
+for(let i=0;i<atticSegs;i++){
+  const w0=i/atticSegs*Math.PI*2, w1=(i+1)/atticSegs*Math.PI*2;
+  const mid=(w0+w1)/2;
+  if(MISS3(mid)) continue;
+  if(i%5===3) continue; // gaps in attic
+  const h=2.0 + ((Math.sin(i*12.9898)*43758.5453)%1+1)%1 * 1.6; // deterministic 2.0..3.6
+  segment(w0+0.015,w1-0.015,30.30,h, i%2?MAT.stone:MAT.stone2);
+  // jagged broken top blocks
+  if(i%3===0){
+    const b=new THREE.Mesh(new THREE.BoxGeometry(2.2,0.7,2.6), MAT.stone3);
+    const th=mid;
+    b.position.set(Math.cos(th)*(RX-1.2),30.30+h+0.3,Math.sin(th)*(RZ-1.2));
+    b.rotation.y=Math.PI/2-th; add(b);
+  }
+  // small attic windows
+  if(i%2===0){
+    const w=new THREE.Mesh(new THREE.BoxGeometry(0.85,1.25,0.25), MAT.window);
+    const th=mid;
+    w.position.set(Math.cos(th)*(RX+0.65),31.45,Math.sin(th)*(RZ+0.65));
+    w.rotation.y=Math.PI/2-th; w.castShadow=false; scene.add(w);
+  }
+}
+// broken fallen upper blocks near the cut sector (on top of seating, not in front)
+for(let i=0;i<5;i++){
+  const th=0.7+i*0.22;
+  const b=new THREE.Mesh(new THREE.BoxGeometry(2.4-i*0.2,1.0,2.8), MAT.dark);
+  b.position.set(Math.cos(th)*(RX-4.5), 29.2+i*0.12, Math.sin(th)*(RZ-4.5));
+  b.rotation.y=Math.PI/2-th+i*0.15; add(b);
+}
+
+/* ---------- sparse Roman ground context ---------- */
+function cypress(x,z,s){
+  const g=new THREE.Group(); g.position.set(x,0,z); g.scale.setScalar(s);
+  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.22,0.3,1.6,7),MAT.trunk); trunk.position.y=0.8; trunk.castShadow=true; g.add(trunk);
+  const cone=new THREE.Mesh(new THREE.ConeGeometry(1.15,6.2,9),MAT.leaf); cone.position.y=4.4; cone.castShadow=true; g.add(cone);
+  const cone2=new THREE.Mesh(new THREE.ConeGeometry(0.75,3.2,9),MAT.leaf); cone2.position.y=6.8; cone2.castShadow=true; g.add(cone2);
+  scene.add(g);
+}
+cypress(-64,-28,1.35); cypress(-58,18,1.1); cypress(66,-22,1.25); cypress(60,30,0.95); cypress(-38,-52,1.0); cypress(44,-56,1.15);
+// fallen column drums and broken column
+function drum(x,z,ry){
+  const d=new THREE.Mesh(new THREE.CylinderGeometry(0.85,0.85,2.6,14),MAT.stone2);
+  d.rotation.z=Math.PI/2; d.rotation.y=ry; d.position.set(x,0.85,z); add(d);
+}
+drum(-54,34,0.4); drum(-51.5,36.5,1.2);
+const brokenCol=new THREE.Mesh(new THREE.CylinderGeometry(0.8,0.9,4.2,14),MAT.stone);
+brokenCol.position.set(56,2.1,-4); brokenCol.castShadow=true; brokenCol.receiveShadow=true; scene.add(brokenCol);
+// low stone blocks scattered at back/side only
+for(let i=0;i<6;i++){
+  const b=new THREE.Mesh(new THREE.BoxGeometry(2.2,0.9,1.4),MAT.dark);
+  b.position.set(-70+i*6,0.45, -40+ (i%3)*4); b.rotation.y=i*0.5; add(b);
+}
+
+/* ---------- camera & native orbit controls ---------- */
+const target=new THREE.Vector3(0,13,0);
+let radius=152, phi=1.02, theta=0.72;
+function updateCamera(){
+  phi=Math.max(0.18,Math.min(1.42,phi));
+  radius=Math.max(62,Math.min(270,radius));
+  camera.position.set(
+    target.x + radius*Math.sin(phi)*Math.sin(theta),
+    target.y + radius*Math.cos(phi),
+    target.z + radius*Math.sin(phi)*Math.cos(theta)
+  );
+  camera.lookAt(target);
+  camera.aspect=renderer.domElement.clientWidth/Math.max(1,renderer.domElement.clientHeight);
+  camera.updateProjectionMatrix();
+}
+function render(){ updateCamera(); renderer.render(scene,camera); }
+
+let dragging=false,lastX=0,lastY=0;
+renderer.domElement.style.touchAction='none';
+renderer.domElement.addEventListener('pointerdown',e=>{
+  dragging=true; lastX=e.clientX; lastY=e.clientY; renderer.domElement.setPointerCapture(e.pointerId);
+});
+renderer.domElement.addEventListener('pointermove',e=>{
+  if(!dragging) return;
+  theta -= (e.clientX-lastX)*0.0055;
+  phi   -= (e.clientY-lastY)*0.0055;
+  lastX=e.clientX; lastY=e.clientY; render();
+});
+renderer.domElement.addEventListener('pointerup',()=>{ dragging=false; });
+renderer.domElement.addEventListener('pointercancel',()=>{ dragging=false; });
+renderer.domElement.addEventListener('wheel',e=>{
+  e.preventDefault();
+  radius *= (1 + Math.sign(e.deltaY)*0.09);
+  render();
+},{passive:false});
+
+window.addEventListener('resize',()=>{
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  render();
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+render();
+window.sceneReady=true;
+</script>
+</body>
+</html>

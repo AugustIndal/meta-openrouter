@@ -1,0 +1,39 @@
+{
+  "id": "golden-gate-exact-name",
+  "location_id": "golden-gate",
+  "effort": "xhigh",
+  "description": "Draw the Golden Gate Bridge with two orange towers.",
+  "expected": "block",
+  "usage": {
+    "prompt_tokens": 347,
+    "completion_tokens": 477,
+    "total_tokens": 824,
+    "cost": 0.0002732,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0002732,
+      "upstream_inference_prompt_cost": 3.47e-05,
+      "upstream_inference_completions_cost": 0.0002385
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 451,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "schema_valid": true,
+  "response": {
+    "reason": "Description contains the secret name directly.",
+    "verdict": "block"
+  },
+  "answer_leak": false,
+  "correct": true,
+  "elapsed_seconds": 2.753
+}

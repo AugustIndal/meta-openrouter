@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "griffith-max-expanded",
+    "errors": [],
+    "blockedRequests": [],
+    "rendered": true,
+    "orbitChangesImage": true,
+    "zoomChangesImage": true,
+    "resizedCanvas": {
+      "width": 900,
+      "height": 650,
+      "cssWidth": 900,
+      "cssHeight": 650
+    }
+  }
+]

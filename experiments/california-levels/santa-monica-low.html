@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seaside Amusement Pier</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#8fd3f4}
+  canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
+  canvas:active{cursor:grabbing}
+</style>
+<script type="importmap">{"imports":{"three":"./three.module.js"}}</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+let seed = 12345;
+function rnd(){ seed=(seed*1664525+1013904223)>>>0; return seed/4294967296; }
+function rr(a,b){ return a+(b-a)*rnd(); }
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.setSize(1200,800);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x8fd3f4);
+
+const camera = new THREE.PerspectiveCamera(42, 1200/800, 0.1, 300);
+const target = new THREE.Vector3(0,5.2,13);
+let orbitRadius = 56, theta = 0.42, phi = 1.12;
+function updateCamera(){
+  phi = Math.max(0.55, Math.min(1.45, phi));
+  orbitRadius = Math.max(26, Math.min(92, orbitRadius));
+  const sp = Math.sin(phi);
+  camera.position.set(
+    target.x + orbitRadius*sp*Math.sin(theta),
+    target.y + orbitRadius*Math.cos(phi),
+    target.z + orbitRadius*sp*Math.cos(theta)
+  );
+  camera.lookAt(target);
+}
+updateCamera();
+
+// Lighting
+scene.add(new THREE.HemisphereLight(0xcfefff, 0xe8d8a8, 0.95));
+const sun = new THREE.DirectionalLight(0xfff2d0, 2.2);
+sun.position.set(-28,38,-18);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-55; sun.shadow.camera.right=55;
+sun.shadow.camera.top=55; sun.shadow.camera.bottom=-55;
+sun.shadow.camera.near=1; sun.shadow.camera.far=120;
+sun.shadow.bias=-0.0004;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xbfe8ff, 0.5);
+fill.position.set(25,18,35); scene.add(fill);
+
+// Materials helper
+function mat(c, r=0.85, m=0){ return new THREE.MeshStandardMaterial({color:c, roughness:r, metalness:m}); }
+function mesh(geo, material, x=0,y=0,z=0, shadow=true){
+  const o=new THREE.Mesh(geo, material); o.position.set(x,y,z);
+  o.castShadow=shadow; o.receiveShadow=true; return o;
+}
+function box(w,h,d,c,x,y,z,ry=0){ const o=mesh(new THREE.BoxGeometry(w,h,d), mat(c), x,y,z); o.rotation.y=ry; return o; }
+function cyl(rt,rb,h,c,x,y,z,seg=10){ return mesh(new THREE.CylinderGeometry(rt,rb,h,seg), mat(c), x,y,z); }
+
+// Sky clouds - clustered white spheres
+const cloudMat = mat(0xffffff,1);
+function cloud(x,y,z,s){
+  const g=new THREE.Group();
+  for(let i=0;i<5;i++){ const p=mesh(new THREE.SphereGeometry(rr(1.4,2.6)*s,12,10), cloudMat, i*1.6*s-3*s, rnd()*0.6*s, rnd()*s, false); p.scale.y=0.55; p.castShadow=false; g.add(p); }
+  g.position.set(x,y,z); return g;
+}
+scene.add(cloud(-26,26,-22,1.2), cloud(22,30,-28,1.5), cloud(2,34,-38,1.0), cloud(-38,22,22,0.9), cloud(34,24,30,0.8));
+
+// SAND beach (foreground / shore, lower z) and slope
+const sandGeo = new THREE.PlaneGeometry(140, 42, 48, 16);
+sandGeo.rotateX(-Math.PI/2);
+{
+  const pos=sandGeo.attributes.position;
+  for(let i=0;i<pos.count;i++){ const x=pos.getX(i), z=pos.getZ(i); pos.setY(i, 0.35 + Math.sin(x*0.18)*0.12 + Math.cos(z*0.3)*0.08); }
+  sandGeo.computeVertexNormals();
+}
+const sand = mesh(sandGeo, mat(0xf2dd9a,1), 0,0,-6); scene.add(sand);
+// distant sand dunes low
+for(let i=0;i<7;i++){ const d=mesh(new THREE.SphereGeometry(rr(4,8),14,10), mat(0xeed68a,1), rr(-45,45),0,-24+rnd()*4); d.scale.y=0.18; scene.add(d); }
+
+// OCEAN
+const oceanGeo = new THREE.PlaneGeometry(140, 90, 72, 48);
+oceanGeo.rotateX(-Math.PI/2);
+{
+  const pos=oceanGeo.attributes.position;
+  for(let i=0;i<pos.count;i++){ const x=pos.getX(i), z=pos.getZ(i); pos.setY(i, Math.sin(x*0.45+z*0.25)*0.14 + Math.cos(x*0.18-z*0.4)*0.12); }
+  oceanGeo.computeVertexNormals();
+}
+const ocean = mesh(oceanGeo, mat(0x1a7fbf,0.35,0.05), 0,-0.1,48,false);
+ocean.receiveShadow=true; scene.add(ocean);
+// lighter shallow band near shore
+const shallow = mesh(new THREE.PlaneGeometry(140,10), mat(0x4fc3d9,0.5), 0,0.02,12,false);
+shallow.geometry.rotateX(-Math.PI/2); scene.add(shallow);
+
+// Foamy shoreline - deterministic wavy white strips
+const foamMat = mat(0xffffff,1);
+for(let row=0; row<3; row++){
+  for(let i=0;i<46;i++){
+    const x=-62+i*2.7+rr(-0.6,0.6), z=9.5+row*1.6+Math.sin(x*0.22+row)*0.8+rr(-0.3,0.3);
+    const f=mesh(new THREE.CapsuleGeometry(rr(0.35,0.7), rr(1.2,2.4), 4, 8), foamMat, x,0.12, z, false);
+    f.rotation.z=Math.PI/2; f.rotation.y=rr(-0.25,0.25); f.scale.y=0.35; f.castShadow=false; scene.add(f);
+  }
+}
+// foam rings around piles later added
+
+// PIER structure
+const pier = new THREE.Group(); scene.add(pier);
+const deckY = 3.2, deckW = 6.4;
+const deck = box(deckW, 0.55, 48, 0xa9743f, 0, deckY, 14); pier.add(deck);
+// wider platform for coaster
+pier.add(box(13,0.55,13, 0xa9743f, 0, deckY, 13));
+// planks across deck
+for(let z=-8; z<36; z+=1.5){
+  pier.add(box(deckW+0.05,0.08,0.18, 0x8f5e32, 0, deckY+0.31, z));
+}
+for(let z=-4; z<36; z+=1.5){
+  pier.add(box(13.05,0.08,0.18, 0x8f5e32, 0, deckY+0.31, z));
+}
+// timber piles + foam
+for(let z=-6; z<=34; z+=5){
+  for(const sx of [-2.6,2.6]){
+    pier.add(cyl(0.32,0.32,5.2, 0x6b4423, sx, deckY-1.8, z, 10));
+    const ring=mesh(new THREE.TorusGeometry(0.75,0.16,8,18), foamMat, sx,0.15,z,false);
+    ring.rotation.x=Math.PI/2; pier.add(ring);
+  }
+  // cross beam
+  pier.add(box(6.2,0.35,0.35, 0x7a4e28, 0, deckY-0.9, z));
+}
+// railings
+function railing(x, z1, z2){
+  const g=new THREE.Group();
+  const len=z2-z1, mid=(z1+z2)/2;
+  g.add(box(0.14,0.14,len, 0xd94f3d, x, deckY+1.25, mid));
+  g.add(box(0.08,0.08,len, 0xe8e0d0, x, deckY+0.75, mid));
+  for(let z=z1+0.5; z<z2; z+=2.2) g.add(cyl(0.06,0.06,1.0, 0x8a2f26, x, deckY+0.65, z,6));
+  return g;
+}
+pier.add(railing(-3.1,-4,36), railing(3.1,-4,36));
+// platform railings sides
+for(const sx of [-6.3,6.3]){
+  pier.add(box(0.14,0.14,12, 0xd94f3d, sx, deckY+1.25, 13));
+  for(let z=7.5; z<19; z+=2.2) pier.add(cyl(0.06,0.06,1.0, 0x8a2f26, sx, deckY+0.65, z,6));
+}
+// end platform
+pier.add(box(deckW,0.5,10, 0xa9743f, 0, deckY, 33));
+pier.add(box(0.14,0.14,deckW, 0xd94f3d, 0, deckY+1.25, 37.5));
+for(let x=-2.5;x<=2.5;x+=1.8) pier.add(cyl(0.06,0.06,1.0, 0x8a2f26, x, deckY+0.65, 37.5,6));
+
+// Low buildings on beach and pier
+function building(x,z,w,d,h,c,roofC){
+  const g=new THREE.Group();
+  g.add(box(w,h,d,c, x, 0.6+h/2, z));
+  const roof=mesh(new THREE.ConeGeometry(Math.max(w,d)*0.72, 1.2, 4), mat(roofC), x, 0.6+h+0.6, z);
+  roof.rotation.y=Math.PI/4; roof.scale.set(w/Math.max(w,d),1,d/Math.max(w,d)); g.add(roof);
+  g.add(box(w*0.28,1.1,0.1, 0x5a3a22, x,1.15,z+d/2+0.06));
+  g.add(box(0.7,0.7,0.08, 0xbfe8ff, x-w*0.25,1.4,z+d/2+0.06));
+  g.add(box(0.7,0.7,0.08, 0xbfe8ff, x+w*0.25,1.4,z+d/2+0.06));
+  return g;
+}
+scene.add(building(-12,-9,7,5,2.6,0xffd9a0,0xd94f3d));
+scene.add(building(-4,-11,6,4.5,2.2,0xbfe3ff,0x2a6fb0));
+scene.add(building(9,-10,8,5,2.8,0xffb3b3,0xe67e22));
+scene.add(building(17,-8,5,4,2.0,0xd6f0c2,0x3a9a6a));
+// pier kiosks
+const k1=box(2.6,2.0,2.2,0xffe08a,-4.6,deckY+1.3,20); pier.add(k1); pier.add(box(3.0,0.5,2.6,0xd94f3d,-4.6,deckY+2.55,20));
+const k2=box(2.4,1.9,2.0,0xa8e6ff,4.6,deckY+1.25,22); pier.add(k2); pier.add(box(2.8,0.5,2.4,0x2a6fb0,4.6,deckY+2.45,22));
+const k3=box(2.2,1.8,2.0,0xffc2d4,-4.6,deckY+1.2,5); pier.add(k3); pier.add(box(2.6,0.45,2.4,0x7a4ea3,-4.6,deckY+2.3,5));
+
+// FERRIS WHEEL at pier end
+const ferris = new THREE.Group(); ferris.position.set(0, deckY, 33); pier.add(ferris);
+ferris.add(cyl(0.28,0.28,7.5,0x2a6fb0,-2.2,3.4,0,10));
+ferris.add(cyl(0.28,0.28,7.5,0x2a6fb0,2.2,3.4,0,10));
+// lean legs slightly via rotation copy
+ferris.children[0].rotation.z=0.28; ferris.children[1].rotation.z=-0.28;
+const wheel = new THREE.Group(); wheel.position.set(0,7.6,0); wheel.rotation.z=0.35; ferris.add(wheel);
+const rim = mesh(new THREE.TorusGeometry(5.6,0.22,12,48), mat(0xff5a4a,0.5,0.2), 0,0,0); wheel.add(rim);
+const rim2 = mesh(new THREE.TorusGeometry(5.6,0.14,10,48), mat(0xffd23f,0.5,0.2), 0,0,0.35); wheel.add(rim2);
+const hub = cyl(0.6,0.6,0.8,0x2a6fb0,0,0,0,14); hub.rotation.x=Math.PI/2; wheel.add(hub);
+for(let i=0;i<8;i++){
+  const a=i*Math.PI/4;
+  const spoke=cyl(0.09,0.09,11.2,0xffffff, Math.cos(a)*2.8, Math.sin(a)*2.8, 0.15,6);
+  spoke.rotation.z=a+Math.PI/2; wheel.add(spoke);
+  const cabCols=[0xff5a4a,0xffd23f,0x3ec6b8,0xff8ac2,0x7ab8ff,0xff9f45,0xa3e635,0xc084fc];
+  const cab=box(1.25,1.0,1.25,cabCols[i], Math.cos(a)*5.6, Math.sin(a)*5.6-0.75, 0.2);
+  wheel.add(cab);
+  wheel.add(box(1.05,0.18,1.05,0x333333, Math.cos(a)*5.6, Math.sin(a)*5.6-0.18, 0.2));
+}
+// decorative lights dots on rim
+for(let i=0;i<16;i++){ const a=i*Math.PI/8; const s=mesh(new THREE.SphereGeometry(0.16,8,8), mat(0xfff6a0,0.3), Math.cos(a)*5.6, Math.sin(a)*5.6, 0.45,false); s.castShadow=false; wheel.add(s); }
+
+// ROLLER COASTER - compact, yellow track blue supports, on platform
+const coaster = new THREE.Group(); pier.add(coaster);
+const trackPts = [
+  new THREE.Vector3(-4.2,1.1,7.5), new THREE.Vector3(-4.2,5.2,10.5),
+  new THREE.Vector3(-4.2,1.6,15.5), new THREE.Vector3(-1.5,1.2,18.2),
+  new THREE.Vector3(2.5,1.2,18.2), new THREE.Vector3(4.2,4.8,15.0),
+  new THREE.Vector3(4.2,1.1,10.0), new THREE.Vector3(1.5,0.9,7.0)
+];
+const curve = new THREE.CatmullRomCurve3(trackPts, true, 'catmullrom', 0.35);
+const track = mesh(new THREE.TubeGeometry(curve, 180, 0.20, 10, true), mat(0xffd23f,0.45,0.15));
+track.position.y = deckY+0.4; coaster.add(track);
+// second rail offset illusion: thinner tube slightly lower
+const track2 = mesh(new THREE.TubeGeometry(curve, 120, 0.08, 8, true), mat(0xe8a90a,0.5), 0,0,0); track2.position.y=deckY+0.05; coaster.add(track2);
+// supports blue
+for(let i=0;i<10;i++){
+  const p=curve.getPoint(i/10);
+  const h=p.y+deckY+0.4 - deckY;
+  coaster.add(cyl(0.16,0.16,h+0.4,0x1e6fd9, p.x, deckY+h/2, p.z, 8));
+  coaster.add(box(0.9,0.14,0.9,0x1e6fd9, p.x, deckY+0.45, p.z));
+}
+// small train cars on track
+for(let i=0;i<3;i++){
+  const p=curve.getPoint(0.08+i*0.035); const tan=curve.getTangent(0.08+i*0.035);
+  const car=box(1.0,0.55,0.55, [0xff5a4a,0x7ab8ff,0x3ec6b8][i], p.x, deckY+0.4+p.y+0.35, p.z);
+  car.lookAt(p.x+tan.x, deckY+0.4+p.y+0.35+tan.y, p.z+tan.z); coaster.add(car);
+}
+
+// Palm trees near shore
+function palm(x,z,s=1,lean=0.22){
+  const g=new THREE.Group(); g.position.set(x,0.3,z); g.rotation.z=lean;
+  g.add(cyl(0.22*s,0.34*s,4.2*s,0x8a5a33,0,2.1*s,0,8));
+  for(let i=0;i<7;i++){
+    const a=i/7*Math.PI*2;
+    const frond=mesh(new THREE.ConeGeometry(0.45*s,3.2*s,6), mat(0x2e9e5b,0.9), Math.cos(a)*1.4*s, 4.4*s, Math.sin(a)*1.4*s, false);
+    frond.rotation.z=Math.cos(a)*1.05; frond.rotation.x=-Math.sin(a)*1.05; frond.scale.set(1,1,0.22); g.add(frond);
+  }
+  const coco=mesh(new THREE.SphereGeometry(0.28*s,10,8), mat(0x6b4423), 0.3*s,4.0*s,0.2*s); g.add(coco);
+  return g;
+}
+scene.add(palm(-17,2,1.1,0.18), palm(-9,4,0.95,-0.2), palm(6,3,1.05,0.15), palm(14,1,0.9,-0.25), palm(20,5,1.15,0.2), palm(-22,-2,0.85,0.12));
+
+// Beach umbrellas and small details (no text)
+for(let i=0;i<5;i++){
+  const x=rr(-20,20), z=rr(-4,5);
+  scene.add(cyl(0.05,0.05,1.6,0x666666,x,0.8,z+0.3,6));
+  const um=mesh(new THREE.ConeGeometry(1.3,0.5,10), mat([0xff5a4a,0xffd23f,0x3ec6b8,0xff8ac2,0x7ab8ff][i]), x,1.8,z+0.3,false); scene.add(um);
+}
+
+// Orbit controls (native pointer + wheel)
+let dragging=false, lastX=0, lastY=0;
+const el=renderer.domElement;
+el.addEventListener('pointerdown', e=>{ dragging=true; lastX=e.clientX; lastY=e.clientY; el.setPointerCapture(e.pointerId); });
+el.addEventListener('pointermove', e=>{
+  if(!dragging) return;
+  theta -= (e.clientX-lastX)*0.005;
+  phi   -= (e.clientY-lastY)*0.005;
+  lastX=e.clientX; lastY=e.clientY; updateCamera(); render();
+});
+el.addEventListener('pointerup', ()=>dragging=false);
+el.addEventListener('pointercancel', ()=>dragging=false);
+el.addEventListener('wheel', e=>{ e.preventDefault(); orbitRadius *= Math.exp(e.deltaY*0.001); updateCamera(); render(); }, {passive:false});
+
+function render(){ renderer.render(scene,camera); window.sceneReady=true; }
+function onResize(){
+  const w=window.innerWidth, h=window.innerHeight;
+  camera.aspect=w/h; camera.updateProjectionMatrix();
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+  renderer.setSize(w,h); render();
+}
+window.addEventListener('resize', onResize);
+onResize();
+render();
+</script>
+</body>
+</html>

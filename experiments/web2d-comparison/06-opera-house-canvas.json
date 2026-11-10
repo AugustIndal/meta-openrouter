@@ -1,0 +1,41 @@
+{
+  "slug": "06-opera-house",
+  "name": "Sydney Opera House",
+  "approach": "Paper sculpture",
+  "format": "canvas",
+  "prompt": "Create a sculptural paper-craft Sydney Opera House beside a deep blue harbor. Arrange multiple groups of overlapping tall pointed white sail-shell roofs of different sizes on a terracotta podium, each shell curved and sharply peaked. Show the interleaved roof silhouette from a three-quarter harbor viewpoint. Crisp ivory material, soft ambient shadows, restrained surrounding details.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+  "scene_brief": "Create a sculptural paper-craft Sydney Opera House beside a deep blue harbor. Arrange multiple groups of overlapping tall pointed white sail-shell roofs of different sizes on a terracotta podium, each shell curved and sharply peaked. Show the interleaved roof silhouette from a three-quarter harbor viewpoint. Crisp ivory material, soft ambient shadows, restrained surrounding details.",
+  "requested_model": "meta/muse-ember",
+  "requested_effort": "xhigh",
+  "max_tokens": 32000,
+  "model": "meta/muse-ember",
+  "provider": "Meta",
+  "usage": {
+    "prompt_tokens": 264,
+    "completion_tokens": 13708,
+    "total_tokens": 13972,
+    "cost": 0.0068804,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0068804,
+      "upstream_inference_prompt_cost": 2.64e-05,
+      "upstream_inference_completions_cost": 0.006854
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 8850,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "bytes": 11894,
+  "generation_id": "gen-1794280471-EnoJsSxwtRUVzQoGlEYt",
+  "file": "06-opera-house-canvas.html",
+  "elapsed_seconds": 23.607
+}

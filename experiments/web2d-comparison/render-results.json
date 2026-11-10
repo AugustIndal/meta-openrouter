@@ -1,0 +1,194 @@
+[
+  {
+    "slug": "01-golden-gate",
+    "format": "canvas",
+    "ready": false,
+    "errors": [],
+    "blocked": [],
+    "render_error": "page.waitForFunction: Timeout 30000ms exceeded.",
+    "render_ms": 30063
+  },
+  {
+    "slug": "01-golden-gate",
+    "format": "svg",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 263,
+    "xml_valid": true
+  },
+  {
+    "slug": "02-eiffel",
+    "format": "canvas",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 442
+  },
+  {
+    "slug": "02-eiffel",
+    "format": "svg",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 420,
+    "xml_valid": true
+  },
+  {
+    "slug": "03-taj-mahal",
+    "format": "canvas",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 389
+  },
+  {
+    "slug": "03-taj-mahal",
+    "format": "svg",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 604,
+    "xml_valid": true
+  },
+  {
+    "slug": "04-colosseum",
+    "format": "canvas",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 213
+  },
+  {
+    "slug": "04-colosseum",
+    "format": "svg",
+    "ready": false,
+    "errors": [],
+    "blocked": [],
+    "render_error": "unclosed token: line 92, column 957",
+    "render_ms": 341,
+    "xml_valid": false
+  },
+  {
+    "slug": "05-liberty",
+    "format": "canvas",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 216
+  },
+  {
+    "slug": "05-liberty",
+    "format": "svg",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 247,
+    "xml_valid": true
+  },
+  {
+    "slug": "06-opera-house",
+    "format": "svg",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 541,
+    "xml_valid": true
+  },
+  {
+    "slug": "07-pyramids",
+    "format": "canvas",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 364
+  },
+  {
+    "slug": "07-pyramids",
+    "format": "svg",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 223,
+    "xml_valid": true
+  },
+  {
+    "slug": "08-big-ben",
+    "format": "canvas",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 265
+  },
+  {
+    "slug": "08-big-ben",
+    "format": "svg",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 158,
+    "xml_valid": true
+  },
+  {
+    "slug": "09-christ",
+    "format": "canvas",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 262
+  },
+  {
+    "slug": "09-christ",
+    "format": "svg",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 403,
+    "xml_valid": true
+  },
+  {
+    "slug": "10-tower-bridge",
+    "format": "canvas",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 257
+  },
+  {
+    "slug": "10-tower-bridge",
+    "format": "svg",
+    "ready": true,
+    "errors": [],
+    "blocked": [],
+    "render_error": null,
+    "render_ms": 156,
+    "xml_valid": true
+  },
+  {
+    "slug": "06-opera-house",
+    "format": "canvas",
+    "ready": false,
+    "errors": [
+      "baseY864 is not defined"
+    ],
+    "blocked": [],
+    "render_error": "page.waitForFunction: Timeout 5000ms exceeded.",
+    "render_ms": 5131
+  }
+]

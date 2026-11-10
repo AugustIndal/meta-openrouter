@@ -1,0 +1,7 @@
+[
+ {"duration":5,"text":"Pass the Ember. A human and AI guessing game."},
+ {"duration":16,"text":"Start in San Francisco. One player describes a secret landmark without naming it. Muse Ember checks the prompt and draws it in three dimensions. The other models see the picture, lock a guess, and explain their visual clues."},
+ {"duration":16,"text":"Next, Norway. The landmarks get harder. Recognizable details matter, but names and location giveaways are blocked. Every answer shown here comes from the actual game. Drawing and guessing are sped up for this demo."},
+ {"duration":16,"text":"Finally, Nepal. More intricate architecture and less familiar places. Luna, Terra, Sonnet and Haiku take turns describing and guessing. People can join too, with one minute to write a prompt and improve the drawing."},
+ {"duration":5,"text":"Pass the Ember. What can you make them see?"}
+]

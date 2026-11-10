@@ -1,0 +1,39 @@
+{
+  "id": "griffith-geographic-giveaway",
+  "location_id": "griffith",
+  "effort": "xhigh",
+  "description": "The observatory on Mount Hollywood in Los Angeles.",
+  "expected": "block",
+  "usage": {
+    "prompt_tokens": 352,
+    "completion_tokens": 298,
+    "total_tokens": 650,
+    "cost": 0.0001842,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0001842,
+      "upstream_inference_prompt_cost": 3.52e-05,
+      "upstream_inference_completions_cost": 0.000149
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 266,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "schema_valid": true,
+  "response": {
+    "reason": "It contains a name, alias, or location giveaway.",
+    "verdict": "block"
+  },
+  "answer_leak": false,
+  "correct": true,
+  "elapsed_seconds": 1.525
+}

@@ -1,0 +1,39 @@
+{
+  "id": "half-dome-physical",
+  "location_id": "half-dome",
+  "effort": "minimal",
+  "description": "A monumental pale granite mountain shaped like a dome sliced vertically in half. One face is a huge sheer smooth cliff, while the back is a rounded sloping shoulder. Dark vertical weathering streaks mark the rock. Smaller granite ridges and a forest of tiny evergreen trees surround it, beneath clear blue mountain sky.",
+  "expected": "allow",
+  "usage": {
+    "prompt_tokens": 396,
+    "completion_tokens": 75,
+    "total_tokens": 471,
+    "cost": 7.71e-05,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 7.71e-05,
+      "upstream_inference_prompt_cost": 3.96e-05,
+      "upstream_inference_completions_cost": 3.75e-05
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 31,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "schema_valid": true,
+  "response": {
+    "reason": "Description is a truthful visible description of shape, structure, color and setting with no name, location or trivia leak.",
+    "verdict": "allow"
+  },
+  "answer_leak": false,
+  "correct": true,
+  "elapsed_seconds": 1.046
+}

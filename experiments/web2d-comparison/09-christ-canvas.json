@@ -1,0 +1,41 @@
+{
+  "slug": "09-christ",
+  "name": "Christ the Redeemer",
+  "approach": "Clay maquette",
+  "format": "canvas",
+  "prompt": "Sculpt Christ the Redeemer as a sophisticated monochrome clay architectural maquette on Corcovado mountain. A readable robed human figure stands upright with both arms fully outstretched horizontally, a small defined head, hands and flowing vertical robe folds, on its pedestal. Use soft off-white clay for statue, muted green-gray mountain layers, museum lighting and a clear frontal three-quarter camera.\n\nReturn only a complete HTML document without Markdown fences. Draw the entire artwork using the native HTML5 Canvas 2D API on a responsive full-window canvas, initially 1200x800. Preserve the composition on resize and redraw. Render the finished scene immediately, then set window.sceneReady=true. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+  "scene_brief": "Sculpt Christ the Redeemer as a sophisticated monochrome clay architectural maquette on Corcovado mountain. A readable robed human figure stands upright with both arms fully outstretched horizontally, a small defined head, hands and flowing vertical robe folds, on its pedestal. Use soft off-white clay for statue, muted green-gray mountain layers, museum lighting and a clear frontal three-quarter camera.",
+  "requested_model": "meta/muse-ember",
+  "requested_effort": "xhigh",
+  "max_tokens": 32000,
+  "model": "meta/muse-ember",
+  "provider": "Meta",
+  "usage": {
+    "prompt_tokens": 271,
+    "completion_tokens": 16679,
+    "total_tokens": 16950,
+    "cost": 0.0083666,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0083666,
+      "upstream_inference_prompt_cost": 2.71e-05,
+      "upstream_inference_completions_cost": 0.0083395
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 10149,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "bytes": 16913,
+  "generation_id": "gen-1794280501-8YjeFmga0A1rznrfY21k",
+  "file": "09-christ-canvas.html",
+  "elapsed_seconds": 29.225
+}

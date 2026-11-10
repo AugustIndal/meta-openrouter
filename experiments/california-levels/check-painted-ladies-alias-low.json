@@ -1,0 +1,39 @@
+{
+  "id": "painted-ladies-alias",
+  "location_id": "painted-ladies",
+  "effort": "low",
+  "description": "Draw the Seven Sisters, the Painted Ladies.",
+  "expected": "block",
+  "usage": {
+    "prompt_tokens": 351,
+    "completion_tokens": 170,
+    "total_tokens": 521,
+    "cost": 0.0001201,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0001201,
+      "upstream_inference_prompt_cost": 3.51e-05,
+      "upstream_inference_completions_cost": 8.5e-05
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 137,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "schema_valid": true,
+  "response": {
+    "reason": "Description contains the landmark name or an alias instead of a visual description.",
+    "verdict": "block"
+  },
+  "answer_leak": false,
+  "correct": true,
+  "elapsed_seconds": 1.255
+}

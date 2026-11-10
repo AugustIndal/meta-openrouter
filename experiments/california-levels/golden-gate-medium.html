@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suspension Bridge</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#b9d6e6;}
+  canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab;}
+  canvas:active{cursor:grabbing;}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.setSize(1200, 800);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xbcd9e8);
+scene.fog = new THREE.Fog(0xc7dce9, 95, 210);
+
+const camera = new THREE.PerspectiveCamera(38, 1200/800, 0.1, 500);
+
+const target = new THREE.Vector3(0, 8.5, 0);
+let radius = 62;
+let theta = 0.68;
+let phi = 1.14;
+
+function updateCamera(){
+  phi = Math.max(0.35, Math.min(1.45, phi));
+  radius = Math.max(32, Math.min(98, radius));
+  const sp = Math.sin(phi), cp = Math.cos(phi);
+  camera.position.set(
+    target.x + radius * sp * Math.sin(theta),
+    target.y + radius * cp,
+    target.z + radius * sp * Math.cos(theta)
+  );
+  camera.lookAt(target);
+}
+function render(){
+  updateCamera();
+  renderer.render(scene, camera);
+}
+
+const hemi = new THREE.HemisphereLight(0xcfe9ff, 0x4d6b48, 0.85);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff0d5, 1.55);
+sun.position.set(38, 52, 28);
+sun.castShadow = true;
+sun.shadow.mapSize.set(1024,1024);
+sun.shadow.camera.left = -55; sun.shadow.camera.right = 55;
+sun.shadow.camera.top = 45; sun.shadow.camera.bottom = -35;
+sun.shadow.camera.near = 5; sun.shadow.camera.far = 140;
+sun.shadow.bias = -0.0004;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0x9fc8e8, 0.35);
+fill.position.set(-30, 20, -35);
+scene.add(fill);
+
+const vermilion = new THREE.MeshStandardMaterial({color:0xd63a20, roughness:0.55, metalness:0.18});
+const vermilionDark = new THREE.MeshStandardMaterial({color:0xb82e18, roughness:0.6, metalness:0.15});
+const steelDark = new THREE.MeshStandardMaterial({color:0x3a3f42, roughness:0.7, metalness:0.25});
+const roadMat = new THREE.MeshStandardMaterial({color:0x565d61, roughness:0.9, metalness:0.02});
+const concrete = new THREE.MeshStandardMaterial({color:0x9aa0a0, roughness:0.85});
+const cableMat = new THREE.MeshStandardMaterial({color:0xc12f1a, roughness:0.5, metalness:0.2});
+const hangerMat = new THREE.MeshStandardMaterial({color:0x8f2a1c, roughness:0.6, metalness:0.15});
+
+function box(w,h,d,mat,x,y,z,cast=true,recv=true){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+  m.position.set(x,y,z); m.castShadow=cast; m.receiveShadow=recv; scene.add(m); return m;
+}
+function seeded(n){ const s = Math.sin(n*127.1+311.7)*43758.5453; return s - Math.floor(s); }
+
+// Water
+const waterGeo = new THREE.PlaneGeometry(260, 160, 48, 30);
+waterGeo.rotateX(-Math.PI/2);
+{
+  const p = waterGeo.attributes.position;
+  for(let i=0;i<p.count;i++){
+    const x=p.getX(i), z=p.getZ(i);
+    p.setY(i, Math.sin(x*0.18)*0.18 + Math.cos(z*0.22)*0.15 + Math.sin((x+z)*0.11)*0.12);
+  }
+  waterGeo.computeVertexNormals();
+}
+const water = new THREE.Mesh(waterGeo, new THREE.MeshStandardMaterial({color:0x226e91, roughness:0.28, metalness:0.08, flatShading:true}));
+water.position.y = 0; water.receiveShadow = true; scene.add(water);
+
+// Rocky green headlands
+function makeRock(cx, cz, scale, sx, sy, sz, color, seed){
+  const geo = new THREE.IcosahedronGeometry(1, 2);
+  const p = geo.attributes.position;
+  const v = new THREE.Vector3();
+  for(let i=0;i<p.count;i++){
+    v.fromBufferAttribute(p,i);
+    const n = 0.82 + seeded(seed + i*3.1)*0.38 + Math.sin(v.x*4.0+seed)*0.08;
+    v.multiplyScalar(n);
+    p.setXYZ(i, v.x, v.y, v.z);
+  }
+  geo.computeVertexNormals();
+  const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({color, roughness:0.95, flatShading:true}));
+  m.position.set(cx, -0.6, cz); m.scale.set(sx*scale, sy*scale, sz*scale);
+  m.castShadow=true; m.receiveShadow=true; scene.add(m); return m;
+}
+makeRock(-48, -4, 1, 18, 5.5, 14, 0x3e6b38, 1);
+makeRock(-42, 8, 1, 13, 4.2, 11, 0x4a7a40, 7);
+makeRock(-58, 2, 1, 12, 3.8, 13, 0x356030, 13);
+makeRock(48, -3, 1, 18, 5.8, 14, 0x406f3a, 21);
+makeRock(42, 9, 1, 13, 4.4, 11, 0x517a42, 27);
+makeRock(58, 2, 1, 12, 4.0, 13, 0x386332, 33);
+// rocky grey accents
+makeRock(-44, -10, 1, 8, 2.6, 7, 0x6b7368, 41);
+makeRock(44, -11, 1, 8, 2.8, 7, 0x6f776c, 47);
+makeRock(-36, 12, 1, 7, 2.2, 6, 0x5f6a5e, 53);
+makeRock(36, 12, 1, 7, 2.2, 6, 0x65705f, 59);
+
+// Land approach slabs
+box(26, 2.2, 18, new THREE.MeshStandardMaterial({color:0x4d7040, roughness:1}), -42, 1.1, 0);
+box(26, 2.2, 18, new THREE.MeshStandardMaterial({color:0x517540, roughness:1}), 42, 1.1, 0);
+
+// Deck
+const deckY = 5.7;
+box(72, 0.7, 5.4, steelDark, 0, deckY, 0);
+box(72, 0.12, 4.5, roadMat, 0, deckY+0.42, 0);
+box(72, 0.55, 0.35, vermilion, 0, deckY+0.15, 2.62);
+box(72, 0.55, 0.35, vermilion, 0, deckY+0.15, -2.62);
+box(72, 0.08, 0.18, vermilionDark, 0, deckY+0.85, 2.35);
+box(72, 0.08, 0.18, vermilionDark, 0, deckY+0.85, -2.35);
+// deck stiffening vertical posts
+for(let x=-34;x<=34;x+=4){
+  box(0.18, 0.6, 0.18, vermilionDark, x, deckY+0.55, 2.35);
+  box(0.18, 0.6, 0.18, vermilionDark, x, deckY+0.55, -2.35);
+}
+// lane line (thin geometry, no label)
+box(70, 0.02, 0.12, new THREE.MeshStandardMaterial({color:0xe8e2c8, roughness:0.8}), 0, deckY+0.49, 0, false);
+
+// Towers
+function makeTower(cx){
+  const g = new THREE.Group(); scene.add(g);
+  const add = (w,h,d,mat,x,y,z)=>{
+    const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+    m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true; g.add(m); return m;
+  };
+  // pier
+  add(5.5, 2.0, 9.5, concrete, cx, 1.0, 0);
+  add(4.2, 1.2, 7.5, concrete, cx, 2.4, 0);
+  // two columns with large opening
+  add(1.5, 18, 1.5, vermilion, cx, 11.5, 2.85);
+  add(1.5, 18, 1.5, vermilion, cx, 11.5, -2.85);
+  // inner stiffeners on columns
+  add(0.35, 18, 0.35, vermilionDark, cx, 11.5, 2.85);
+  add(0.35, 18, 0.35, vermilionDark, cx, 11.5, -2.85);
+  // horizontal struts
+  add(1.15, 1.1, 5.7, vermilion, cx, 6.2, 0);
+  add(1.15, 1.0, 5.7, vermilion, cx, 12.5, 0);
+  add(1.25, 1.2, 5.8, vermilion, cx, 19.4, 0);
+  add(1.6, 0.8, 6.4, vermilionDark, cx, 20.6, 0);
+  // cross braces (X in Y-Z plane)
+  const brace = (y0,y1)=>{
+    const dy=y1-y0, dz=5.7;
+    const len=Math.sqrt(dy*dy+dz*dz);
+    const ang=Math.atan2(dz, dy);
+    for(const s of [1,-1]){
+      const m=new THREE.Mesh(new THREE.BoxGeometry(0.42, len, 0.42), vermilionDark);
+      m.position.set(cx, (y0+y1)/2, 0);
+      m.rotation.x = s*ang;
+      m.castShadow=true; g.add(m);
+    }
+  };
+  brace(6.8, 11.9);
+  brace(13.1, 18.8);
+  brace(2.8, 6.0);
+}
+makeTower(-18);
+makeTower(18);
+
+// Anchor blocks
+box(5, 3.2, 8, concrete, -32, 3.2, 0);
+box(5, 3.2, 8, concrete, 32, 3.2, 0);
+box(3.5, 1.2, 6.5, vermilionDark, -32, 5.2, 0);
+box(3.5, 1.2, 6.5, vermilionDark, 32, 5.2, 0);
+
+// Main cables - two sweeping tubes
+function cableY(x){
+  const ax = Math.abs(x);
+  if(ax <= 18){
+    const t = ax/18;
+    return 7.1 + t*t*(20.4-7.1);
+  } else {
+    const t = Math.min(1,(ax-18)/15);
+    // side span sag from tower to anchor
+    return 6.6 + Math.pow(1-t, 1.7)*(20.4-6.6) + Math.sin(t*Math.PI)*0.4;
+  }
+}
+for(const z of [-2.35, 2.35]){
+  const pts=[];
+  for(let x=-33;x<=33;x+=2.2){
+    pts.push(new THREE.Vector3(x, cableY(x)+0.15, z));
+  }
+  const curve = new THREE.CatmullRomCurve3(pts);
+  const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 110, 0.14, 8, false), cableMat);
+  tube.castShadow=true; scene.add(tube);
+}
+// Secondary thinner cable lines just inside (visual richness)
+for(const z of [-2.35, 2.35]){
+  const pts=[];
+  for(let x=-30;x<=30;x+=3){
+    pts.push(new THREE.Vector3(x, cableY(x)-0.35, z*0.92));
+  }
+  const curve = new THREE.CatmullRomCurve3(pts);
+  const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 80, 0.05, 6, false), vermilionDark);
+  scene.add(tube);
+}
+
+// Vertical hangers
+const hangerGeo = new THREE.CylinderGeometry(0.035, 0.035, 1, 5);
+for(let x=-31.5;x<=31.5;x+=1.75){
+  if(Math.abs(Math.abs(x)-18) < 1.0) continue;
+  const cy = cableY(x);
+  const top = cy - 0.05;
+  const bot = deckY + 0.48;
+  const h = Math.max(0.3, top-bot);
+  for(const z of [-2.35, 2.35]){
+    const hanger = new THREE.Mesh(hangerGeo, hangerMat);
+    hanger.scale.y = h;
+    hanger.position.set(x, bot + h/2, z);
+    scene.add(hanger);
+  }
+}
+
+// Small lamp posts
+for(let x=-28;x<=28;x+=7){
+  if(Math.abs(Math.abs(x)-18)<2) continue;
+  box(0.08, 1.0, 0.08, steelDark, x, deckY+1.0, 2.3);
+  box(0.45, 0.08, 0.12, steelDark, x, deckY+1.48, 2.12);
+}
+
+// Distant low hills silhouettes (solid geometry, no fog planes)
+makeRock(-85, -28, 1, 26, 6, 16, 0x6f94a8, 71);
+makeRock(85, -30, 1, 28, 7, 16, 0x7498ab, 77);
+makeRock(0, -62, 1, 42, 8, 18, 0x7fa0b2, 83);
+
+let dragging=false, lastX=0, lastY=0;
+renderer.domElement.addEventListener('pointerdown', e=>{
+  dragging=true; lastX=e.clientX; lastY=e.clientY;
+  renderer.domElement.setPointerCapture(e.pointerId);
+});
+renderer.domElement.addEventListener('pointermove', e=>{
+  if(!dragging) return;
+  theta -= (e.clientX-lastX)*0.005;
+  phi   -= (e.clientY-lastY)*0.005;
+  lastX=e.clientX; lastY=e.clientY;
+  render();
+});
+renderer.domElement.addEventListener('pointerup', ()=>{ dragging=false; });
+renderer.domElement.addEventListener('pointercancel', ()=>{ dragging=false; });
+renderer.domElement.addEventListener('wheel', e=>{
+  e.preventDefault();
+  radius *= (1 + e.deltaY*0.001);
+  render();
+}, {passive:false});
+
+function onResize(){
+  const w = window.innerWidth, h = window.innerHeight;
+  camera.aspect = w/h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+  render();
+}
+window.addEventListener('resize', onResize);
+
+render();
+window.sceneReady = true;
+</script>
+</body>
+</html>

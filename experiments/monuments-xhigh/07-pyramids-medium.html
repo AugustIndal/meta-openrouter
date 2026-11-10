@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Giza Pyramids</title>
+<style>
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#e9cf9f}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+canvas:active{cursor:grabbing}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.12;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xe6c79b, 750, 2600);
+
+const camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 1, 6000);
+
+function hash(n){ const s=Math.sin(n*127.1+311.7)*43758.5453; return s-Math.floor(s); }
+
+/* Sky dome */
+const sunDir = new THREE.Vector3(-0.62,0.22,0.42).normalize();
+const skyMat = new THREE.ShaderMaterial({
+  side: THREE.BackSide, depthWrite:false, fog:false,
+  uniforms:{ sunDir:{value:sunDir} },
+  vertexShader:`varying vec3 vDir; void main(){ vDir=normalize(position); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+  fragmentShader:`varying vec3 vDir; uniform vec3 sunDir;
+    void main(){
+      float h = clamp(vDir.y,-0.05,1.0);
+      vec3 top = vec3(0.42,0.58,0.72);
+      vec3 mid = vec3(0.83,0.76,0.62);
+      vec3 hor = vec3(0.98,0.82,0.58);
+      vec3 col = mix(hor, mid, smoothstep(0.0,0.18,h));
+      col = mix(col, top, smoothstep(0.15,0.65,h));
+      float s = max(dot(normalize(vDir), normalize(sunDir)),0.0);
+      col += vec3(1.0,0.62,0.28)*pow(s,180.0)*0.9;
+      col += vec3(1.0,0.72,0.38)*pow(s,8.0)*0.18;
+      gl_FragColor = vec4(col,1.0);
+    }`
+});
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(2800,32,16), skyMat));
+
+/* Lights */
+const hemi = new THREE.HemisphereLight(0xb9cfe2, 0xc49a68, 0.65);
+scene.add(hemi);
+scene.add(new THREE.AmbientLight(0xffe0b8, 0.18));
+
+const sun = new THREE.DirectionalLight(0xffb26a, 2.9);
+sun.position.copy(sunDir).multiplyScalar(900);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left = -650; sun.shadow.camera.right = 650;
+sun.shadow.camera.top = 500; sun.shadow.camera.bottom = -500;
+sun.shadow.camera.near = 100; sun.shadow.camera.far = 2200;
+sun.shadow.bias = -0.0004;
+sun.shadow.normalBias = 2.0;
+scene.add(sun);
+scene.add(sun.target);
+sun.target.position.set(30,0,-30);
+
+/* Pyramid builder: stepped stone courses */
+function buildPyramid(base, height, courseH, seed){
+  const positions=[], colors=[];
+  const levels = Math.max(10, Math.round(height/courseH));
+  const ch = height/levels;
+  const step = 0.32;
+  const half = base/2;
+  const baseCol = new THREE.Color(0xcab27a);
+
+  function pushTri(a,b,c,col){
+    positions.push(a.x,a.y,a.z, b.x,b.y,b.z, c.x,c.y,c.z);
+    colors.push(col.r,col.g,col.b, col.r,col.g,col.b, col.r,col.g,col.b);
+  }
+  function pushQuad(a,b,c,d,col){ pushTri(a,b,c,col); pushTri(a,c,d,col); }
+  function corners(h,y){ return [new THREE.Vector3(h,y,h), new THREE.Vector3(h,y,-h), new THREE.Vector3(-h,y,-h), new THREE.Vector3(-h,y,h)]; }
+
+  for(let i=0;i<levels;i++){
+    const y0=i*ch, y1=(i+1)*ch;
+    const outerB = half*(1-y0/height);
+    const outerT = half*(1-y1/height);
+    const innerB = (i===0)? outerB : Math.max(outerB-step,0);
+    const innerT = Math.max(outerT-step,0);
+    const bC = corners(innerB,y0);
+    const tC = corners(innerT,y1);
+    const rnd = 0.93 + hash(seed+i*3.7)*0.12;
+    for(let f=0;f<4;f++){
+      const nf=(f+1)%4;
+      const faceShade = 0.96 + hash(seed+i*11+f*5)*0.07;
+      const col = baseCol.clone().multiplyScalar(rnd*faceShade);
+      // slight warm/cool variation by face
+      if(f===0) col.multiplyScalar(1.02); if(f===2) col.multiplyScalar(0.94); if(f===3) col.multiplyScalar(1.04);
+      pushQuad(bC[f], bC[nf], tC[nf], tC[f], col);
+      if(i<levels-1){
+        const oC = corners(outerT,y1);
+        const ledgeCol = baseCol.clone().multiplyScalar(rnd*0.90);
+        pushQuad(oC[f], oC[nf], tC[nf], tC[f], ledgeCol);
+      }
+    }
+    // apex cap as small triangle set for final course
+    if(i===levels-1){
+      const apex = new THREE.Vector3(0,height,0);
+      for(let f=0;f<4;f++){
+        const nf=(f+1)%4;
+        const col = baseCol.clone().multiplyScalar(rnd*1.05);
+        pushTri(tC[f], tC[nf], apex, col);
+      }
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions,3));
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(colors,3));
+  geo.computeVertexNormals();
+  const mat = new THREE.MeshStandardMaterial({vertexColors:true, roughness:0.95, metalness:0.0});
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.castShadow = true; mesh.receiveShadow = true;
+  return mesh;
+}
+
+/* Pyramids - realistic relative scales: Khufu 146.6/230.3, Khafre 136.4/215.5, Menkaure 65.5/105 */
+const pyramids = [
+  {x:-140, z: 50,  base:230.3, h:146.6, seed:1.3},
+  {x:  90, z:-70,  base:215.5, h:136.4, seed:4.7},
+  {x: 270, z:-160, base:105.0, h: 65.5, seed:8.1}
+];
+pyramids.forEach(p=>{
+  const m = buildPyramid(p.base, p.h, p.h>100?3.1:2.4, p.seed);
+  m.position.set(p.x,0,p.z);
+  scene.add(m);
+});
+
+/* Ground with gentle dunes, flattened near pyramids */
+const groundGeo = new THREE.PlaneGeometry(3400,3400,150,150);
+groundGeo.rotateX(-Math.PI/2);
+{
+  const pos = groundGeo.attributes.position;
+  const cols = [];
+  const sand = new THREE.Color(0xcfa870);
+  const sand2 = new THREE.Color(0xbd975f);
+  for(let i=0;i<pos.count;i++){
+    const x = pos.getX(i), z = pos.getZ(i);
+    let flatten = 1.0;
+    for(const p of pyramids){
+      const dx = Math.abs(x-p.x)/(p.base*0.72), dz = Math.abs(z-p.z)/(p.base*0.72);
+      const d = Math.sqrt(dx*dx+dz*dz);
+      if(d<1.4) flatten = Math.min(flatten, THREE.MathUtils.smoothstep(d,0.55,1.35));
+    }
+    const distC = Math.sqrt(x*x+z*z);
+    const amp = 2.0 + Math.min(distC/900,1.0)*5.0;
+    let y = (Math.sin(x*0.006+1.7)*Math.cos(z*0.005-0.6)*3.2
+           + Math.sin(x*0.016+z*0.004)*1.6
+           + Math.sin(z*0.021-x*0.007)*1.1) * (amp/6.0);
+    y *= flatten;
+    // keep a broad plateau under monument
+    y -= (1-flatten)*0.4;
+    pos.setY(i,y);
+    const n = hash(i*0.37+Math.floor(x)*0.13+Math.floor(z)*0.07)*0.14;
+    const c = sand.clone().lerp(sand2, n).multiplyScalar(0.96+hash(i*1.3)*0.07);
+    cols.push(c.r,c.g,c.b);
+  }
+  groundGeo.setAttribute('color', new THREE.Float32BufferAttribute(cols,3));
+  groundGeo.computeVertexNormals();
+}
+const ground = new THREE.Mesh(groundGeo, new THREE.MeshStandardMaterial({vertexColors:true, roughness:1.0, metalness:0}));
+ground.receiveShadow = true;
+scene.add(ground);
+
+/* Distant dunes behind monument */
+const duneMat = new THREE.MeshStandardMaterial({color:0xc59f66, roughness:1});
+[[-520,-720,520,38,170],[180,-860,640,44,210],[620,-680,460,30,150],[-900,-520,500,34,180]].forEach(d=>{
+  const m = new THREE.Mesh(new THREE.SphereGeometry(1,24,12), duneMat);
+  m.scale.set(d[2], d[3], d[4]);
+  m.position.set(d[0], -4, d[1]);
+  m.receiveShadow = true;
+  scene.add(m);
+});
+
+/* Camera framing: whole monument, margins, low elevated */
+const target = new THREE.Vector3(35,30,-35);
+let radius = 510;
+let theta = Math.atan2(-175-target.x, 450-target.z); // from camera pos (-140,65,450)
+let phi = Math.acos(THREE.MathUtils.clamp((65-target.y)/radius,-1,1));
+function updateCamera(){
+  phi = THREE.MathUtils.clamp(phi, 0.32, 1.52);
+  radius = THREE.MathUtils.clamp(radius, 220, 1400);
+  const x = target.x + radius*Math.sin(phi)*Math.sin(theta);
+  const y = target.y + radius*Math.cos(phi);
+  const z = target.z + radius*Math.sin(phi)*Math.cos(theta);
+  camera.position.set(x, Math.max(y,8), z);
+  camera.lookAt(target);
+}
+updateCamera();
+
+function render(){ renderer.render(scene,camera); }
+
+/* Native pointer drag orbit + wheel zoom (+ pinch) */
+const pointers = new Map();
+let lastPinch = 0;
+const el = renderer.domElement;
+el.addEventListener('pointerdown', e=>{
+  el.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pointers.size===2){
+    const pts=[...pointers.values()];
+    lastPinch = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+  }
+});
+el.addEventListener('pointermove', e=>{
+  if(!pointers.has(e.pointerId)) return;
+  const prev = pointers.get(e.pointerId);
+  if(pointers.size===1){
+    const dx = e.clientX-prev.x, dy = e.clientY-prev.y;
+    theta -= dx*0.005;
+    phi  -= dy*0.005;
+    updateCamera(); render();
+  } else if(pointers.size===2){
+    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    const pts=[...pointers.values()];
+    const d = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+    if(lastPinch>0){ radius *= lastPinch/Math.max(d,1); updateCamera(); render(); }
+    lastPinch = d;
+    return;
+  }
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+});
+function endPointer(e){ pointers.delete(e.pointerId); if(pointers.size<2) lastPinch=0; }
+el.addEventListener('pointerup', endPointer);
+el.addEventListener('pointercancel', endPointer);
+el.addEventListener('wheel', e=>{
+  e.preventDefault();
+  radius *= Math.exp(e.deltaY*0.001);
+  updateCamera(); render();
+},{passive:false});
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  render();
+});
+
+render();
+window.sceneReady = true;
+</script>
+</body>
+</html>

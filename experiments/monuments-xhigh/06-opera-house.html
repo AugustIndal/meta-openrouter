@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sydney Opera House Paper Craft</title>
+<style>
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#dfe8ec}
+canvas{display:block;width:100%;height:100%}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.06;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xdfe8ec);
+
+const camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 0.1, 300);
+
+const hemi = new THREE.HemisphereLight(0xe8f1f7, 0xc9b394, 0.85);
+scene.add(hemi);
+scene.add(new THREE.AmbientLight(0xffffff, 0.28));
+
+const sun = new THREE.DirectionalLight(0xfff0d8, 1.75);
+sun.position.set(16, 24, 12);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -22;
+sun.shadow.camera.right = 22;
+sun.shadow.camera.top = 24;
+sun.shadow.camera.bottom = -18;
+sun.shadow.camera.near = 2;
+sun.shadow.camera.far = 70;
+sun.shadow.bias = -0.0004;
+scene.add(sun);
+
+const fill = new THREE.DirectionalLight(0xd6e6f2, 0.38);
+fill.position.set(-14, 10, -8);
+scene.add(fill);
+
+// Deep blue faceted harbour
+const waterGeo = new THREE.PlaneGeometry(150, 100, 52, 34);
+waterGeo.rotateX(-Math.PI/2);
+{
+  const p = waterGeo.attributes.position;
+  for (let i=0;i<p.count;i++){
+    const x=p.getX(i), z=p.getZ(i);
+    p.setY(i, Math.sin(x*0.32)*Math.cos(z*0.28)*0.09 + Math.sin(x*0.11+z*0.17)*0.055);
+  }
+  waterGeo.computeVertexNormals();
+}
+const water = new THREE.Mesh(waterGeo, new THREE.MeshStandardMaterial({ color:0x144a7d, roughness:0.34, metalness:0.06, flatShading:true }));
+water.receiveShadow = true;
+scene.add(water);
+
+const matStone = new THREE.MeshStandardMaterial({ color:0xd9d0bf, roughness:0.9 });
+const matTerra = new THREE.MeshStandardMaterial({ color:0xb96b4c, roughness:0.86 });
+const matTerraLight = new THREE.MeshStandardMaterial({ color:0xc47a5c, roughness:0.86 });
+const matBase = new THREE.MeshStandardMaterial({ color:0xdccbb0, roughness:0.82 });
+const matGlass = new THREE.MeshStandardMaterial({ color:0x403c35, roughness:0.45, metalness:0.18 });
+const matGreen = new THREE.MeshStandardMaterial({ color:0x506b49, roughness:0.9, flatShading:true });
+const matTrunk = new THREE.MeshStandardMaterial({ color:0x5d4632, roughness:0.95 });
+
+function addBox(x,y,z,w,h,d,mat,ry=0){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+  m.position.set(x,y,z);
+  m.rotation.y = ry;
+  m.castShadow = true;
+  m.receiveShadow = true;
+  scene.add(m);
+  return m;
+}
+
+// Quay and stepped terracotta podium
+addBox(0, 0.5, 0, 28, 1.0, 17, matStone);
+addBox(0, 1.45, 0, 20, 0.9, 12.5, matTerra);
+addBox(0, 2.25, 0, 17.5, 0.7, 10.5, matTerraLight);
+addBox(0, 2.02, 5.78, 10, 0.24, 1.1, matTerra);
+
+// Low base buildings beneath the shells
+addBox(-3.7, 3.25, -2.3, 9.2, 1.3, 5.6, matBase);
+addBox(-3.7, 4.02, -2.3, 8.6, 0.5, 5.0, matGlass);
+addBox(4.2, 3.25, 0.05, 8.0, 1.3, 5.2, matBase);
+addBox(4.2, 4.02, 0.05, 7.4, 0.5, 4.6, matGlass);
+addBox(0.3, 3.1, 0.4, 3.2, 1.0, 3.4, matBase);
+
+// Curved pointed shell geometry, front and recessed back with paper thickness
+function createShellGeometry(H,W,D,lean){
+  const NU=18, NV=22;
+  const thick = 0.10 + H*0.012;
+  const pos=[];
+  for (let side=0; side<2; side++){
+    for (let iv=0; iv<=NV; iv++){
+      const vv=iv/NV;
+      const wf=Math.pow(Math.max(0,1-Math.pow(vv,1.35)),0.78);
+      const df=Math.pow(Math.max(0,1-Math.pow(vv,1.85)),0.55);
+      for (let iu=0; iu<=NU; iu++){
+        const s=(iu/NU)*2-1;
+        let x=s*(W*0.5)*wf;
+        let y=vv*H;
+        let z=(D*0.5)*(1-s*s)*df + Math.sin(Math.PI*vv)*0.07*D*(1-s*s)*df - lean*Math.pow(vv,1.55);
+        if (side===1){ x*=0.97; y*=0.998; z-=thick*(0.45+0.55*df); }
+        pos.push(x,y,z);
+      }
+    }
+  }
+  const count=(NU+1)*(NV+1);
+  const idx=[];
+  const F=(iv,iu)=>iv*(NU+1)+iu;
+  const B=(iv,iu)=>count+iv*(NU+1)+iu;
+  for (let iv=0; iv<NV; iv++) for (let iu=0; iu<NU; iu++){
+    const a=F(iv,iu), b=F(iv,iu+1), c=F(iv+1,iu), d=F(iv+1,iu+1);
+    idx.push(a,b,c, b,d,c);
+    const a2=B(iv,iu), b2=B(iv,iu+1), c2=B(iv+1,iu), d2=B(iv+1,iu+1);
+    idx.push(a2,c2,b2, b2,c2,d2);
+  }
+  for (let iu=0; iu<NU; iu++){
+    idx.push(F(0,iu),B(0,iu),F(0,iu+1), F(0,iu+1),B(0,iu),B(0,iu+1));
+    idx.push(F(NV,iu),F(NV,iu+1),B(NV,iu), F(NV,iu+1),B(NV,iu+1),B(NV,iu));
+  }
+  for (let iv=0; iv<NV; iv++){
+    idx.push(F(iv,0),F(iv+1,0),B(iv,0), F(iv+1,0),B(iv+1,0),B(iv,0));
+    idx.push(F(iv,NU),B(iv,NU),F(iv+1,NU), F(iv+1,NU),B(iv,NU),B(iv+1,NU));
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos,3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+
+const ivoryMats=[
+  new THREE.MeshStandardMaterial({ color:0xf6f0e2, roughness:0.5, metalness:0.03, side:THREE.DoubleSide }),
+  new THREE.MeshStandardMaterial({ color:0xefe7d5, roughness:0.54, metalness:0.03, side:THREE.DoubleSide }),
+  new THREE.MeshStandardMaterial({ color:0xfbf7ec, roughness:0.46, metalness:0.03, side:THREE.DoubleSide })
+];
+
+const shells=[
+  {h:9.6,w:5.4,d:3.9,lean:1.35,x:-4.6,z:-2.2,ry:0.55,rz:0.035},
+  {h:8.0,w:4.8,d:3.4,lean:1.10,x:-1.9,z:-3.3,ry:0.38,rz:-0.02},
+  {h:6.4,w:4.0,d:2.8,lean:0.85,x:-6.3,z:-3.7,ry:0.74,rz:0.06},
+  {h:7.2,w:4.4,d:3.1,lean:1.00,x:3.6,z:0.5,ry:0.50,rz:-0.03},
+  {h:5.6,w:3.6,d:2.5,lean:0.75,x:5.7,z:-1.3,ry:0.42,rz:0.02},
+  {h:4.6,w:3.0,d:2.1,lean:0.55,x:1.8,z:-1.5,ry:0.66,rz:0.05},
+  {h:3.6,w:2.4,d:1.7,lean:0.40,x:0.1,z:1.2,ry:0.48,rz:0.0}
+];
+const podiumTop=2.6;
+shells.forEach((s,i)=>{
+  const mesh=new THREE.Mesh(createShellGeometry(s.h,s.w,s.d,s.lean), ivoryMats[i%3]);
+  mesh.position.set(s.x,podiumTop,s.z);
+  mesh.rotation.set(0,s.ry,s.rz);
+  mesh.castShadow=true;
+  mesh.receiveShadow=true;
+  scene.add(mesh);
+});
+
+// Restrained background details, kept behind the landmark
+function tree(x,z,scale){
+  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.06*scale,0.08*scale,0.8*scale,6), matTrunk);
+  trunk.position.set(x,podiumTop+0.4*scale,z);
+  trunk.castShadow=true;
+  scene.add(trunk);
+  const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(0.48*scale,1), matGreen);
+  crown.position.set(x,podiumTop+(0.85+0.38)*scale,z);
+  crown.castShadow=true;
+  scene.add(crown);
+}
+tree(-7.9,-4.3,1.15);
+tree(7.9,-4.2,1.0);
+tree(-8.2,-2.0,0.8);
+
+// Camera orbit controls
+const target=new THREE.Vector3(0,4.8,0);
+let theta=0.72, phi=1.22, radius=39;
+function updateCamera(){
+  phi=Math.max(0.55,Math.min(1.48,phi));
+  radius=Math.max(16,Math.min(70,radius));
+  const sp=Math.sin(phi);
+  camera.position.set(
+    target.x + radius*sp*Math.sin(theta),
+    target.y + radius*Math.cos(phi),
+    target.z + radius*sp*Math.cos(theta)
+  );
+  camera.lookAt(target);
+}
+function render(){ renderer.render(scene,camera); }
+
+const dom=renderer.domElement;
+const pts=new Map();
+let pinchDist=0;
+dom.addEventListener('pointerdown', e=>{
+  dom.setPointerCapture(e.pointerId);
+  pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if (pts.size===2){
+    const a=[...pts.values()];
+    pinchDist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);
+  }
+});
+dom.addEventListener('pointermove', e=>{
+  if (!pts.has(e.pointerId)) return;
+  const prev=pts.get(e.pointerId);
+  if (pts.size===1){
+    theta -= (e.clientX-prev.x)*0.0055;
+    phi -= (e.clientY-prev.y)*0.0055;
+    pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    updateCamera(); render();
+  } else if (pts.size===2){
+    pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    const a=[...pts.values()];
+    const d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);
+    if (pinchDist>0 && d>0) radius *= pinchDist/d;
+    pinchDist=d;
+    updateCamera(); render();
+  }
+});
+function endPointer(e){ pts.delete(e.pointerId); }
+dom.addEventListener('pointerup', endPointer);
+dom.addEventListener('pointercancel', endPointer);
+dom.addEventListener('wheel', e=>{
+  e.preventDefault();
+  radius *= Math.exp(e.deltaY*0.0011);
+  updateCamera(); render();
+}, { passive:false });
+
+window.addEventListener('resize', ()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  render();
+});
+
+updateCamera();
+render();
+window.sceneReady=true;
+</script>
+</body>
+</html>

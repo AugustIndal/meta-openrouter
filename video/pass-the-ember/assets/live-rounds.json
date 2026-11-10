@@ -1,0 +1,122 @@
+[
+  {
+    "number": 1,
+    "place": "Painted Ladies",
+    "region": "San Francisco",
+    "country": "USA",
+    "difficulty": 2,
+    "prompt": "A row of three ornate Victorian houses stands side by side, each with a steep roof, pointed gables, bay windows, and narrow porches. Their fa\u00e7ades are painted in contrasting pastel shades of coral, mint green, pale yellow, and cream, with white trim highlighting the decorative woodwork. Small front steps lead to a sidewalk, with a leafy tree and a few shrubs nearby. Soft afternoon light casts gentle shadows across the colorful fronts.",
+    "describer": "Luna",
+    "image": "assets/round-1.png",
+    "guesses": [
+      {
+        "playerId": "terra",
+        "name": "Terra",
+        "guess": "Painted Ladies",
+        "correct": true,
+        "explanation": "Three colorful Victorian-style houses stand in a row, with steep gabled roofs, bay windows, and small front porches. The simplified drawing leaves the exact identity uncertain."
+      },
+      {
+        "playerId": "sonnet",
+        "name": "Sonnet",
+        "guess": "Painted Ladies",
+        "correct": true,
+        "explanation": "The drawing shows a row of three colorful Victorian-style houses with steep gabled roofs, decorative trim, bay-style fronts and front porches. That matches the Painted Ladies row of Victorian houses in California, though the park lawn and the drawing's simplification add some uncertainty."
+      },
+      {
+        "playerId": "haiku",
+        "name": "Haiku",
+        "guess": "Bryggen Wharf",
+        "correct": false,
+        "explanation": "The drawing shows three colorful, gabled wooden houses in a row with steep roofs and white trim, which loosely resembles Norway's historic timber waterfront architecture. It is a stylized cartoon with no clear landmark, signage, or landscape cues, so this guess is highly uncertain."
+      }
+    ],
+    "timings": {
+      "creating_clue": "2026-11-10T03:50:32.143819+00:00",
+      "checking_clue": "2026-11-10T03:50:55.010403+00:00",
+      "rendering": "2026-11-10T03:50:56.802284+00:00",
+      "guessing": "2026-11-10T03:51:28.856583+00:00",
+      "elapsedSeconds": 64.9
+    }
+  },
+  {
+    "number": 2,
+    "place": "Borgund Stave Church",
+    "region": "Laerdal",
+    "country": "Norway",
+    "difficulty": 3,
+    "prompt": "A dark brown wooden church with a compact, steeply tiered silhouette. Several overlapping black shingled roofs rise toward a narrow central tower, each roof edged with upturned, dragon-head carvings. A small pointed spire crowns the tower. Vertical timber walls and a covered gallery wrap around the lower building, with tiny windows and a simple wooden doorway. Place it on green grass beneath a pale sky, with wooded hills in the distance.",
+    "describer": "Terra",
+    "image": "assets/round-2.png",
+    "guesses": [
+      {
+        "playerId": "luna",
+        "name": "Luna",
+        "guess": "Japanese Tea Garden Pagoda",
+        "correct": false,
+        "explanation": "The image shows a dark, multi-tiered pagoda with broad upturned roofs, wooden walls, and small golden windows. The surrounding green hills are stylized, so the specific location is uncertain."
+      },
+      {
+        "playerId": "sonnet",
+        "name": "Sonnet",
+        "guess": "Gol Stave Church",
+        "correct": false,
+        "explanation": "The dark, tarred-wood building has multiple tiers of steep roofs, a slender central spire, and dragon-head finials at the roof corners. An outer wooden gallery surrounds the base. These are typical features of a Norwegian stave church, though the tier count and proportions are stylized, so I can't pinpoint which stave church it is."
+      },
+      {
+        "playerId": "haiku",
+        "name": "Haiku",
+        "guess": "Borgund Stave Church",
+        "correct": true,
+        "explanation": "The image shows a dark wooden, multi-tiered structure with stacked black roofs and carved dragon-head finials at the roof corners, typical of Norwegian stave churches. The surrounding green hills and simple wooden walkway fit a Norwegian landscape. The exact church is uncertain because the model is stylized and simplified."
+      }
+    ],
+    "timings": {
+      "creating_clue": "2026-11-10T03:51:48.728009+00:00",
+      "checking_clue": "2026-11-10T03:51:56.502477+00:00",
+      "rendering": "2026-11-10T03:51:57.283716+00:00",
+      "guessing": "2026-11-10T03:52:18.932287+00:00",
+      "elapsedSeconds": 40.2
+    }
+  },
+  {
+    "number": 3,
+    "place": "Rani Mahal",
+    "region": "Palpa",
+    "country": "Nepal",
+    "difficulty": 4,
+    "prompt": "A wide, flat-roofed palace of warm sandstone and cream plaster, three storeys tall. Rows of arched windows and carved stone balconies jut from the walls. Small round-domed open pavilions on pillars sit at the roofline corners, with a crenellated parapet between them. A heavy arched doorway leads to an inner courtyard. Weathered, faded walls. A dry grassy foreground with a few scattered trees, and a bright blue sky behind.",
+    "describer": "Sonnet",
+    "image": "assets/round-3.png",
+    "guesses": [
+      {
+        "playerId": "luna",
+        "name": "Luna",
+        "guess": "Hawa Mahal",
+        "correct": false,
+        "explanation": "The pale sandstone-colored fa\u00e7ade has many small arched windows and balconies arranged in repeated rows, with a broad central entrance and domed rooftop pavilions. The drawing is stylized, so the identification is uncertain."
+      },
+      {
+        "playerId": "terra",
+        "name": "Terra",
+        "guess": "Singha Durbar",
+        "correct": false,
+        "explanation": "The drawing shows a long, pale palace with rows of arched windows and balconies, a large central entrance, and domed corner pavilions. The identification is uncertain from the stylized image."
+      },
+      {
+        "playerId": "haiku",
+        "name": "Haiku",
+        "guess": "Hearst Castle",
+        "correct": false,
+        "explanation": "The image shows a long, cream-colored Spanish Revival style building with arched windows, balconies, and a crenellated roofline. Its domed corner towers and the sandy, arid ground suggest California rather than Norway or Nepal. The low-poly rendering leaves details uncertain, so this is a tentative match."
+      }
+    ],
+    "timings": {
+      "creating_clue": "2026-11-10T03:52:42.589522+00:00",
+      "checking_clue": "2026-11-10T03:52:48.356096+00:00",
+      "rendering": "2026-11-10T03:52:49.093666+00:00",
+      "guessing": "2026-11-10T03:53:47.029325+00:00",
+      "elapsedSeconds": 76.66
+    }
+  }
+]

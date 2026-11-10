@@ -1,0 +1,345 @@
+{
+  "wall_seconds": 19.096,
+  "results": [
+    {
+      "slug": "01-golden-gate",
+      "name": "Golden Gate Bridge",
+      "approach": "Geometry-first",
+      "prompt": "Build the Golden Gate Bridge with accurate structural hierarchy: two International Orange open-frame towers, a continuous road deck, paired sagging main cables and evenly spaced vertical hangers attached at both ends. Use a wide three-quarter viewpoint, cool ocean, distant hills and warm afternoon sun. Prioritize structural correctness over decoration.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 278,
+        "completion_tokens": 8165,
+        "total_tokens": 8443,
+        "cost": 0.0041103,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0041103,
+          "upstream_inference_prompt_cost": 2.78e-05,
+          "upstream_inference_completions_cost": 0.0040825
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 4500,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 11295,
+      "elapsed_seconds": 15.083
+    },
+    {
+      "slug": "02-eiffel",
+      "name": "Eiffel Tower",
+      "approach": "Miniature diorama",
+      "prompt": "Create a collectible miniature diorama of the Eiffel Tower on a circular landscaped base. Emphasize four splayed lattice legs, the wide arch at the base, two observation platforms and a tapering open lattice spire. Tiny paths and trees establish scale. Refined warm brass and iron materials, soft studio lighting, lovely three-quarter composition.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 287,
+        "completion_tokens": 7371,
+        "total_tokens": 7658,
+        "cost": 0.0037142,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0037142,
+          "upstream_inference_prompt_cost": 2.87e-05,
+          "upstream_inference_completions_cost": 0.0036855
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 2977,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 11210,
+      "elapsed_seconds": 13.277
+    },
+    {
+      "slug": "03-taj-mahal",
+      "name": "Taj Mahal",
+      "approach": "Symmetry and reflection",
+      "prompt": "Render the Taj Mahal as a serene architectural scene: central ivory onion dome with finial above a symmetrical building with a tall central pointed portal, smaller domed kiosks and four slender corner minarets. A long foreground reflecting pool and flanking formal gardens guide the eye to the facade. Symmetry, soft dawn light, pale pink sky, polished proportions.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 289,
+        "completion_tokens": 5832,
+        "total_tokens": 6121,
+        "cost": 0.0029449,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0029449,
+          "upstream_inference_prompt_cost": 2.89e-05,
+          "upstream_inference_completions_cost": 0.002916
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 1831,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 10786,
+      "elapsed_seconds": 9.866
+    },
+    {
+      "slug": "04-colosseum",
+      "name": "Colosseum",
+      "approach": "Architectural cutaway",
+      "prompt": "Build a recognizable Colosseum as a detailed architectural cutaway: elliptical amphitheater, three stacked rings of repeated open arches, a partially broken upper wall and visible stepped seating surrounding the exposed arena. Warm travertine stone, sparse Roman ground context, elevated three-quarter view. Make openings genuine empty spaces between columns and arch segments.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 284,
+        "completion_tokens": 10137,
+        "total_tokens": 10421,
+        "cost": 0.0050969,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0050969,
+          "upstream_inference_prompt_cost": 2.84e-05,
+          "upstream_inference_completions_cost": 0.0050685
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 5803,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 12432,
+      "elapsed_seconds": 19.092
+    },
+    {
+      "slug": "05-liberty",
+      "name": "Statue of Liberty",
+      "approach": "Faceted low-poly",
+      "prompt": "Create a refined low-poly Statue of Liberty: oxidized copper robed standing figure on a stepped stone pedestal, seven-point crown, right arm raised high with a gold flame torch, left arm holding a tablet. Build a readable human silhouette with deliberate geometry, distinguish arms and head, include the star-shaped island foundation and blue harbor. Strong side lighting.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 287,
+        "completion_tokens": 7991,
+        "total_tokens": 8278,
+        "cost": 0.0040242,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0040242,
+          "upstream_inference_prompt_cost": 2.87e-05,
+          "upstream_inference_completions_cost": 0.0039955
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 4158,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 10024,
+      "elapsed_seconds": 14.478
+    },
+    {
+      "slug": "06-opera-house",
+      "name": "Sydney Opera House",
+      "approach": "Paper sculpture",
+      "prompt": "Create a sculptural paper-craft Sydney Opera House beside a deep blue harbor. Arrange multiple groups of overlapping tall pointed white sail-shell roofs of different sizes on a terracotta podium, each shell curved and sharply peaked. Show the interleaved roof silhouette from a three-quarter harbor viewpoint. Crisp ivory material, soft ambient shadows, restrained surrounding details.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 288,
+        "completion_tokens": 8870,
+        "total_tokens": 9158,
+        "cost": 0.0044638,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0044638,
+          "upstream_inference_prompt_cost": 2.88e-05,
+          "upstream_inference_completions_cost": 0.004435
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 5530,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 9286,
+      "elapsed_seconds": 16.982
+    },
+    {
+      "slug": "07-pyramids",
+      "name": "Pyramids of Giza",
+      "approach": "Cinematic landscape",
+      "prompt": "Create a cinematic desert scene featuring the three Pyramids of Giza at distinct realistic relative scales. Use square-based pyramids with clean triangular faces and subtle horizontal stone courses, sandy ground with gentle dune variation, low warm sun, long soft shadows and atmospheric depth. The great pyramid is the focal point. Elegant restrained composition from a low elevated camera.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 286,
+        "completion_tokens": 8451,
+        "total_tokens": 8737,
+        "cost": 0.0042541,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0042541,
+          "upstream_inference_prompt_cost": 2.86e-05,
+          "upstream_inference_completions_cost": 0.0042255
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 5208,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 9808,
+      "elapsed_seconds": 16.979
+    },
+    {
+      "slug": "08-big-ben",
+      "name": "Elizabeth Tower / Big Ben",
+      "approach": "Night illumination",
+      "prompt": "Create a recognizable Elizabeth Tower (Big Ben) at blue hour. Model the tall square tan Gothic clock tower, large luminous round clock faces on all four sides, decorative vertical buttresses, belfry and steep dark pyramidal spire with finial. Add a modest Westminster wing, warm ground lights and dark blue sky. The clock hands and hour marks should be clearly visible.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 292,
+        "completion_tokens": 7594,
+        "total_tokens": 7886,
+        "cost": 0.0038262,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0038262,
+          "upstream_inference_prompt_cost": 2.92e-05,
+          "upstream_inference_completions_cost": 0.003797
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 3432,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 11512,
+      "elapsed_seconds": 14.365
+    },
+    {
+      "slug": "09-christ",
+      "name": "Christ the Redeemer",
+      "approach": "Clay maquette",
+      "prompt": "Sculpt Christ the Redeemer as a sophisticated monochrome clay architectural maquette on Corcovado mountain. A readable robed human figure stands upright with both arms fully outstretched horizontally, a small defined head, hands and flowing vertical robe folds, on its pedestal. Use soft off-white clay for statue, muted green-gray mountain layers, museum lighting and a clear frontal three-quarter camera.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 295,
+        "completion_tokens": 7292,
+        "total_tokens": 7587,
+        "cost": 0.0036755,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0036755,
+          "upstream_inference_prompt_cost": 2.95e-05,
+          "upstream_inference_completions_cost": 0.003646
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 3912,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 9514,
+      "elapsed_seconds": 13.25
+    },
+    {
+      "slug": "10-tower-bridge",
+      "name": "Tower Bridge",
+      "approach": "Isometric precision",
+      "prompt": "Create a precise isometric-style Tower Bridge scene over the Thames: two matching stone Gothic towers capped by blue-gray pointed roofs, two high-level walkways joining the towers, a lower road deck with the two bascule leaves closed, blue suspension elements extending toward both shores. Include tower arches, warm stone masonry hints and calm water. Use an orthographic camera and clean detailed miniature style.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 293,
+        "completion_tokens": 6827,
+        "total_tokens": 7120,
+        "cost": 0.0034428,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0034428,
+          "upstream_inference_prompt_cost": 2.93e-05,
+          "upstream_inference_completions_cost": 0.0034135
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 3370,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 9301,
+      "elapsed_seconds": 13.594
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+Pass the Ember 🔥
+One player describes a secret place. Muse Ember checks the prompt and turns words into a 3D scene. Everyone else has to guess from the picture.
+
+60 seconds to refine your drawing. Humans and AI at the same table. Three increasingly difficult rounds: San Francisco → Norway → Nepal.
+
+Built for the Meta × OpenRouter hackathon.
+
+This demo uses actual model outputs and game results. Waiting is sped up; prompt-entry animations are labeled replays. Model explanations summarize visible evidence, not private internal reasoning.

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stone Tower Illustration</title>
+<style>
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#dfeaf0}
+canvas{display:block;touch-action:none;cursor:grab}
+canvas:active{cursor:grabbing}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+function mulberry32(seed) {
+  return function() {
+    seed |= 0;
+    seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+const rng = mulberry32(20240917);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+renderer.setSize(window.innerWidth || 1200, window.innerHeight || 800);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.06;
+if (THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xd9e8f0);
+scene.fog = new THREE.Fog(0xdde8e4, 150, 380);
+
+const camera = new THREE.PerspectiveCamera(38, (window.innerWidth || 1200) / (window.innerHeight || 800), 0.1, 1000);
+
+const hemi = new THREE.HemisphereLight(0xcfe8ff, 0xc2ad8d, 0.95);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff1d6, 2.0);
+sun.position.set(38, 58, 30);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -70;
+sun.shadow.camera.right = 70;
+sun.shadow.camera.top = 70;
+sun.shadow.camera.bottom = -70;
+sun.shadow.camera.near = 1;
+sun.shadow.camera.far = 190;
+sun.shadow.bias = -0.0004;
+sun.shadow.normalBias = 0.03;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xd7ecff, 0.42);
+fill.position.set(-40, 24, -35);
+scene.add(fill);
+
+const skyMaterial = new THREE.ShaderMaterial({
+  side: THREE.BackSide,
+  depthWrite: false,
+  uniforms: {
+    topColor: { value: new THREE.Color(0x79b8e6) },
+    bottomColor: { value: new THREE.Color(0xeef1e4) }
+  },
+  vertexShader: 'varying vec3 vPos; void main(){ vPos = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: 'uniform vec3 topColor; uniform vec3 bottomColor; varying vec3 vPos; void main(){ float h = normalize(vPos).y * 0.5 + 0.5; float t = pow(max(h, 0.0), 1.35); gl_FragColor = vec4(mix(bottomColor, topColor, t), 1.0); }'
+});
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(420, 32, 16), skyMaterial));
+
+const ground = new THREE.Mesh(
+  new THREE.CircleGeometry(240, 64),
+  new THREE.MeshStandardMaterial({ color: 0xbfb8a9, roughness: 1, metalness: 0 })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+const plaza = new THREE.Mesh(
+  new THREE.BoxGeometry(32, 0.18, 32),
+  new THREE.MeshStandardMaterial({ color: 0xd0c9bb, roughness: 0.95, metalness: 0 })
+);
+plaza.position.y = 0.09;
+plaza.receiveShadow = true;
+scene.add(plaza);
+
+const streetMat = new THREE.MeshStandardMaterial({ color: 0x70767a, roughness: 0.98, metalness: 0 });
+const street1 = new THREE.Mesh(new THREE.BoxGeometry(210, 0.1, 7.5), streetMat);
+street1.position.y = 0.05;
+street1.receiveShadow = true;
+scene.add(street1);
+const street2 = new THREE.Mesh(new THREE.BoxGeometry(7.5, 0.1, 210), streetMat);
+street2.position.y = 0.05;
+street2.receiveShadow = true;
+scene.add(street2);
+
+const stoneMat = new THREE.MeshStandardMaterial({ color: 0xe7ddc9, roughness: 0.88, metalness: 0.02, flatShading: true });
+const stoneDarkMat = new THREE.MeshStandardMaterial({ color: 0xcabfa8, roughness: 0.92, metalness: 0.02, flatShading: true });
+const metalMat = new THREE.MeshStandardMaterial({ color: 0x33404d, roughness: 0.42, metalness: 0.55 });
+
+const shaftBottom = 1.3;
+const shaftTop = 36.3;
+const shaftHeight = shaftTop - shaftBottom;
+const bottomWidth = 9.5;
+const topWidth = 2.6;
+function widthAt(y) {
+  const t = THREE.MathUtils.clamp((y - shaftBottom) / shaftHeight, 0, 1);
+  return bottomWidth + (topWidth - bottomWidth) * t;
+}
+function radiusAtWidth(w) { return w / Math.SQRT2; }
+
+const tower = new THREE.Group();
+scene.add(tower);
+
+const step1 = new THREE.Mesh(new THREE.BoxGeometry(14, 0.35, 14), stoneDarkMat);
+step1.position.y = 0.175;
+step1.castShadow = true;
+step1.receiveShadow = true;
+tower.add(step1);
+const step2 = new THREE.Mesh(new THREE.BoxGeometry(12.2, 0.35, 12.2), stoneMat);
+step2.position.y = 0.525;
+step2.castShadow = true;
+step2.receiveShadow = true;
+tower.add(step2);
+const plinth = new THREE.Mesh(new THREE.BoxGeometry(10.8, 0.6, 10.8), stoneDarkMat);
+plinth.position.y = 1.0;
+plinth.castShadow = true;
+plinth.receiveShadow = true;
+tower.add(plinth);
+
+const shaft = new THREE.Mesh(
+  new THREE.CylinderGeometry(radiusAtWidth(topWidth), radiusAtWidth(bottomWidth), shaftHeight, 4, 1),
+  stoneMat
+);
+shaft.rotation.y = Math.PI / 4;
+shaft.position.y = shaftBottom + shaftHeight / 2;
+shaft.castShadow = true;
+shaft.receiveShadow = true;
+tower.add(shaft);
+
+for (const by of [7, 12, 17, 22, 27, 32]) {
+  const band = new THREE.Mesh(
+    new THREE.CylinderGeometry(radiusAtWidth(widthAt(by + 0.16) + 0.22), radiusAtWidth(widthAt(by - 0.16) + 0.22), 0.32, 4, 1),
+    stoneDarkMat
+  );
+  band.rotation.y = Math.PI / 4;
+  band.position.y = by;
+  band.castShadow = true;
+  band.receiveShadow = true;
+  tower.add(band);
+}
+
+const topBand = new THREE.Mesh(
+  new THREE.CylinderGeometry(radiusAtWidth(2.92), radiusAtWidth(2.92), 0.42, 4, 1),
+  stoneDarkMat
+);
+topBand.rotation.y = Math.PI / 4;
+topBand.position.y = shaftTop;
+topBand.castShadow = true;
+topBand.receiveShadow = true;
+tower.add(topBand);
+
+const crown = new THREE.Mesh(
+  new THREE.CylinderGeometry(radiusAtWidth(2.0), radiusAtWidth(topWidth), 3.2, 4, 1),
+  stoneMat
+);
+crown.rotation.y = Math.PI / 4;
+crown.position.y = shaftTop + 1.6;
+crown.castShadow = true;
+crown.receiveShadow = true;
+tower.add(crown);
+
+const spire = new THREE.Mesh(
+  new THREE.ConeGeometry(radiusAtWidth(2.0), 8.5, 4, 1),
+  stoneMat
+);
+spire.rotation.y = Math.PI / 4;
+spire.position.y = shaftTop + 3.2 + 4.25;
+spire.castShadow = true;
+spire.receiveShadow = true;
+tower.add(spire);
+
+const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.13, 2.8, 6), metalMat);
+tip.position.y = shaftTop + 3.2 + 8.5 + 0.9;
+tip.castShadow = true;
+tower.add(tip);
+const finial = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 8), metalMat);
+finial.position.y = shaftTop + 3.2 + 8.5 + 2.35;
+tower.add(finial);
+
+const finGeo = new THREE.BoxGeometry(2.6, 11, 0.34);
+const finEast = new THREE.Mesh(finGeo, stoneDarkMat);
+finEast.position.set(2.2, 30, 0);
+finEast.castShadow = true;
+finEast.receiveShadow = true;
+tower.add(finEast);
+const finWest = new THREE.Mesh(finGeo, stoneDarkMat);
+finWest.position.set(-2.2, 30, 0);
+finWest.castShadow = true;
+finWest.receiveShadow = true;
+tower.add(finWest);
+
+const supportShape = new THREE.Shape();
+supportShape.moveTo(0, 0);
+supportShape.lineTo(5.1, 0);
+supportShape.lineTo(0, 8.4);
+supportShape.closePath();
+const supportGeo = new THREE.ExtrudeGeometry(supportShape, { depth: 0.62, bevelEnabled: false });
+supportGeo.translate(0, 0, -0.31);
+for (let i = 0; i < 4; i++) {
+  const holder = new THREE.Group();
+  holder.rotation.y = i * Math.PI / 2;
+  const support = new THREE.Mesh(supportGeo, stoneDarkMat);
+  support.position.set(4.05, 0, 0);
+  support.castShadow = true;
+  support.receiveShadow = true;
+  holder.add(support);
+  tower.add(holder);
+}
+
+const dummy = new THREE.Object3D();
+const windowMatrices = [];
+const tilt = Math.atan2((bottomWidth - topWidth) / 2, shaftHeight);
+function collectFaceWindows(y, width, tiltAngle) {
+  const n = Math.max(2, Math.floor((width - 0.6) / 0.78) + 1);
+  for (let f = 0; f < 4; f++) {
+    const yaw = f * Math.PI / 2;
+    const dirX = Math.sin(yaw);
+    const dirZ = Math.cos(yaw);
+    const tanX = Math.cos(yaw);
+    const tanZ = -Math.sin(yaw);
+    for (let i = 0; i < n; i++) {
+      const off = (i - (n - 1) / 2) * 0.78;
+      dummy.position.set(dirX * (width / 2 + 0.045) + tanX * off, y, dirZ * (width / 2 + 0.045) + tanZ * off);
+      dummy.quaternion.setFromEuler(new THREE.Euler(-tiltAngle, yaw, 0, 'YXZ'));
+      dummy.scale.set(1, 1, 1);
+      dummy.updateMatrix();
+      windowMatrices.push(dummy.matrix.clone());
+    }
+  }
+}
+for (let y = 3.8; y <= 35.3; y += 1.02) collectFaceWindows(y, widthAt(y), tilt);
+const crownTilt = Math.atan2((topWidth - 2.0) / 2, 3.2);
+for (let y = 37.0; y <= 39.0; y += 1.0) {
+  const w = topWidth + (2.0 - topWidth) * ((y - shaftTop) / 3.2);
+  collectFaceWindows(y, w, crownTilt);
+}
+const windowGeo = new THREE.BoxGeometry(0.52, 0.68, 0.07);
+const windowMat = new THREE.MeshStandardMaterial({ color: 0x203240, roughness: 0.28, metalness: 0.35 });
+const towerWindows = new THREE.InstancedMesh(windowGeo, windowMat, windowMatrices.length);
+windowMatrices.forEach((m, i) => towerWindows.setMatrixAt(i, m));
+towerWindows.instanceMatrix.needsUpdate = true;
+tower.add(towerWindows);
+
+const dashMatrices = [];
+for (let d = -95; d <= 95; d += 7) {
+  if (Math.abs(d) <= 18) continue;
+  dummy.position.set(d, 0.13, 0);
+  dummy.quaternion.set(0, 0, 0, 1);
+  dummy.scale.set(1, 1, 1);
+  dummy.updateMatrix();
+  dashMatrices.push(dummy.matrix.clone());
+  dummy.position.set(0, 0.13, d);
+  dummy.quaternion.setFromEuler(new THREE.Euler(0, Math.PI / 2, 0));
+  dummy.updateMatrix();
+  dashMatrices.push(dummy.matrix.clone());
+}
+const dashes = new THREE.InstancedMesh(
+  new THREE.BoxGeometry(2.2, 0.03, 0.28),
+  new THREE.MeshStandardMaterial({ color: 0xe8ddb0, roughness: 0.9, metalness: 0 }),
+  dashMatrices.length
+);
+dashMatrices.forEach((m, i) => dashes.setMatrixAt(i, m));
+dashes.instanceMatrix.needsUpdate = true;
+scene.add(dashes);
+
+const blockMatrices = [];
+const roofMatrices = [];
+const cityWindowMatrices = [];
+const blockColors = [];
+const palette = [0xd8cfbc, 0xc9bda6, 0xb9c1c8, 0xd0b5a4, 0xb2c2ae, 0xe0d8c8, 0xc4b49a, 0xaebcc2].map(c => new THREE.Color(c));
+for (let gx = -6; gx <= 6; gx++) {
+  for (let gz = -6; gz <= 6; gz++) {
+    const x = gx * 13.2 + (rng() - 0.5) * 2.6;
+    const z = gz * 13.2 + (rng() - 0.5) * 2.6;
+    const dist = Math.hypot(x, z);
+    if (dist < 19 || dist > 84) continue;
+    if (Math.abs(x) < 5.2 || Math.abs(z) < 5.2) continue;
+    const w = 6.2 + rng() * 4.2;
+    const d = 6.2 + rng() * 4.2;
+    const h = 2.6 + rng() * 4.4;
+    dummy.position.set(x, h / 2, z);
+    dummy.quaternion.set(0, 0, 0, 1);
+    dummy.scale.set(w, h, d);
+    dummy.updateMatrix();
+    blockMatrices.push(dummy.matrix.clone());
+    dummy.position.set(x, h + 0.16, z);
+    dummy.scale.set(w + 0.4, 0.32, d + 0.4);
+    dummy.updateMatrix();
+    roofMatrices.push(dummy.matrix.clone());
+    blockColors.push(palette[Math.floor(rng() * palette.length)]);
+    const rows = Math.max(1, Math.floor((h - 0.8) / 1.15));
+    const colsS = Math.max(2, Math.floor(w / 1.1));
+    const colsE = Math.max(2, Math.floor(d / 1.1));
+    for (let r = 0; r < rows; r++) {
+      const y = 1.15 + r * 1.15;
+      if (y > h - 0.5) continue;
+      for (let c = 0; c < colsS; c++) {
+        const off = (c - (colsS - 1) / 2) * 1.05;
+        dummy.position.set(x + off, y, z + d / 2 + 0.04);
+        dummy.quaternion.set(0, 0, 0, 1);
+        dummy.scale.set(1, 1, 1);
+        dummy.updateMatrix();
+        cityWindowMatrices.push(dummy.matrix.clone());
+      }
+      for (let c = 0; c < colsE; c++) {
+        const off = (c - (colsE - 1) / 2) * 1.05;
+        dummy.position.set(x + w / 2 + 0.04, y, z + off);
+        dummy.quaternion.setFromEuler(new THREE.Euler(0, Math.PI / 2, 0));
+        dummy.scale.set(1, 1, 1);
+        dummy.updateMatrix();
+        cityWindowMatrices.push(dummy.matrix.clone());
+      }
+    }
+  }
+}
+const blocks = new THREE.InstancedMesh(
+  new THREE.BoxGeometry(1, 1, 1),
+  new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.92, metalness: 0.02 }),
+  blockMatrices.length
+);
+blockMatrices.forEach((m, i) => {
+  blocks.setMatrixAt(i, m);
+  blocks.setColorAt(i, blockColors[i]);
+});
+blocks.instanceMatrix.needsUpdate = true;
+if (blocks.instanceColor) blocks.instanceColor.needsUpdate = true;
+blocks.castShadow = true;
+blocks.receiveShadow = true;
+scene.add(blocks);
+
+const roofs = new THREE.InstancedMesh(
+  new THREE.BoxGeometry(1, 1, 1),
+  new THREE.MeshStandardMaterial({ color: 0x6e6a62, roughness: 1, metalness: 0 }),
+  roofMatrices.length
+);
+roofMatrices.forEach((m, i) => roofs.setMatrixAt(i, m));
+roofs.instanceMatrix.needsUpdate = true;
+roofs.castShadow = true;
+roofs.receiveShadow = true;
+scene.add(roofs);
+
+const cityWindows = new THREE.InstancedMesh(windowGeo, windowMat, cityWindowMatrices.length);
+cityWindowMatrices.forEach((m, i) => cityWindows.setMatrixAt(i, m));
+cityWindows.instanceMatrix.needsUpdate = true;
+scene.add(cityWindows);
+
+const treePos = [];
+for (let i = 0; i < 28; i++) {
+  const a = (i / 28) * Math.PI * 2 + (rng() - 0.5) * 0.18;
+  const r = 13.8 + rng() * 3.2;
+  treePos.push([Math.cos(a) * r, Math.sin(a) * r]);
+}
+for (let z = -72; z <= 72; z += 8.5) {
+  if (Math.abs(z) > 15) {
+    treePos.push([-6.4 + (rng() - 0.5), z + (rng() - 0.5) * 1.4]);
+    treePos.push([6.4 + (rng() - 0.5), z + (rng() - 0.5) * 1.4]);
+  }
+}
+for (let x = -72; x <= 72; x += 8.5) {
+  if (Math.abs(x) > 15) {
+    treePos.push([x + (rng() - 0.5) * 1.4, -6.4 + (rng() - 0.5)]);
+    treePos.push([x + (rng() - 0.5) * 1.4, 6.4 + (rng() - 0.5)]);
+  }
+}
+const trunks = new THREE.InstancedMesh(
+  new THREE.CylinderGeometry(0.09, 0.15, 1.0, 6),
+  new THREE.MeshStandardMaterial({ color: 0x6b4f35, roughness: 1, metalness: 0 }),
+  treePos.length
+);
+const canopies = new THREE.InstancedMesh(
+  new THREE.IcosahedronGeometry(1.05, 1),
+  new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9, metalness: 0, flatShading: true }),
+  treePos.length
+);
+const greens = [0x4f7d3a, 0x5f8f42, 0x6da04c, 0x3f6d37].map(c => new THREE.Color(c));
+treePos.forEach((p, i) => {
+  const s = 0.85 + rng() * 0.55;
+  dummy.position.set(p[0], 0.5 * s, p[1]);
+  dummy.quaternion.set(0, 0, 0, 1);
+  dummy.scale.set(s, s, s);
+  dummy.updateMatrix();
+  trunks.setMatrixAt(i, dummy.matrix);
+  dummy.position.set(p[0], 1.72 * s, p[1]);
+  dummy.scale.set(1.15 * s, 1.3 * s, 1.15 * s);
+  dummy.updateMatrix();
+  canopies.setMatrixAt(i, dummy.matrix);
+  canopies.setColorAt(i, greens[Math.floor(rng() * greens.length)]);
+});
+trunks.instanceMatrix.needsUpdate = true;
+canopies.instanceMatrix.needsUpdate = true;
+if (canopies.instanceColor) canopies.instanceColor.needsUpdate = true;
+trunks.castShadow = true;
+canopies.castShadow = true;
+scene.add(trunks);
+scene.add(canopies);
+
+let theta = 0.65;
+let phi = 1.16;
+let radius = 106;
+const target = new THREE.Vector3(0, 21.5, 0);
+function updateCamera() {
+  const sp = Math.sin(phi);
+  camera.position.set(
+    target.x + radius * sp * Math.sin(theta),
+    target.y + radius * Math.cos(phi),
+    target.z + radius * sp * Math.cos(theta)
+  );
+  camera.lookAt(target);
+}
+function renderScene() {
+  renderer.render(scene, camera);
+  if (!window.sceneReady) window.sceneReady = true;
+}
+
+const dom = renderer.domElement;
+let dragging = false;
+let lastX = 0;
+let lastY = 0;
+dom.addEventListener('pointerdown', (e) => {
+  dragging = true;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  if (dom.setPointerCapture) {
+    try { dom.setPointerCapture(e.pointerId); } catch (err) {}
+  }
+});
+dom.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  const dx = e.clientX - lastX;
+  const dy = e.clientY - lastY;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  theta -= dx * 0.0055;
+  phi -= dy * 0.0055;
+  phi = Math.max(0.2, Math.min(1.48, phi));
+  updateCamera();
+  renderScene();
+});
+dom.addEventListener('pointerup', () => { dragging = false; });
+dom.addEventListener('pointercancel', () => { dragging = false; });
+dom.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  radius *= Math.exp(e.deltaY * 0.001);
+  radius = Math.max(42, Math.min(170, radius));
+  updateCamera();
+  renderScene();
+}, { passive: false });
+
+function onResize() {
+  const w = window.innerWidth || 1200;
+  const h = window.innerHeight || 800;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+  renderScene();
+}
+window.addEventListener('resize', onResize);
+
+updateCamera();
+renderScene();
+</script>
+</body>
+</html>

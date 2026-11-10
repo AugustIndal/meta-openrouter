@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Golden Gate Bridge</title>
+<style>
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#8fc7e8}
+canvas{display:block;width:100vw;height:100vh}
+</style>
+</head>
+<body>
+<canvas id="scene" width="1200" height="800"></canvas>
+<script>
+const canvas=document.getElementById('scene');
+const ctx=canvas.getContext('2d');
+const W=1200,H=800;
+const DX=14,DY=-7;
+const deckTop=445,deckBot=464,deckLeft=150,deckRight=1050;
+const towerTop=140,pierBot=618;
+const T1=398,T2=812,MID=605;
+const cableTop=152,cableSag=436;
+const KK=(cableSag-cableTop)/((T2-MID)*(T2-MID));
+function cableY(x){return cableSag-KK*(x-MID)*(x-MID);}
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;draw();}
+window.addEventListener('resize',resize);
+function draw(){
+  const cw=canvas.width,ch=canvas.height;
+  let bg=ctx.createLinearGradient(0,0,0,ch);
+  bg.addColorStop(0,'#7ab8d9');bg.addColorStop(0.55,'#bfe0ef');bg.addColorStop(1,'#3e7f92');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,cw,ch);
+  const s=Math.min(cw/W,ch/H),ox=(cw-W*s)/2,oy=(ch-H*s)/2;
+  ctx.save();ctx.translate(ox,oy);ctx.scale(s,s);
+  drawScene();
+  ctx.restore();
+  window.sceneReady=true;
+}
+function leg(x,top,bot,wb,wt,fill){
+  ctx.beginPath();
+  ctx.moveTo(x-wb/2,bot);ctx.lineTo(x+wb/2,bot);ctx.lineTo(x+wt/2,top);ctx.lineTo(x-wt/2,top);ctx.closePath();
+  ctx.fillStyle=fill;ctx.fill();
+}
+function beam(fx,nearX,yNear,fill){
+  const yFar=yNear+DY;
+  ctx.beginPath();
+  ctx.moveTo(fx-7,yFar);ctx.lineTo(nearX+7,yNear);ctx.lineTo(nearX+7,yNear+13);ctx.lineTo(fx-7,yFar+13);ctx.closePath();
+  ctx.fillStyle=fill;ctx.fill();
+  ctx.fillStyle='rgba(255,190,140,0.22)';
+  ctx.fillRect(fx-7,yFar,nearX-fx+14,2);
+}
+function drawTower(cx){
+  const farX=cx-16+DX, nearX=cx+16;
+  // far leg
+  let g1=ctx.createLinearGradient(farX-8,0,farX+8,0);
+  g1.addColorStop(0,'#8e2f22');g1.addColorStop(0.6,'#b03a28');g1.addColorStop(1,'#7e281c');
+  leg(farX,towerTop+DY,pierBot,15,11,g1);
+  // beams behind near leg
+  let gb=ctx.createLinearGradient(0,150,0,430);
+  gb.addColorStop(0,'#c14a32');gb.addColorStop(1,'#9e3424');
+  beam(farX,nearX,172,gb);beam(farX,nearX,268,gb);beam(farX,nearX,360,gb);
+  // near leg with warm sun from right
+  let g2=ctx.createLinearGradient(nearX-9,0,nearX+9,0);
+  g2.addColorStop(0,'#b03a28');g2.addColorStop(0.55,'#dd5f3d');g2.addColorStop(1,'#f07a4e');
+  leg(nearX,towerTop,pierBot,16,11,g2);
+  // re-draw beams front edges over near leg junction
+  ctx.fillStyle='rgba(90,25,18,0.55)';
+  ctx.fillRect(nearX+3,172,4,13);ctx.fillRect(nearX+3,268,4,13);ctx.fillRect(nearX+3,360,4,13);
+  // top caps
+  ctx.fillStyle='#8e2f22';ctx.fillRect(farX-6,towerTop+DY-3,12,5);
+  ctx.fillStyle='#e86a44';ctx.fillRect(nearX-6,towerTop-3,12,5);
+  // tower lights
+  ctx.fillStyle='#ffe9a8';ctx.beginPath();ctx.arc(nearX,towerTop-6,2.6,0,7);ctx.fill();
+  ctx.fillStyle='#ffd98a';ctx.beginPath();ctx.arc(farX,towerTop+DY-6,2.2,0,7);ctx.fill();
+  // warm highlight on right edge
+  ctx.strokeStyle='rgba(255,210,150,0.55)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(nearX+5,towerTop+4);ctx.lineTo(nearX+7,pierBot-10);ctx.stroke();
+}
+function cablePath(ox,oy,width,color){
+  ctx.beginPath();
+  ctx.moveTo(152+ox,432+oy);
+  ctx.quadraticCurveTo(T1+ox,432+oy,T1+ox,cableTop+oy);
+  for(let x=T1;x<=T2;x+=8){ctx.lineTo(x+ox,cableY(x)+oy);}
+  ctx.quadraticCurveTo(T2+ox,432+oy,1048+ox,432+oy);
+  ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();
+}
+function drawScene(){
+  // SKY
+  let sky=ctx.createLinearGradient(0,0,0,500);
+  sky.addColorStop(0,'#6fb2d8');sky.addColorStop(0.45,'#aedcf0');sky.addColorStop(0.82,'#f7e8c8');sky.addColorStop(1,'#fdeecf');
+  ctx.fillStyle=sky;ctx.fillRect(0,0,W,520);
+  // SUN warm afternoon, upper right
+  let sun=ctx.createRadialGradient(985,126,10,985,126,210);
+  sun.addColorStop(0,'rgba(255,238,180,0.95)');sun.addColorStop(0.25,'rgba(255,214,140,0.65)');sun.addColorStop(1,'rgba(255,200,110,0)');
+  ctx.fillStyle=sun;ctx.beginPath();ctx.arc(985,126,210,0,7);ctx.fill();
+  let sd=ctx.createRadialGradient(978,118,4,985,126,38);
+  sd.addColorStop(0,'#fffbe8');sd.addColorStop(0.7,'#ffe9a3');sd.addColorStop(1,'#ffd07a');
+  ctx.fillStyle=sd;ctx.beginPath();ctx.arc(985,126,37,0,7);ctx.fill();
+  // CLOUDS
+  ctx.fillStyle='rgba(255,255,255,0.82)';
+  function cloud(x,y,s){ctx.beginPath();ctx.ellipse(x,y,52*s,14*s,0,0,7);ctx.ellipse(x+38*s,y+3*s,36*s,11*s,0,0,7);ctx.ellipse(x-40*s,y+4*s,34*s,10*s,0,0,7);ctx.fill();}
+  cloud(230,108,1);cloud(580,82,0.8);cloud(825,190,0.65);cloud(360,185,0.6);cloud(105,205,0.55);
+  ctx.fillStyle='rgba(255,244,214,0.35)';cloud(985,210,0.5);
+  // DISTANT HILLS far haze
+  let fh=ctx.createLinearGradient(0,340,0,480);
+  fh.addColorStop(0,'#b7d0d2');fh.addColorStop(1,'#8fb0b3');
+  ctx.fillStyle=fh;ctx.beginPath();ctx.moveTo(0,475);
+  ctx.bezierCurveTo(120,430,260,445,400,430);ctx.bezierCurveTo(560,415,720,440,880,425);ctx.bezierCurveTo(1020,412,1120,440,1200,430);
+  ctx.lineTo(1200,480);ctx.lineTo(0,480);ctx.closePath();ctx.fill();
+  // NEAR HILLS left and right headlands
+  let lh=ctx.createLinearGradient(0,360,0,480);
+  lh.addColorStop(0,'#7fa39b');lh.addColorStop(1,'#5d857c');
+  ctx.fillStyle=lh;ctx.beginPath();ctx.moveTo(0,480);ctx.lineTo(0,420);ctx.bezierCurveTo(70,390,150,365,230,395);ctx.bezierCurveTo(300,420,340,450,380,480);ctx.closePath();ctx.fill();
+  let rh=ctx.createLinearGradient(0,320,0,480);
+  rh.addColorStop(0,'#6f9584');rh.addColorStop(1,'#4f7468');
+  ctx.fillStyle=rh;ctx.beginPath();ctx.moveTo(1200,480);ctx.lineTo(1200,380);ctx.bezierCurveTo(1110,340,1010,320,940,360);ctx.bezierCurveTo(880,395,840,440,820,480);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='rgba(70,100,90,0.35)';ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(940,360);ctx.bezierCurveTo(1010,330,1100,350,1200,385);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(20,425);ctx.bezierCurveTo(90,395,160,380,225,398);ctx.stroke();
+  // OCEAN cool
+  let oc=ctx.createLinearGradient(0,470,0,800);
+  oc.addColorStop(0,'#6ba9b5');oc.addColorStop(0.25,'#47899a');oc.addColorStop(0.6,'#316d80');oc.addColorStop(1,'#224f61');
+  ctx.fillStyle=oc;ctx.fillRect(0,472,W,328);
+  // horizon line
+  ctx.fillStyle='rgba(255,240,200,0.5)';ctx.fillRect(0,470,W,2);
+  // bridge shadow / reflection on water
+  let sh=ctx.createLinearGradient(0,470,0,560);
+  sh.addColorStop(0,'rgba(20,50,60,0.30)');sh.addColorStop(1,'rgba(20,50,60,0)');
+  ctx.fillStyle=sh;ctx.fillRect(140,472,920,92);
+  ctx.fillStyle='rgba(200,80,50,0.18)';
+  ctx.fillRect(T1-18,500,36,120);ctx.fillRect(T2-18,500,36,120);
+  ctx.fillStyle='rgba(255,190,120,0.10)';ctx.fillRect(220,492,760,26);
+  // ocean shimmer deterministic
+  ctx.lineCap='round';
+  for(let i=0;i<110;i++){
+    const y=486+((i*37)%300),x=((i*173)%1150)+10,len=16+((i*53)%58),a=0.05+((i*29)%20)/100;
+    ctx.strokeStyle='rgba(220,245,250,'+a.toFixed(2)+')';ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+len,y);ctx.stroke();
+  }
+  for(let i=0;i<28;i++){
+    const y=500+((i*61)%260),x=((i*211)%1100)+30;
+    ctx.strokeStyle='rgba(255,220,160,0.22)';ctx.lineWidth=1.6;
+    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+26+((i*17)%30),y);ctx.stroke();
+  }
+  // PIERS
+  function pier(cx){
+    ctx.beginPath();
+    ctx.moveTo(cx+DX-30,pierBot);ctx.lineTo(cx+DX+34,pierBot);ctx.lineTo(cx+DX+20,deckBot+6);ctx.lineTo(cx+DX-20,deckBot+6);ctx.closePath();
+    ctx.fillStyle='#6f7578';ctx.fill();
+    let pg=ctx.createLinearGradient(cx-34,0,cx+34,0);
+    pg.addColorStop(0,'#8a8f91');pg.addColorStop(0.6,'#a8adae');pg.addColorStop(1,'#7d8386');
+    ctx.beginPath();ctx.moveTo(cx-36,pierBot);ctx.lineTo(cx+36,pierBot);ctx.lineTo(cx+22,deckBot+4);ctx.lineTo(cx-22,deckBot+4);ctx.closePath();
+    ctx.fillStyle=pg;ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.55)';
+    ctx.beginPath();ctx.ellipse(cx,584,52,9,0,0,7);ctx.fill();
+    ctx.fillStyle='rgba(230,250,252,0.7)';
+    ctx.beginPath();ctx.ellipse(cx-28,588,22,5,0,0,7);ctx.ellipse(cx+30,590,24,5,0,0,7);ctx.fill();
+  }
+  pier(T1);pier(T2);
+  // FAR ANCHORAGES
+  ctx.fillStyle='#7c8285';
+  ctx.fillRect(136+DX,432+DY,56,92);ctx.fillRect(1006+DX,432+DY,56,92);
+  // FAR DECK TOP SURFACE (road)
+  let road=ctx.createLinearGradient(0,430,0,455);
+  road.addColorStop(0,'#4a5054');road.addColorStop(1,'#363c40');
+  ctx.beginPath();ctx.moveTo(deckLeft,deckTop);ctx.lineTo(deckRight,deckTop);ctx.lineTo(deckRight+DX,deckTop+DY);ctx.lineTo(deckLeft+DX,deckTop+DY);ctx.closePath();
+  ctx.fillStyle=road;ctx.fill();
+  // far railing
+  ctx.strokeStyle='rgba(200,210,215,0.85)';ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(deckLeft+DX,deckTop+DY-7);ctx.lineTo(deckRight+DX,deckTop+DY-7);ctx.stroke();
+  // FAR CABLE paired
+  cablePath(DX,DY,4.4,'rgba(122,46,34,0.95)');
+  // FAR HANGERS paired - main span
+  ctx.strokeStyle='rgba(70,35,28,0.75)';ctx.lineWidth=1.2;
+  for(let i=1;i<12;i++){const x=T1+i*(T2-T1)/12;ctx.beginPath();ctx.moveTo(x+DX,cableY(x)+DY);ctx.lineTo(x+DX,deckTop+DY);ctx.stroke();}
+  // far side hangers via bezier points
+  function sideHangers(x0,x1,ox,oy){
+    for(let k=0;k<4;k++){const t=0.22+k*0.20;
+      const bx=(1-t)*(1-t)*x0+2*(1-t)*t*x0+t*t*x1;
+      const by=(1-t)*(1-t)*cableTop+2*(1-t)*t*432+t*t*432;
+      ctx.beginPath();ctx.moveTo(bx+ox,by+oy);ctx.lineTo(bx+ox,deckTop+oy);ctx.stroke();}
+  }
+  sideHangers(T1,152,DX,DY);sideHangers(T2,1048,DX,DY);
+  // NEAR ANCHORAGES concrete blocks
+  function anch(x){
+    let ag=ctx.createLinearGradient(x,0,x+58,0);
+    ag.addColorStop(0,'#9aa0a2');ag.addColorStop(0.6,'#b6bab9');ag.addColorStop(1,'#878d8f');
+    ctx.fillStyle=ag;ctx.fillRect(x,438,58,90);
+    ctx.fillStyle='#c05338';ctx.fillRect(x+8,470,42,6);
+    ctx.fillStyle='#5b6163';ctx.fillRect(x+16,428,26,12);
+  }
+  anch(132);anch(1004);
+  // DECK FRONT FACE with truss
+  let df=ctx.createLinearGradient(0,deckTop,0,deckBot);
+  df.addColorStop(0,'#d06040');df.addColorStop(0.5,'#b84932');df.addColorStop(1,'#8e3424');
+  ctx.fillStyle=df;ctx.fillRect(deckLeft,deckTop,deckRight-deckLeft,deckBot-deckTop);
+  ctx.fillStyle='#2f3437';ctx.fillRect(deckLeft,deckTop,deckRight-deckLeft,4);
+  // truss diagonals under deck front
+  ctx.strokeStyle='rgba(70,25,18,0.65)';ctx.lineWidth=1.4;
+  for(let x=deckLeft+8;x<deckRight-10;x+=26){
+    ctx.beginPath();ctx.moveTo(x,deckBot-3);ctx.lineTo(x+13,deckTop+6);ctx.lineTo(x+26,deckBot-3);ctx.stroke();
+  }
+  ctx.strokeStyle='rgba(255,200,160,0.35)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(deckLeft,deckTop+5);ctx.lineTo(deckRight,deckTop+5);ctx.stroke();
+  // centre line on road top surface
+  ctx.strokeStyle='rgba(250,230,170,0.9)';ctx.lineWidth=1.6;
+  ctx.setLineDash([14,12]);
+  ctx.beginPath();ctx.moveTo(deckLeft+DX/2,deckTop+DY/2+1);ctx.lineTo(deckRight+DX/2,deckTop+DY/2+1);ctx.stroke();
+  ctx.setLineDash([]);
+  // FRONT RAILING posts + rail
+  ctx.strokeStyle='#d7dee0';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(deckLeft,deckTop-8);ctx.lineTo(deckRight,deckTop-8);ctx.stroke();
+  ctx.strokeStyle='rgba(90,100,105,0.9)';ctx.lineWidth=1.3;
+  for(let x=deckLeft+6;x<=deckRight;x+=18){ctx.beginPath();ctx.moveTo(x,deckTop);ctx.lineTo(x,deckTop-8);ctx.stroke();}
+  // TOWERS front over deck
+  drawTower(T1);drawTower(T2);
+  // NEAR MAIN CABLE paired
+  cablePath(0,0,6,'#a63d2c');
+  // cable highlight
+  ctx.beginPath();
+  ctx.moveTo(152,431);ctx.quadraticCurveTo(T1,431,T1,cableTop-1);
+  for(let x=T1;x<=T2;x+=8){ctx.lineTo(x,cableY(x)-1);}
+  ctx.quadraticCurveTo(T2,431,1048,431);
+  ctx.strokeStyle='rgba(255,160,120,0.45)';ctx.lineWidth=1.4;ctx.stroke();
+  // NEAR HANGERS evenly spaced main span attached both ends
+  ctx.strokeStyle='#4a2a22';ctx.lineWidth=1.7;
+  for(let i=1;i<12;i++){
+    const x=T1+i*(T2-T1)/12;
+    ctx.beginPath();ctx.moveTo(x,cableY(x));ctx.lineTo(x,deckTop);ctx.stroke();
+  }
+  sideHangers(T1,152,0,0);sideHangers(T2,1048,0,0);
+  // deck lamp posts
+  ctx.strokeStyle='#3a3f42';ctx.lineWidth=1.8;
+  for(let i=0;i<6;i++){
+    const x=230+i*140;if(x>T1-30&&x<T1+40)continue;if(x>T2-30&&x<T2+40)continue;
+    ctx.beginPath();ctx.moveTo(x,deckTop);ctx.lineTo(x,deckTop-24);ctx.lineTo(x+10,deckTop-24);ctx.stroke();
+    ctx.fillStyle='#ffdf8a';ctx.beginPath();ctx.arc(x+11,deckTop-23,2.4,0,7);ctx.fill();
+  }
+  // cable saddle over towers
+  ctx.fillStyle='#7e281c';
+  ctx.fillRect(T1-8,cableTop-4,16,8);ctx.fillRect(T2-8,cableTop-4,16,8);
+  // foreground water sparkles not obstructing
+  for(let i=0;i<36;i++){
+    const y=610+((i*47)%140),x=((i*149)%1120)+20;
+    ctx.strokeStyle='rgba(235,250,252,'+(0.10+((i*13)%18)/100).toFixed(2)+')';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+20+((i*23)%34),y);ctx.stroke();
+  }
+  // warm sunlight wash from upper right
+  let warm=ctx.createLinearGradient(1200,0,400,500);
+  warm.addColorStop(0,'rgba(255,195,110,0.20)');warm.addColorStop(0.5,'rgba(255,180,100,0.06)');warm.addColorStop(1,'rgba(255,180,100,0)');
+  ctx.fillStyle=warm;ctx.fillRect(0,0,W,H);
+  // soft vignette
+  let vg=ctx.createRadialGradient(600,400,320,600,400,820);
+  vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(20,40,50,0.14)');
+  ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);
+}
+resize();
+</script>
+</body>
+</html>

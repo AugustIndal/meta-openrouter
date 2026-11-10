@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Colosseum Cutaway</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#dce8ef}
+canvas{display:block;width:100%;height:100%}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.setSize(window.innerWidth||1200,window.innerHeight||800);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.05;
+document.body.appendChild(renderer.domElement);
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xd8e6ee);
+
+const camera=new THREE.PerspectiveCamera(38,(window.innerWidth||1200)/(window.innerHeight||800),0.1,400);
+const target=new THREE.Vector3(0,5.4,0);
+let azimuth=Math.atan2(42,48), polar=1.10, dist=72;
+
+function updateCamera(){
+  polar=Math.max(0.25,Math.min(1.45,polar));
+  dist=Math.max(35,Math.min(130,dist));
+  const sp=Math.sin(polar);
+  camera.position.set(target.x+dist*sp*Math.sin(azimuth),target.y+dist*Math.cos(polar),target.z+dist*sp*Math.cos(azimuth));
+  camera.lookAt(target);
+}
+function render(){updateCamera();renderer.render(scene,camera);}
+
+const hemi=new THREE.HemisphereLight(0xd6e8ff,0xb59a73,0.95); scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xffe7bf,2.5);
+sun.position.set(34,48,22); sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-58; sun.shadow.camera.right=58; sun.shadow.camera.top=58; sun.shadow.camera.bottom=-58;
+sun.shadow.camera.near=1; sun.shadow.camera.far=140; sun.shadow.bias=-0.0006;
+scene.add(sun);
+const fill=new THREE.DirectionalLight(0xcfe0ff,0.55); fill.position.set(-30,22,-28); scene.add(fill);
+
+const matStone=new THREE.MeshStandardMaterial({color:0xd9c193,roughness:0.92,metalness:0});
+const matStone2=new THREE.MeshStandardMaterial({color:0xe4d1a4,roughness:0.9,metalness:0});
+const matStone3=new THREE.MeshStandardMaterial({color:0xc8ad7d,roughness:0.95,metalness:0});
+const matSeat=new THREE.MeshStandardMaterial({color:0xe0cda0,roughness:0.92});
+const matSeat2=new THREE.MeshStandardMaterial({color:0xcdb488,roughness:0.94});
+const matArena=new THREE.MeshStandardMaterial({color:0xe8d6a8,roughness:1});
+const matDark=new THREE.MeshStandardMaterial({color:0x4a3d2b,roughness:1});
+const matGround=new THREE.MeshStandardMaterial({color:0xb6a584,roughness:1});
+const matPave=new THREE.MeshStandardMaterial({color:0xcdbb90,roughness:1});
+const matGreen=new THREE.MeshStandardMaterial({color:0x47653c,roughness:1});
+const matTrunk=new THREE.MeshStandardMaterial({color:0x6b533a,roughness:1});
+
+function add(mesh){mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);return mesh;}
+
+function ringGeo(aO,bO,aI,bI,h){
+  const sh=new THREE.Shape(); sh.absellipse(0,0,aO,bO,0,Math.PI*2,false,0);
+  const hole=new THREE.Path(); hole.absellipse(0,0,aI,bI,0,Math.PI*2,true,0); sh.holes.push(hole);
+  const g=new THREE.ExtrudeGeometry(sh,{depth:h,bevelEnabled:false,curveSegments:56});
+  g.rotateX(-Math.PI/2); return g;
+}
+function discGeo(a,b,h){
+  const sh=new THREE.Shape(); sh.absellipse(0,0,a,b,0,Math.PI*2,false,0);
+  const g=new THREE.ExtrudeGeometry(sh,{depth:h,bevelEnabled:false,curveSegments:56});
+  g.rotateX(-Math.PI/2); return g;
+}
+function archGeo(w,h){
+  const ah=0.78, spring=h*0.58; const s=new THREE.Shape();
+  s.moveTo(-w/2,0); s.lineTo(-ah,0); s.lineTo(-ah,spring);
+  s.absarc(0,spring,ah,Math.PI,0,true);
+  s.lineTo(ah,0); s.lineTo(w/2,0); s.lineTo(w/2,h); s.lineTo(-w/2,h); s.closePath();
+  return new THREE.ExtrudeGeometry(s,{depth:2.15,bevelEnabled:false,curveSegments:20});
+}
+function atticGeo(w,h){
+  const s=new THREE.Shape();
+  s.moveTo(-w/2,0); s.lineTo(w/2,0); s.lineTo(w/2,h); s.lineTo(-w/2,h); s.closePath();
+  const hole=new THREE.Path();
+  hole.moveTo(-0.36,0.62); hole.lineTo(-0.36,1.48); hole.lineTo(0.36,1.48); hole.lineTo(0.36,0.62); hole.closePath();
+  s.holes.push(hole);
+  return new THREE.ExtrudeGeometry(s,{depth:2.0,bevelEnabled:false});
+}
+function brokenGeo(w,h){
+  const s=new THREE.Shape();
+  s.moveTo(-w/2,0); s.lineTo(w/2,0); s.lineTo(w/2,h*0.62); s.lineTo(w*0.28,h*0.88); s.lineTo(w*0.05,h*0.64);
+  s.lineTo(-w*0.22,h*0.82); s.lineTo(-w/2,h*0.58); s.closePath();
+  return new THREE.ExtrudeGeometry(s,{depth:2.1,bevelEnabled:false});
+}
+function hash(i,seed){const x=Math.sin(i*127.1+seed*311.7)*43758.5453;return x-Math.floor(x);}
+
+/* Ground and sparse context */
+const ground=new THREE.Mesh(new THREE.CircleGeometry(95,48),matGround);
+ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+const pave=new THREE.Mesh(new THREE.CircleGeometry(1,56),matPave);
+pave.rotation.x=-Math.PI/2; pave.scale.set(40,29,1); pave.position.y=0.03; pave.receiveShadow=true; scene.add(pave);
+const road=new THREE.Mesh(new THREE.BoxGeometry(70,0.06,5.2),matPave);
+road.position.set(0,0.05,-34); road.receiveShadow=true; scene.add(road);
+
+function column(x,z,h,r,tilt){
+  const g=new THREE.Group();
+  const c=new THREE.Mesh(new THREE.CylinderGeometry(r,r*1.08,h,14),matStone2); c.position.y=h/2; c.castShadow=c.receiveShadow=true; g.add(c);
+  const cap=new THREE.Mesh(new THREE.BoxGeometry(r*3.1,r*0.7,r*3.1),matStone2); cap.position.y=h+r*0.3; cap.castShadow=true; g.add(cap);
+  g.position.set(x,0,z); g.rotation.z=tilt||0; g.rotation.y=hash(x,3)*1.7; scene.add(g);
+}
+column(-39,-20,5.2,0.55,0); column(-45,8,3.4,0.5,-0.04); column(40,-24,4.3,0.52,0.03); column(46,10,2.7,0.45,0);
+function fallen(x,z,ry){
+  const c=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,5.5,14),matStone2);
+  c.position.set(x,0.55,z); c.rotation.z=Math.PI/2; c.rotation.y=ry; c.castShadow=c.receiveShadow=true; scene.add(c);
+}
+fallen(-36,22,0.5); fallen(38,26,-0.4);
+for(let i=0;i<5;i++){
+  const b=new THREE.Mesh(new THREE.BoxGeometry(1.8+hash(i,9),1.1,1.3),matStone3);
+  b.position.set(-50+i*8,0.55,30+hash(i,4)*5); b.rotation.y=hash(i,7)*2; add(b);
+}
+function cypress(x,z,s){
+  const t=new THREE.Mesh(new THREE.CylinderGeometry(0.18*s,0.24*s,1.4*s,8),matTrunk); t.position.set(x,0.7*s,z); add(t);
+  const c=new THREE.Mesh(new THREE.ConeGeometry(1.05*s,5.6*s,12),matGreen); c.position.set(x,3.9*s,z); add(c);
+}
+cypress(-48,-28,1.1); cypress(49,-30,1.25); cypress(-50,25,0.9); cypress(50,28,1.0);
+
+/* Podium base */
+add(new THREE.Mesh(discGeo(30.4,22.4,0.65),matStone3)).position.y=0;
+add(new THREE.Mesh(discGeo(29.4,21.5,0.55),matStone)).position.y=0.62;
+
+/* Arena, podium wall and stepped seating */
+add(new THREE.Mesh(discGeo(18.4,12.5,0.22),matArena)).position.y=1.02;
+add(new THREE.Mesh(ringGeo(18.7,12.8,17.7,11.95,1.95),matStone2)).position.y=1.08;
+add(new THREE.Mesh(ringGeo(19.0,13.05,18.45,12.6,0.32),matStone)).position.y=2.98;
+for(let i=0;i<4;i++){
+  const d=new THREE.Mesh(new THREE.BoxGeometry(2.4,0.08,0.95),matDark);
+  d.position.set(-7+i*4.6,1.28,-2+ (i%2)*4); d.rotation.y=hash(i,11)*0.8; d.receiveShadow=true; scene.add(d);
+}
+for(let i=0;i<3;i++){
+  const m=new THREE.Mesh(new THREE.SphereGeometry(1.1,16,10),matArena);
+  m.scale.set(1.5,0.28,1); m.position.set(-6+i*6,1.28,-4+i*2.5); m.castShadow=m.receiveShadow=true; scene.add(m);
+}
+for(let i=0;i<14;i++){
+  const aI=17.9+i*0.55, bI=12.05+i*0.38;
+  const top=2.25+i*0.77, drop=2.7;
+  const m=new THREE.Mesh(ringGeo(aI+1.35,bI+0.92,aI,bI,drop), i%2?matSeat2:matSeat);
+  m.position.y=top-drop; add(m);
+}
+/* Seating cross passages: small radial divider strips */
+for(let k=0;k<4;k++){
+  const ang=k*Math.PI/2+0.35;
+  const strip=new THREE.Mesh(new THREE.BoxGeometry(0.55,0.16,7.8),matStone2);
+  strip.position.set(Math.cos(ang)*21.5,7.0,Math.sin(ang)*14.8);
+  strip.rotation.y=-ang+Math.PI/2; strip.rotation.x=0.35; add(strip);
+}
+
+/* Horizontal bands */
+function band(y,a,b){
+  const m=new THREE.Mesh(ringGeo(a+0.35,b+0.3,a-0.45,b-0.4,0.38),matStone2); m.position.y=y; add(m);
+}
+band(5.0,28,20); band(9.2,27.6,19.7); band(13.2,27.2,19.4);
+
+/* Outer arched rings */
+const W=3.4;
+const geo0=archGeo(W,4.0), geo1=archGeo(W,3.8), geo2=archGeo(W,3.6), geoA=atticGeo(W,2.0);
+const geoB=brokenGeo(W,3.6), geoBA=brokenGeo(W,2.0);
+const tiers=[
+  {y:1.0,a:28.0,b:20.0,geo:geo0,mat:matStone,h:4.0,columns:true},
+  {y:5.4,a:27.6,b:19.7,geo:geo1,mat:matStone2,h:3.8,columns:true},
+  {y:9.6,a:27.2,b:19.4,geo:geo2,mat:matStone,h:3.6,columns:true},
+  {y:13.6,a:27.0,b:19.2,geo:geoA,mat:matStone2,h:2.0,columns:false}
+];
+const N=48, delta=Math.PI*2/N, brokenCenter=2.65;
+const colPos=[], capPos=[];
+const dummy=new THREE.Object3D();
+
+for(let ti=0;ti<tiers.length;ti++){
+  const T=tiers[ti];
+  for(let i=0;i<N;i++){
+    const t=i*delta+delta/2;
+    let angDiff=Math.abs(t-brokenCenter); if(angDiff>Math.PI) angDiff=Math.PI*2-angDiff;
+    let useGeo=T.geo, missing=false, broken=false;
+    if(ti===2){
+      if(angDiff<0.95){ if(hash(i,21)<0.52) missing=true; else broken=true; }
+      else if(angDiff<1.45 && hash(i,22)<0.28) broken=true;
+      else if(hash(i,23)<0.035) missing=true;
+    }
+    if(ti===3){
+      if(angDiff<1.15){ if(hash(i,31)<0.78) missing=true; else broken=true; }
+      else if(angDiff<1.8 && hash(i,32)<0.38) missing=true;
+      else if(hash(i,33)<0.06) broken=true;
+    }
+    if(missing) continue;
+    if(broken) useGeo=(ti===3?geoBA:geoB);
+    const cx=T.a*Math.cos(t), cz=T.b*Math.sin(t);
+    let nx=Math.cos(t)/T.a, nz=Math.sin(t)/T.b; const nl=Math.hypot(nx,nz); nx/=nl; nz/=nl;
+    const ds=Math.hypot(T.a*Math.sin(t),T.b*Math.cos(t))*delta;
+    const scale=ds*1.04/W;
+    const m=new THREE.Mesh(useGeo,T.mat);
+    m.position.set(cx-nx*1.05,T.y,cz-nz*1.05);
+    m.rotation.y=Math.atan2(nx,nz);
+    m.scale.set(scale,1,1);
+    add(m);
+    if(T.columns && !broken){
+      const tx=-T.a*Math.sin(t), tz=T.b*Math.cos(t); const tl=Math.hypot(tx,tz);
+      const ux=tx/tl, uz=tz/tl;
+      const ch=T.h*0.72, off=0.92*scale;
+      for(let s=-1;s<=1;s+=2){
+        colPos.push(new THREE.Vector3(cx+nx*1.25+ux*off*s,T.y+0.28+ch/2,cz+nz*1.25+uz*off*s));
+        capPos.push(new THREE.Vector3(cx+nx*1.25+ux*off*s,T.y+0.28+ch+0.14,cz+nz*1.25+uz*off*s));
+      }
+    }
+  }
+}
+const colGeo=new THREE.CylinderGeometry(0.16,0.19,1,10);
+const colMesh=new THREE.InstancedMesh(colGeo,matStone2,colPos.length);
+for(let i=0;i<colPos.length;i++){
+  const T=tiers[Math.floor(i/34)]||tiers[0];
+  dummy.position.copy(colPos[i]); dummy.rotation.set(0,0,0); dummy.scale.set(1,T.h*0.72,1); dummy.updateMatrix(); colMesh.setMatrixAt(i,dummy.matrix);
+}
+colMesh.castShadow=colMesh.receiveShadow=true; scene.add(colMesh);
+const capGeo=new THREE.BoxGeometry(0.52,0.28,0.52);
+const capMesh=new THREE.InstancedMesh(capGeo,matStone2,capPos.length);
+for(let i=0;i<capPos.length;i++){dummy.position.copy(capPos[i]);dummy.rotation.set(0,0,0);dummy.scale.set(1,1,1);dummy.updateMatrix();capMesh.setMatrixAt(i,dummy.matrix);}
+capMesh.castShadow=true; scene.add(capMesh);
+
+/* Orbit controls: drag + wheel + pinch */
+const cvs=renderer.domElement;
+const pointers=new Map(); let lastPinch=0;
+cvs.addEventListener('pointerdown',e=>{
+  cvs.setPointerCapture(e.pointerId); pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pointers.size===2){const p=[...pointers.values()]; lastPinch=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);}
+});
+cvs.addEventListener('pointermove',e=>{
+  if(!pointers.has(e.pointerId))return;
+  const prev=pointers.get(e.pointerId);
+  const dx=e.clientX-prev.x, dy=e.clientY-prev.y;
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pointers.size===2){
+    const p=[...pointers.values()], cur=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);
+    if(lastPinch>1&&cur>1) dist=dist*lastPinch/cur;
+    lastPinch=cur; render(); return;
+  }
+  azimuth-=dx*0.0055; polar-=dy*0.0055; render();
+});
+function endPointer(e){pointers.delete(e.pointerId); if(pointers.size<2)lastPinch=0;}
+cvs.addEventListener('pointerup',endPointer);
+cvs.addEventListener('pointercancel',endPointer);
+cvs.addEventListener('wheel',e=>{e.preventDefault(); dist*=1+Math.sign(e.deltaY)*0.09; render();},{passive:false});
+
+function onResize(){
+  const w=window.innerWidth, h=window.innerHeight;
+  camera.aspect=w/h; camera.updateProjectionMatrix();
+  renderer.setSize(w,h); render();
+}
+window.addEventListener('resize',onResize);
+
+render();
+window.sceneReady=true;
+</script>
+</body>
+</html>

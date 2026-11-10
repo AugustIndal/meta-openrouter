@@ -1,0 +1,41 @@
+{
+  "slug": "08-big-ben",
+  "name": "Elizabeth Tower / Big Ben",
+  "approach": "Night illumination",
+  "format": "svg",
+  "prompt": "Create a recognizable Elizabeth Tower (Big Ben) at blue hour. Model the tall square tan Gothic clock tower, large luminous round clock faces on all four sides, decorative vertical buttresses, belfry and steep dark pyramidal spire with finial. Add a modest Westminster wing, warm ground lights and dark blue sky. The clock hands and hour marks should be clearly visible.\n\nReturn only one complete standalone SVG document without Markdown fences. Use xmlns=\"http://www.w3.org/2000/svg\", width=\"1200\", height=\"800\", viewBox=\"0 0 1200 800\". Build the entire artwork with native SVG paths, shapes, gradients, masks and filters. No scripts or embedded HTML. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+  "scene_brief": "Create a recognizable Elizabeth Tower (Big Ben) at blue hour. Model the tall square tan Gothic clock tower, large luminous round clock faces on all four sides, decorative vertical buttresses, belfry and steep dark pyramidal spire with finial. Add a modest Westminster wing, warm ground lights and dark blue sky. The clock hands and hour marks should be clearly visible.",
+  "requested_model": "meta/muse-ember",
+  "requested_effort": "xhigh",
+  "max_tokens": 32000,
+  "model": "meta/muse-ember",
+  "provider": "Meta",
+  "usage": {
+    "prompt_tokens": 278,
+    "completion_tokens": 24782,
+    "total_tokens": 25060,
+    "cost": 0.0124188,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0124188,
+      "upstream_inference_prompt_cost": 2.78e-05,
+      "upstream_inference_completions_cost": 0.012391
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 18568,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "bytes": 15160,
+  "generation_id": "gen-1794280499-zgmjUwq85wUSxMY5IsHI",
+  "file": "08-big-ben-svg.svg",
+  "elapsed_seconds": 44.954
+}

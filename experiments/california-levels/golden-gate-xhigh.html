@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vermilion Suspension Bridge</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #d9edf6; }
+  canvas { display: block; touch-action: none; }
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+renderer.setSize(1200, 800);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.08;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xd9edf6);
+scene.fog = new THREE.Fog(0xd9edf6, 560, 1450);
+
+const camera = new THREE.PerspectiveCamera(40, 1200 / 800, 1, 3000);
+
+const hemi = new THREE.HemisphereLight(0xcfeaff, 0x416050, 0.95);
+scene.add(hemi);
+
+const sun = new THREE.DirectionalLight(0xfff1d6, 2.4);
+sun.position.set(240, 320, 210);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -340;
+sun.shadow.camera.right = 340;
+sun.shadow.camera.top = 340;
+sun.shadow.camera.bottom = -340;
+sun.shadow.camera.near = 50;
+sun.shadow.camera.far = 1000;
+sun.shadow.bias = -0.0004;
+scene.add(sun);
+
+const fill = new THREE.DirectionalLight(0xbfe0ff, 0.55);
+fill.position.set(-220, 110, -160);
+scene.add(fill);
+
+const vermilion = new THREE.MeshStandardMaterial({ color: 0xd23424, roughness: 0.42, metalness: 0.28 });
+const vermilionDark = new THREE.MeshStandardMaterial({ color: 0xa92a1d, roughness: 0.5, metalness: 0.25 });
+const cableMat = new THREE.MeshStandardMaterial({ color: 0x39444c, roughness: 0.38, metalness: 0.65 });
+const roadMat = new THREE.MeshStandardMaterial({ color: 0x363c41, roughness: 0.92, metalness: 0.02 });
+const deckMat = new THREE.MeshStandardMaterial({ color: 0x8f979b, roughness: 0.7, metalness: 0.25 });
+const concreteMat = new THREE.MeshStandardMaterial({ color: 0xa9ada8, roughness: 0.9, metalness: 0.02 });
+const lightMat = new THREE.MeshStandardMaterial({ color: 0xe9eff0, roughness: 0.45, metalness: 0.15 });
+const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf4f4ef, roughness: 0.7, metalness: 0.0 });
+const waterMat = new THREE.MeshStandardMaterial({ color: 0x2c7ab5, roughness: 0.24, metalness: 0.06 });
+const rockMat = new THREE.MeshStandardMaterial({ color: 0x7f7e74, roughness: 1.0, metalness: 0.0 });
+const rockMat2 = new THREE.MeshStandardMaterial({ color: 0x686e68, roughness: 1.0, metalness: 0.0 });
+const treeMat = new THREE.MeshStandardMaterial({ color: 0x3f6f33, roughness: 1.0, metalness: 0.0 });
+const treeMat2 = new THREE.MeshStandardMaterial({ color: 0x527f3d, roughness: 1.0, metalness: 0.0 });
+const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1.0, metalness: 0.0 });
+
+function addBox(parent, w, h, d, mat, x, y, z) {
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  mesh.position.set(x, y, z);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  parent.add(mesh);
+  return mesh;
+}
+
+function beamBetween(parent, ax, ay, az, bx, by, bz, thick, mat) {
+  const a = new THREE.Vector3(ax, ay, az);
+  const b = new THREE.Vector3(bx, by, bz);
+  const dir = new THREE.Vector3().subVectors(b, a);
+  const len = dir.length();
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(thick, len, thick), mat);
+  mesh.position.copy(a).add(b).multiplyScalar(0.5);
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  parent.add(mesh);
+  return mesh;
+}
+
+function cableY(x) {
+  const ax = Math.abs(x);
+  if (ax <= 110) return 38 + 77 * (ax / 110) * (ax / 110);
+  const t = Math.min((ax - 110) / 80, 1);
+  return (1 - t) * (1 - t) * 115 + 2 * (1 - t) * t * 70 + t * t * 42;
+}
+
+function headlandHeight(wx, wz, sign) {
+  const inland = sign * wx;
+  const shoreDist = inland - 160;
+  if (shoreDist < -5) return 0;
+  let h = 10 + 38 * (1 - Math.exp(-Math.max(shoreDist, 0) / 85));
+  const side = Math.abs(wz) / 170;
+  const sideFactor = Math.exp(-side * side * 0.85);
+  h *= (0.35 + 0.65 * sideFactor);
+  h += Math.sin(wx * 0.045 + wz * 0.03) * 4.0 * sideFactor + Math.cos(wz * 0.06 - inland * 0.025) * 3.0;
+  h += Math.sin(wx * 0.11) * Math.cos(wz * 0.09) * 1.4;
+  const dx1 = (inland - 260) / 70, dz1 = (wz + 70) / 70;
+  h += 16 * Math.exp(-(dx1 * dx1 + dz1 * dz1));
+  const dx2 = (inland - 305) / 90, dz2 = (wz - 85) / 90;
+  h += 14 * Math.exp(-(dx2 * dx2 + dz2 * dz2));
+  const shoreTaper = 0.15 + 0.85 * Math.min(1, Math.max(shoreDist, 0) / 45);
+  h *= shoreTaper;
+  const rd = Math.abs(wz);
+  if (rd < 26) {
+    const blend = (1 - rd / 26) * 0.85;
+    h = h * (1 - blend) + 27.5 * blend;
+  }
+  return Math.max(h, 0);
+}
+
+// Water
+const waterGeo = new THREE.PlaneGeometry(1600, 900, 48, 28);
+waterGeo.rotateX(-Math.PI / 2);
+{
+  const p = waterGeo.attributes.position;
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i), z = p.getZ(i);
+    p.setY(i, Math.sin(x * 0.045) * 0.45 + Math.cos(z * 0.065) * 0.35 + Math.sin((x + z) * 0.02) * 0.25);
+  }
+  waterGeo.computeVertexNormals();
+}
+const water = new THREE.Mesh(waterGeo, waterMat);
+water.receiveShadow = true;
+scene.add(water);
+
+// Headlands
+function createHeadland(sign) {
+  const centreX = sign * 300;
+  const geo = new THREE.PlaneGeometry(280, 360, 32, 32);
+  geo.rotateX(-Math.PI / 2);
+  const pos = geo.attributes.position;
+  const colours = [];
+  const rock = new THREE.Color(0x8b8a7f);
+  const greenA = new THREE.Color(0x4a7738);
+  const greenB = new THREE.Color(0x6b9a4a);
+  const brown = new THREE.Color(0x7d6a4a);
+  const c = new THREE.Color();
+  for (let i = 0; i < pos.count; i++) {
+    const lx = pos.getX(i), lz = pos.getZ(i);
+    const wx = centreX + lx, wz = lz;
+    const h = headlandHeight(wx, wz, sign);
+    pos.setY(i, h);
+    const v = 0.92 + 0.08 * Math.sin(wx * 0.35 + wz * 0.42);
+    if (h < 6) {
+      c.copy(rock);
+    } else if (h < 16) {
+      c.copy(rock).lerp(greenA, (h - 6) / 10);
+      if (Math.sin(wx * 0.2 + wz * 0.15) > 0.2) c.lerp(brown, 0.25);
+    } else {
+      c.copy(greenA).lerp(greenB, 0.5 + 0.5 * Math.sin(wx * 0.08 + wz * 0.11));
+    }
+    if (Math.abs(wz) < 13 && h > 10) c.lerp(rock, 0.45);
+    c.multiplyScalar(v);
+    colours.push(c.r, c.g, c.b);
+  }
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(colours, 3));
+  geo.computeVertexNormals();
+  const mat = new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1.0, metalness: 0.0 });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(centreX, 0, 0);
+  mesh.receiveShadow = true;
+  mesh.castShadow = true;
+  scene.add(mesh);
+}
+createHeadland(-1);
+createHeadland(1);
+
+// Rocks along shores
+const rockGeo = new THREE.DodecahedronGeometry(1, 0);
+for (let i = 0; i < 72; i++) {
+  const sign = (i % 2 === 0) ? -1 : 1;
+  const inland = 152 + ((i * 29) % 18);
+  const wz = -170 + ((i * 47) % 340);
+  const wx = sign * inland;
+  const h = headlandHeight(wx, wz, sign);
+  const s = 1.4 + ((i * 13) % 34) / 10;
+  const rock = new THREE.Mesh(rockGeo, (i % 3 === 0) ? rockMat2 : rockMat);
+  rock.position.set(wx, Math.max(0.5, h * 0.55), wz);
+  rock.scale.set(s, s * 0.75, s);
+  rock.rotation.set(i * 0.37, i * 0.61, i * 0.23);
+  rock.castShadow = true;
+  rock.receiveShadow = true;
+  scene.add(rock);
+}
+
+// Trees on headlands
+const treeGeo = new THREE.ConeGeometry(2.6, 7.5, 7);
+for (let i = 0; i < 170; i++) {
+  const sign = (i % 2 === 0) ? 1 : -1;
+  const inland = 195 + ((i * 53) % 210);
+  const wz = -155 + ((i * 37) % 310);
+  if (Math.abs(wz) < 24) continue;
+  const wx = sign * inland;
+  const h = headlandHeight(wx, wz, sign);
+  if (h < 14 || h > 56) continue;
+  const s = 0.8 + ((i * 17) % 40) / 50;
+  const tree = new THREE.Mesh(treeGeo, (i % 2 === 0) ? treeMat : treeMat2);
+  tree.position.set(wx, h + 3.3 * s, wz);
+  tree.scale.set(s, s, s);
+  tree.rotation.y = i * 0.53;
+  tree.castShadow = true;
+  tree.receiveShadow = true;
+  scene.add(tree);
+}
+
+// Clouds
+function addCloud(x, y, z, s) {
+  const g = new THREE.Group();
+  const geo = new THREE.SphereGeometry(1, 10, 8);
+  const parts = [[0,0,0,18,7,11],[16,1,2,13,5.5,9],[-15,0.5,1,12,5,8],[6,3,-3,11,5,8]];
+  for (const p of parts) {
+    const m = new THREE.Mesh(geo, cloudMat);
+    m.position.set(p[0]*s, p[1]*s, p[2]*s);
+    m.scale.set(p[3]*s, p[4]*s, p[5]*s);
+    g.add(m);
+  }
+  g.position.set(x, y, z);
+  scene.add(g);
+}
+addCloud(-260, 195, -190, 1.0);
+addCloud(40, 215, -240, 1.25);
+addCloud(280, 185, -150, 0.9);
+addCloud(-120, 225, 210, 1.1);
+addCloud(200, 205, 190, 0.8);
+
+const bridge = new THREE.Group();
+scene.add(bridge);
+
+// Deck
+addBox(bridge, 380, 4, 17, deckMat, 0, 28, 0);
+addBox(bridge, 380, 0.4, 15.5, roadMat, 0, 30.2, 0);
+addBox(bridge, 380, 2.8, 1.2, vermilionDark, 0, 27.6, 8.8);
+addBox(bridge, 380, 2.8, 1.2, vermilionDark, 0, 27.6, -8.8);
+addBox(bridge, 380, 0.4, 0.4, lightMat, 0, 32.3, 8.2);
+addBox(bridge, 380, 0.4, 0.4, lightMat, 0, 32.3, -8.2);
+addBox(bridge, 380, 0.08, 0.3, whiteMat, 0, 30.45, 5.2);
+addBox(bridge, 380, 0.08, 0.3, whiteMat, 0, 30.45, -5.2);
+
+// Railing posts
+const postGeo = new THREE.BoxGeometry(0.35, 1.9, 0.35);
+for (let x = -180; x <= 180; x += 18) {
+  for (const zs of [8.2, -8.2]) {
+    const post = new THREE.Mesh(postGeo, vermilion);
+    post.position.set(x, 31.15, zs);
+    post.castShadow = true;
+    post.receiveShadow = true;
+    bridge.add(post);
+  }
+}
+// Centre dashes
+const dashGeo = new THREE.BoxGeometry(5, 0.07, 0.5);
+for (let x = -180; x <= 180; x += 15) {
+  const dash = new THREE.Mesh(dashGeo, whiteMat);
+  dash.position.set(x, 30.46, 0);
+  dash.receiveShadow = true;
+  bridge.add(dash);
+}
+// Under-deck cross beams
+for (let x = -180; x <= 180; x += 20) {
+  addBox(bridge, 1.0, 1.6, 17, cableMat, x, 25.6, 0);
+}
+
+// Approach roads into headlands
+for (const sign of [-1, 1]) {
+  addBox(bridge, 100, 3.5, 16.5, deckMat, sign * 240, 28, 0);
+  addBox(bridge, 100, 0.4, 14.5, roadMat, sign * 240, 30.2, 0);
+  addBox(bridge, 100, 0.5, 0.4, lightMat, sign * 240, 31.0, 8.0);
+  addBox(bridge, 100, 0.5, 0.4, lightMat, sign * 240, 31.0, -8.0);
+  // Anchorage blocks
+  addBox(bridge, 13, 16, 21, concreteMat, sign * 188, 38, 0);
+  addBox(bridge, 14, 2, 22, vermilionDark, sign * 188, 46.5, 0);
+}
+
+// Towers
+for (const towerX of [-110, 110]) {
+  addBox(bridge, 11, 7, 31, concreteMat, towerX, 3.5, 0);
+  for (const pz of [-12.5, 12.5]) {
+    addBox(bridge, 6, 114, 6, vermilion, towerX, 61, pz);
+  }
+  addBox(bridge, 7, 2, 27, vermilionDark, towerX, 116.5, 0);
+  // Portal beams between pillars
+  addBox(bridge, 6, 6, 25, vermilion, towerX, 112, 0);
+  addBox(bridge, 5.5, 5, 25, vermilion, towerX, 82, 0);
+  addBox(bridge, 5.5, 5, 25, vermilion, towerX, 52, 0);
+  addBox(bridge, 5, 5, 25, vermilion, towerX, 36, 0);
+  addBox(bridge, 5, 5, 25, vermilion, towerX, 22, 0);
+  // Cross braces in the large openings
+  beamBetween(bridge, towerX, 86, -9.5, towerX, 108, 9.5, 1.7, vermilionDark);
+  beamBetween(bridge, towerX, 86, 9.5, towerX, 108, -9.5, 1.7, vermilionDark);
+  beamBetween(bridge, towerX, 56, -9.5, towerX, 78, 9.5, 1.7, vermilionDark);
+  beamBetween(bridge, towerX, 56, 9.5, towerX, 78, -9.5, 1.7, vermilionDark);
+  beamBetween(bridge, towerX, 5, -9.5, towerX, 18, 9.5, 1.6, vermilionDark);
+  beamBetween(bridge, towerX, 5, 9.5, towerX, 18, -9.5, 1.6, vermilionDark);
+}
+
+// Main cables
+for (const cz of [-8.5, 8.5]) {
+  const pts = [];
+  for (let x = -190; x <= 190.001; x += 5) {
+    pts.push(new THREE.Vector3(x, cableY(x), cz));
+  }
+  const curve = new THREE.CatmullRomCurve3(pts);
+  const geo = new THREE.TubeGeometry(curve, 90, 0.7, 8, false);
+  const cable = new THREE.Mesh(geo, cableMat);
+  cable.castShadow = true;
+  cable.receiveShadow = true;
+  bridge.add(cable);
+}
+
+// Hangers
+const hangerGeo = new THREE.CylinderGeometry(0.15, 0.15, 1, 6);
+for (let x = -180; x <= 180; x += 10) {
+  if (Math.abs(Math.abs(x) - 110) < 7) continue;
+  const top = cableY(x) - 0.4;
+  const bottom = 30.2;
+  const h = top - bottom;
+  if (h < 3) continue;
+  for (const cz of [-8.5, 8.5]) {
+    const hanger = new THREE.Mesh(hangerGeo, cableMat);
+    hanger.position.set(x, bottom + h / 2, cz);
+    hanger.scale.set(1, h, 1);
+    hanger.castShadow = true;
+    bridge.add(hanger);
+  }
+}
+
+// Orbit controls (native pointer drag + wheel zoom)
+const target = new THREE.Vector3(0, 48, 0);
+let theta = 0.58;
+let phi = 1.30;
+let radius = 580;
+
+function applyCamera() {
+  const sinPhi = Math.sin(phi);
+  camera.position.set(
+    target.x + radius * sinPhi * Math.sin(theta),
+    target.y + radius * Math.cos(phi),
+    target.z + radius * sinPhi * Math.cos(theta)
+  );
+  camera.lookAt(target);
+}
+
+let dragging = false;
+let lastX = 0, lastY = 0;
+const el = renderer.domElement;
+el.addEventListener('pointerdown', (e) => {
+  dragging = true;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  try { el.setPointerCapture(e.pointerId); } catch (err) {}
+});
+el.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  const dx = e.clientX - lastX;
+  const dy = e.clientY - lastY;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  theta -= dx * 0.005;
+  phi -= dy * 0.005;
+  phi = Math.max(0.25, Math.min(1.48, phi));
+  applyCamera();
+  renderer.render(scene, camera);
+});
+function endDrag() { dragging = false; }
+el.addEventListener('pointerup', endDrag);
+el.addEventListener('pointercancel', endDrag);
+el.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  radius *= (1 + e.deltaY * 0.001);
+  radius = Math.max(260, Math.min(850, radius));
+  applyCamera();
+  renderer.render(scene, camera);
+}, { passive: false });
+
+window.addEventListener('resize', () => {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.render(scene, camera);
+});
+
+applyCamera();
+renderer.render(scene, camera);
+window.sceneReady = true;
+</script>
+</body>
+</html>

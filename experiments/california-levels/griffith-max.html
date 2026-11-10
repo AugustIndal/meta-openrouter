@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hill Observatory</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#dfeef5}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+canvas:active{cursor:grabbing}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+let seed = 987654321;
+function rand(){ seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+
+const HILL_TOP = 11;
+function hillHeight(x,z){
+  const ex = x/44, ez = z/48;
+  const r = Math.sqrt(ex*ex + ez*ez);
+  const plateau = 0.65;
+  if(r <= plateau) return HILL_TOP;
+  if(r >= 1) return 0;
+  const t = (r-plateau)/(1-plateau);
+  const s = 0.5 + 0.5*Math.cos(Math.PI*t);
+  return HILL_TOP * Math.pow(s,0.9);
+}
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.08;
+document.body.appendChild(renderer.domElement);
+const canvas = renderer.domElement;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xdfeef5);
+
+const camera = new THREE.PerspectiveCamera(40, 1.5, 0.1, 900);
+
+const hemi = new THREE.HemisphereLight(0xcfe8ff, 0x8a7a5a, 0.95);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff1d6, 2.3);
+sun.position.set(52,72,62);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left = -70; sun.shadow.camera.right = 70;
+sun.shadow.camera.top = 70; sun.shadow.camera.bottom = -70;
+sun.shadow.camera.near = 10; sun.shadow.camera.far = 260;
+sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.6;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xddeeff, 0.5);
+fill.position.set(-45,34,-35);
+scene.add(fill);
+
+// Sky dome with vertex gradient
+{
+  const g = new THREE.SphereGeometry(340,32,16);
+  const p = g.attributes.position;
+  const cols = new Float32Array(p.count*3);
+  const top = new THREE.Color(0x69aed6), mid = new THREE.Color(0xbcd9ec), hor = new THREE.Color(0xf2ead2), tmp = new THREE.Color();
+  for(let i=0;i<p.count;i++){
+    const f = Math.max(0, Math.min(1, p.getY(i)/340));
+    if(f < 0.35) tmp.copy(hor).lerp(mid, f/0.35); else tmp.copy(mid).lerp(top,(f-0.35)/0.65);
+    cols[i*3]=tmp.r; cols[i*3+1]=tmp.g; cols[i*3+2]=tmp.b;
+  }
+  g.setAttribute('color', new THREE.BufferAttribute(cols,3));
+  const sky = new THREE.Mesh(g, new THREE.MeshBasicMaterial({vertexColors:true, side:THREE.BackSide, depthWrite:false}));
+  scene.add(sky);
+}
+
+// Materials
+const matCream = new THREE.MeshStandardMaterial({color:0xf4ecd6, roughness:0.9, metalness:0.02});
+const matCreamDark = new THREE.MeshStandardMaterial({color:0xe8dcc0, roughness:0.92, metalness:0.02});
+const matTrim = new THREE.MeshStandardMaterial({color:0xdfd0aa, roughness:0.9, metalness:0.02});
+const matStone = new THREE.MeshStandardMaterial({color:0xd9cdb0, roughness:0.95, metalness:0.01});
+const matStoneDark = new THREE.MeshStandardMaterial({color:0xc4b48f, roughness:0.95, metalness:0.01});
+const matCopper = new THREE.MeshStandardMaterial({color:0x5b3a2d, roughness:0.46, metalness:0.55});
+const matCopperDark = new THREE.MeshStandardMaterial({color:0x453025, roughness:0.52, metalness:0.5});
+const matGlass = new THREE.MeshStandardMaterial({color:0x2e3e4a, roughness:0.28, metalness:0.25});
+const matWood = new THREE.MeshStandardMaterial({color:0x4a3428, roughness:0.8, metalness:0.05});
+const matLawn = new THREE.MeshStandardMaterial({color:0x74904a, roughness:1});
+const matPath = new THREE.MeshStandardMaterial({color:0xd8c9a8, roughness:1});
+const matLeaf = new THREE.MeshStandardMaterial({color:0x5f7f3e, roughness:1});
+
+function makeBox(w,h,d,mat,x,y,z){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+  m.position.set(x,y,z); m.castShadow = true; m.receiveShadow = true; scene.add(m); return m;
+}
+function makeCylinder(rt,rb,h,mat,x,y,z,seg=24){
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg), mat);
+  m.position.set(x,y,z); m.castShadow = true; m.receiveShadow = true; scene.add(m); return m;
+}
+function makeSphere(r,mat,x,y,z){
+  const m = new THREE.Mesh(new THREE.SphereGeometry(r,20,14), mat);
+  m.position.set(x,y,z); m.castShadow = true; m.receiveShadow = true; scene.add(m); return m;
+}
+function makeTorus(r,tube,mat,x,y,z){
+  const m = new THREE.Mesh(new THREE.TorusGeometry(r,tube,8,44), mat);
+  m.rotation.x = Math.PI/2; m.position.set(x,y,z); m.castShadow = true; m.receiveShadow = true; scene.add(m); return m;
+}
+
+// Plain ground
+{
+  const g = new THREE.CircleGeometry(320,64); g.rotateX(-Math.PI/2);
+  const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({color:0xa99e7a, roughness:1}));
+  m.position.y = -0.06; m.receiveShadow = true; scene.add(m);
+}
+// Distant hills
+function farHill(x,z,sx,sy,sz,col){
+  const m = new THREE.Mesh(new THREE.SphereGeometry(1,24,16), new THREE.MeshStandardMaterial({color:col, roughness:1}));
+  m.position.set(x,0,z); m.scale.set(sx,sy,sz); m.receiveShadow = true; scene.add(m);
+}
+farHill(-58,-108,38,9,22,0x8d9f8a);
+farHill(28,-118,46,12,24,0x93a88f);
+farHill(82,-102,34,8,20,0x8a9c86);
+
+// Distant city, instanced
+{
+  const list = [];
+  const palette = [0xcbbfa3,0xb8b0a0,0xd0c0a8,0xa8a898,0xc2b49a,0xb5a88f];
+  for(let i=0;i<210;i++){
+    let x,z;
+    if(i%3===0){ x = (rand()<0.5?-1:1)*(58+rand()*38); z = -32+rand()*72; }
+    else { x = -98+rand()*196; z = -58-rand()*56; }
+    if(Math.sqrt(Math.pow(x/50,2)+Math.pow(z/54,2)) < 1.12) continue;
+    list.push({x,z,w:3+rand()*4,h:2.5+rand()*8.5,d:3+rand()*4,c:palette[Math.floor(rand()*palette.length)]});
+  }
+  const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1), new THREE.MeshStandardMaterial({roughness:0.95}), list.length);
+  const dummy = new THREE.Object3D(); const col = new THREE.Color();
+  list.forEach((b,i)=>{
+    dummy.position.set(b.x,b.h/2-0.2,b.z); dummy.scale.set(b.w,b.h,b.d); dummy.rotation.set(0,0,0); dummy.updateMatrix();
+    mesh.setMatrixAt(i,dummy.matrix); mesh.setColorAt(i,col.setHex(b.c));
+  });
+  mesh.instanceMatrix.needsUpdate = true; if(mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+  mesh.receiveShadow = true; scene.add(mesh);
+}
+
+// Hill with vertex colours
+{
+  const g = new THREE.PlaneGeometry(180,180,72,72); g.rotateX(-Math.PI/2);
+  const p = g.attributes.position;
+  const cols = new Float32Array(p.count*3);
+  const top = new THREE.Color(0x7c9a4e), mid = new THREE.Color(0x8f8a4f), low = new THREE.Color(0x8f7350), tmp = new THREE.Color();
+  for(let i=0;i<p.count;i++){
+    const x=p.getX(i), z=p.getZ(i), h=hillHeight(x,z); p.setY(i,h);
+    const t=h/HILL_TOP;
+    if(t>0.55) tmp.copy(mid).lerp(top,(t-0.55)/0.45); else tmp.copy(low).lerp(mid,t/0.55);
+    const n = Math.sin(x*0.37+1.7)*Math.cos(z*0.41-0.6)*0.045;
+    tmp.offsetHSL(0,0,n);
+    cols[i*3]=tmp.r; cols[i*3+1]=tmp.g; cols[i*3+2]=tmp.b;
+  }
+  g.setAttribute('color', new THREE.BufferAttribute(cols,3));
+  g.computeVertexNormals();
+  const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({vertexColors:true, roughness:1}));
+  m.receiveShadow = true; scene.add(m);
+}
+
+const terraceTop = HILL_TOP + 2.4;
+
+// Front lawn, path and plaza
+makeBox(34,0.18,17,matLawn,0,HILL_TOP+0.09,16.5);
+makeBox(14,0.14,5,matPath,0,HILL_TOP+0.12,15.5);
+makeBox(3,0.12,7,matPath,0,HILL_TOP+0.11,28);
+
+// Terrace and base step
+makeBox(42,0.7,22,matStoneDark,0,HILL_TOP+0.35,-2);
+makeBox(40,2.4,20,matStone,0,HILL_TOP+1.2,-2);
+
+// Wide front steps
+for(let i=0;i<4;i++) makeBox(12,0.6,1.25,matStone,0,terraceTop-0.3-i*0.6,8.65+i*1.25);
+makeBox(0.6,2.0,5.2,matStone,-6.4,12.2,10.5);
+makeBox(0.6,2.0,5.2,matStone,6.4,12.2,10.5);
+makeBox(0.85,0.25,5.4,matTrim,-6.4,13.3,10.5);
+makeBox(0.85,0.25,5.4,matTrim,6.4,13.3,10.5);
+
+// Balustrade rails and pillars
+makeBox(12.6,0.24,0.5,matTrim,-12.9,terraceTop+0.98,7.65);
+makeBox(12.6,0.24,0.5,matTrim,12.9,terraceTop+0.98,7.65);
+makeBox(0.5,0.24,19.4,matTrim,-19.5,terraceTop+0.98,-2);
+makeBox(0.5,0.24,19.4,matTrim,19.5,terraceTop+0.98,-2);
+[[-19.5,7.65],[19.5,7.65],[-19.5,-11.65],[19.5,-11.65],[-6.6,7.65],[6.6,7.65]].forEach(pt=>{
+  makeBox(0.85,1.5,0.85,matStone,pt[0],terraceTop+0.75,pt[1]);
+});
+// Balusters, instanced
+{
+  const pts=[];
+  for(let x=-18.7;x<=-7.2;x+=0.95) pts.push([x,7.65]);
+  for(let x=7.2;x<=18.7;x+=0.95) pts.push([x,7.65]);
+  for(let z=-11;z<=7.1;z+=0.95){ pts.push([-19.5,z]); pts.push([19.5,z]); }
+  const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.17,0.78,0.17), matStone, pts.length);
+  const dummy = new THREE.Object3D();
+  pts.forEach((pt,i)=>{ dummy.position.set(pt[0],terraceTop+0.45,pt[1]); dummy.updateMatrix(); mesh.setMatrixAt(i,dummy.matrix); });
+  mesh.instanceMatrix.needsUpdate=true; mesh.castShadow=true; mesh.receiveShadow=true; scene.add(mesh);
+}
+// Planters on terrace
+makeBox(3.2,0.65,1.1,matStone,-15,terraceTop+0.32,6.2);
+makeBox(3.2,0.65,1.1,matStone,15,terraceTop+0.32,6.2);
+makeBox(2.9,0.22,0.85,matLeaf,-15,terraceTop+0.72,6.2);
+makeBox(2.9,0.22,0.85,matLeaf,15,terraceTop+0.72,6.2);
+
+// Central block
+const plinthTopC = terraceTop + 1.0;
+makeBox(17,1.0,13,matStoneDark,0,terraceTop+0.5,-6);
+makeBox(16,6.5,12,matCream,0,plinthTopC+3.25,-6);
+makeBox(17,0.4,13,matTrim,0,21.1,-6);
+makeBox(16.4,0.3,12.4,matCreamDark,0,21.45,-6);
+
+// Side wings and low linking walls
+const plinthTopW = terraceTop + 0.8;
+[-1,1].forEach(s=>{
+  makeBox(10,0.8,11,matStoneDark,s*14,terraceTop+0.4,-6);
+  makeBox(9.5,5.0,10.5,matCream,s*14,plinthTopW+2.5,-6);
+  makeBox(10.2,0.35,11.2,matTrim,s*14,19.37,-6);
+  makeBox(9.8,0.25,10.8,matCreamDark,s*14,19.7,-6);
+  makeBox(1.7,3.4,10,matCream,s*8.6,terraceTop+1.7,-6);
+  makeBox(1.9,0.25,10.3,matTrim,s*8.6,16.92,-6);
+});
+
+// Domes
+function createDome(cx,roofY,cz,drumR,drumH,domeR){
+  makeCylinder(drumR,drumR*1.06,drumH,matCreamDark,cx,roofY+drumH/2,cz,28);
+  makeTorus(drumR+0.08,0.14,matCopperDark,cx,roofY+drumH,cz);
+  const geo = new THREE.SphereGeometry(domeR,36,18,0,Math.PI*2,0,Math.PI/2);
+  const dome = new THREE.Mesh(geo,matCopper);
+  dome.scale.y=1.08; dome.position.set(cx,roofY+drumH,cz); dome.castShadow=true; dome.receiveShadow=true; scene.add(dome);
+  [0.38,0.68].forEach(f=>{
+    const hr = domeR*1.08*f; const cr = domeR*Math.sqrt(1-f*f);
+    makeTorus(cr,0.05,matCopperDark,cx,roofY+drumH+hr,cz);
+  });
+  makeCylinder(0.1,0.15,0.7,matCopperDark,cx,roofY+drumH+domeR*1.08+0.3,cz,10);
+  makeSphere(0.26,matCopperDark,cx,roofY+drumH+domeR*1.08+0.78,cz);
+  const n = domeR>4?10:7;
+  for(let i=0;i<n;i++){
+    const a=i/n*Math.PI*2+0.3;
+    const win = makeBox(0.55,0.85,0.12,matGlass,cx+Math.sin(a)*(drumR+0.03),roofY+drumH*0.55,cz+Math.cos(a)*(drumR+0.03));
+    win.rotation.y=a;
+  }
+}
+createDome(0,21.6,-6,4.4,2.0,4.9);
+createDome(-14,19.85,-6,2.5,1.4,2.8);
+createDome(14,19.85,-6,2.5,1.4,2.8);
+
+// Windows
+function addWindow(x,y,z,ry=0,w=1.05,h=1.65){
+  const g = makeBox(w,h,0.14,matGlass,x,y,z); g.rotation.y=ry;
+  const sill = makeBox(w+0.3,0.16,0.26,matStone,x,y-h/2-0.09,z); sill.rotation.y=ry;
+}
+[-5.2,-2.6,0,2.6,5.2].forEach(x=>addWindow(x,19.3,0.07));
+[-5.2,-2.6,2.6,5.2].forEach(x=>addWindow(x,16.4,0.

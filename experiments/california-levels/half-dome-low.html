@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Granite Dome</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#6fb0e3;}
+  #app{position:fixed;inset:0;}
+  canvas{display:block;cursor:grab;}
+  canvas:active{cursor:grabbing;}
+</style>
+<script type="importmap">
+{"imports":{"three":"./three.module.js"}}
+</script>
+</head>
+<body>
+<div id="app"></div>
+<script type="module">
+import * as THREE from './three.module.js';
+
+// ---------- deterministic random ----------
+function mulberry32(seed){ return function(){ let t = seed += 0x6D2B79F5; t = Math.imul(t ^ (t>>>15), t|1); t ^= t + Math.imul(t ^ (t>>>7), t|61); return ((t ^ (t>>>14))>>>0)/4294967296; }; }
+const rand = mulberry32(1234567);
+
+// ---------- renderer / scene ----------
+const container = document.getElementById('app');
+const renderer = new THREE.WebGLRenderer({antialias:true, powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 1.5));
+renderer.setSize(1200, 800, false);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x5fa8e0);
+scene.fog = new THREE.Fog(0x8fc3ec, 180, 420);
+
+const camera = new THREE.PerspectiveCamera(38, 1200/800, 0.5, 1000);
+
+// orbit state
+const target = new THREE.Vector3(0, 16, 0);
+let azimuth = 0.62;      // radians around Y
+let polar = 1.18;        // from +Y
+let distance = 118;
+
+function updateCamera(){
+  const sp = Math.sin(polar), cp = Math.cos(polar);
+  camera.position.set(
+    target.x + distance * sp * Math.sin(azimuth),
+    target.y + distance * cp,
+    target.z + distance * sp * Math.cos(azimuth)
+  );
+  camera.lookAt(target);
+}
+
+// ---------- lights ----------
+scene.add(new THREE.HemisphereLight(0xcfe8ff, 0x8a7f6a, 1.15));
+const sun = new THREE.DirectionalLight(0xfff2d8, 2.6);
+sun.position.set(70, 95, 55);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -95; sun.shadow.camera.right = 95;
+sun.shadow.camera.top = 95; sun.shadow.camera.bottom = -95;
+sun.shadow.camera.near = 10; sun.shadow.camera.far = 260;
+sun.shadow.bias = -0.0006;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xbcd9ff, 0.55);
+fill.position.set(-60, 35, -40);
+scene.add(fill);
+
+// ---------- sky dome (gradient, no flat planes) ----------
+const skyGeo = new THREE.SphereGeometry(480, 32, 16);
+const skyMat = new THREE.ShaderMaterial({
+  side: THREE.BackSide, depthWrite:false, fog:false,
+  uniforms:{ top:{value:new THREE.Color(0x3f8fd6)}, mid:{value:new THREE.Color(0x7dbbe9)}, bot:{value:new THREE.Color(0xd8edf8)} },
+  vertexShader:`varying vec3 vP; void main(){ vP=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+  fragmentShader:`varying vec3 vP; uniform vec3 top; uniform vec3 mid; uniform vec3 bot;
+    void main(){ float h=normalize(vP).y; vec3 c = h>0.18 ? mix(mid,top,smoothstep(0.18,0.85,h)) : mix(bot,mid,smoothstep(-0.1,0.18,h)); gl_FragColor=vec4(c,1.0); }`
+});
+scene.add(new THREE.Mesh(skyGeo, skyMat));
+
+// ---------- ground height (deterministic, shared for placement) ----------
+function groundH(x,z){
+  const d = Math.hypot(x,z);
+  const flat = THREE.MathUtils.smoothstep(d, 42, 95); // 0 near mountain, 1 far
+  let h = Math.sin(x*0.045+1.3)*Math.cos(z*0.05-0.7)*3.2 + Math.sin(x*0.11+z*0.04)*1.4 + Math.cos((x+z)*0.07)*1.1;
+  h *= (0.35 + 0.65*flat);
+  const rise = Math.max(0, d-85)*0.10;
+  return h + rise*flat;
+}
+
+// ---------- ground ----------
+const groundGeo = new THREE.PlaneGeometry(520, 520, 90, 90);
+groundGeo.rotateX(-Math.PI/2);
+{
+  const p = groundGeo.attributes.position;
+  for(let i=0;i<p.count;i++){ p.setY(i, groundH(p.getX(i), p.getZ(i))); }
+  groundGeo.computeVertexNormals();
+}
+const ground = new THREE.Mesh(groundGeo, new THREE.MeshStandardMaterial({color:0x7e9a5e, roughness:1, metalness:0}));
+ground.receiveShadow = true;
+scene.add(ground);
+
+// subtle ground colour variation patches
+const patchMat = new THREE.MeshStandardMaterial({color:0x6d8a4f, roughness:1});
+for(let i=0;i<14;i++){
+  const a = rand()*Math.PI*2, r = 48 + rand()*95;
+  const x = Math.cos(a)*r, z = Math.sin(a)*r;
+  const m = new THREE.Mesh(new THREE.CircleGeometry(5+rand()*11, 18), patchMat);
+  m.rotation.x = -Math.PI/2; m.position.set(x, groundH(x,z)+0.12, z);
+  m.scale.set(1, 0.55+rand()*0.4, 1); m.receiveShadow = true; scene.add(m);
+}
+
+// ---------- materials ----------
+const granite = new THREE.MeshStandardMaterial({color:0xe9e4d6, roughness:0.82, metalness:0.02, flatShading:false});
+const graniteDark = new THREE.MeshStandardMaterial({color:0xd6cfbd, roughness:0.92, flatShading:true});
+const graniteCliff = new THREE.MeshStandardMaterial({color:0xefe9da, roughness:0.88});
+const streakMat = new THREE.MeshStandardMaterial({color:0x4d4a42, roughness:1});
+const crackMat = new THREE.MeshStandardMaterial({color:0x8d8676, roughness:1});
+const trunkMat = new THREE.MeshStandardMaterial({color:0x5a4030, roughness:1});
+const leafMat = new THREE.MeshStandardMaterial({color:0x2e5d33, roughness:1, flatShading:true});
+
+// ---------- main dome: half dome sliced vertically ----------
+const R = 38;
+const domeGroup = new THREE.Group();
+scene.add(domeGroup);
+
+const domeGeo = new THREE.SphereGeometry(R, 72, 46, 0, Math.PI, 0, Math.PI/2);
+const dome = new THREE.Mesh(domeGeo, granite.clone());
+// add subtle vertex variation for rock character (deterministic)
+{
+  const p = domeGeo.attributes.position;
+  for(let i=0;i<p.count;i++){
+    const x=p.getX(i), y=p.getY(i), z=p.getZ(i);
+    const n = Math.sin(x*0.35+ y*0.2)*0.35 + Math.cos(z*0.3 + x*0.15)*0.3;
+    const s = 1 + n/R*0.55;
+    p.setXYZ(i, x*s, y*s, z*s);
+  }
+  domeGeo.computeVertexNormals();
+}
+dome.rotation.y = Math.PI; // flat cut faces +Z, rounded shoulder to -Z
+dome.castShadow = true; dome.receiveShadow = true;
+domeGroup.add(dome);
+
+// sheer cliff face (semicircular disk on the cut plane)
+const cliffShape = new THREE.Shape();
+cliffShape.moveTo(-R, 0);
+cliffShape.absarc(0, 0, R, Math.PI, 0, true);
+cliffShape.lineTo(-R, 0);
+const cliffGeo = new THREE.ShapeGeometry(cliffShape, 56);
+const cliff = new THREE.Mesh(cliffGeo, graniteCliff);
+cliff.position.set(0, 0.4, 0.18);
+cliff.castShadow = true; cliff.receiveShadow = true;
+domeGroup.add(cliff);
+
+// base skirt / talus platform under dome
+const skirtGeo = new THREE.CylinderGeometry(R*0.98, R*1.28, 6, 48, 2);
+{
+  const p = skirtGeo.attributes.position;
+  for(let i=0;i<p.count;i++){
+    const x=p.getX(i), z=p.getZ(i), y=p.getY(i);
+    const n = Math.sin(Math.atan2(z,x)*7 + y*0.5)*1.4 + (rand()-0.5)*0.8;
+    p.setX(i, x + Math.cos(Math.atan2(z,x))*n*0.4);
+    p.setZ(i, z + Math.sin(Math.atan2(z,x))*n*0.4);
+  }
+  skirtGeo.computeVertexNormals();
+}
+const skirt = new THREE.Mesh(skirtGeo, graniteDark);
+skirt.position.y = 1.2; skirt.castShadow = true; skirt.receiveShadow = true;
+domeGroup.add(skirt);
+const baseDisk = new THREE.Mesh(new THREE.CircleGeometry(R*1.32, 48), new THREE.MeshStandardMaterial({color:0xbdb49e, roughness:1}));
+baseDisk.rotation.x = -Math.PI/2; baseDisk.position.y = 0.25; baseDisk.receiveShadow = true;
+scene.add(baseDisk);
+
+// ---------- dark vertical weathering streaks on cliff ----------
+function addStreak(x, topY, length, width, darkness){
+  if(topY*topY + x*x > (R-1.2)*(R-1.2)) return;
+  const geo = new THREE.PlaneGeometry(width, length, 1, 1);
+  // taper bottom and jitter
+  const p = geo.attributes.position;
+  for(let i=0;i<p.count;i++){
+    const yy = p.getY(i);
+    if(yy < 0) p.setX(i, p.getX(i)*0.45);
+    p.setX(i, p.getX(i) + Math.sin((yy+length/2)*0.7 + x)*0.12);
+  }
+  geo.computeVertexNormals();
+  const mat = streakMat.clone(); mat.color = new THREE.Color(darkness);
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(x, topY - length/2, 0.32);
+  m.receiveShadow = true;
+  domeGroup.add(m);
+}
+for(let i=0;i<26;i++){
+  const x = -30 + rand()*60;
+  const maxY = Math.sqrt(Math.max(0,(R-2)*(R-2)-x*x));
+  const topY = 4 + rand()*Math.max(4, maxY-5);
+  addStreak(x, topY, 10 + rand()*26, 0.5 + rand()*1.6, 0x4a473d + Math.floor(rand()*0x18));
+}
+// a few thin cracks
+for(let i=0;i<12;i++){
+  const x = -28 + rand()*56;
+  const maxY = Math.sqrt(Math.max(0,(R-2)*(R-2)-x*x));
+  if(maxY < 8) continue;
+  const topY = 6 + rand()*(maxY-8);
+  const len = 6 + rand()*14;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(0.14+rand()*0.14, len), crackMat);
+  m.position.set(x, topY-len/2, 0.30); domeGroup.add(m);
+}
+// slight horizontal bedding bands on shoulder (thin torus arcs approximated by thin boxes wrapping? use curved lines via torus segments)
+for(let i=0;i<3;i++){
+  const rr = R - 3 - i*3;
+  const tor = new THREE.Mesh(new THREE.TorusGeometry(rr, 0.18, 6, 40, Math.PI*0.9), crackMat);
+  tor.rotation.x = Math.PI/2; tor.rotation.z = 0.2 + i*0.15; tor.position.y = 2 + i*2;
+  tor.scale.set(1,1,0.4); domeGroup.add(tor);
+}
+
+// ---------- smaller granite ridges ----------
+function makeRidge(x,z,scale,rotY,stretch){
+  const geo = new THREE.IcosahedronGeometry(scale, 1);
+  const p = geo.attributes.position;
+  for(let i=0;i<p.count;i++){
+    const vx=p.getX(i), vy=p.getY(i), vz=p.getZ(i);
+    const n = 0.82 + rand()*0.38;
+    p.setXYZ(i, vx*n*stretch, vy*n*0.72, vz*n);
+  }
+  geo.computeVertexNormals();
+  const m = new THREE.Mesh(geo, graniteDark.clone());
+  m.material.color.offsetHSL(0, 0, (rand()-0.5)*0.06);
+  m.position.set(x, groundH(x,z)+scale*0.28, z);
+  m.rotation.y = rotY;
+  m.castShadow = true; m.receiveShadow = true;
+  scene.add(m);
+  return m;
+}
+makeRidge(-58, -42, 16, 0.4, 1.35);
+makeRidge( 62, -55, 19, 1.1, 1.5);
+makeRidge( 78,  18, 13, 2.0, 1.2);
+makeRidge(-78,  22, 12, 0.9, 1.3);
+makeRidge( -30, -78, 15, 0.2, 1.6);
+makeRidge(  38, -88, 17, 1.5, 1.4);
+makeRidge( 95, -30, 21, 0.7, 1.7);
+makeRidge(-98, -25, 20, 2.2, 1.6);
+makeRidge(  12, -108, 24, 0.3, 2.0);
+makeRidge(-62,  62, 10, 1.2, 1.2);
+makeRidge( 66,  58, 11, 0.5, 1.3);
+makeRidge( 52, -18,  8, 1.0, 1.1);
+makeRidge(-50, -12,  9, 0.1, 1.15);
+
+// distant ridge silhouettes
+for(let i=0;i<7;i++){
+  const a = -0.4 + i*0.45 + rand()*0.15;
+  const r = 150 + rand()*40;
+  const x = Math.sin(a)*r, z = -Math.cos(a)*r - 30;
+  const h = 26 + rand()*26;
+  const m = new THREE.Mesh(new THREE.ConeGeometry(30+rand()*22, h, 7), new THREE.MeshStandardMaterial({color:0xc9c2ae, roughness:1, flatShading:true}));
+  m.position.set(x, h/2 - 4, z); scene.add(m);
+}
+
+// ---------- forest of tiny evergreens (instanced) ----------
+const treeCount = 650;
+const trunkGeo = new THREE.CylinderGeometry(0.14, 0.2, 0.9, 5);
+const leafGeo = new THREE.ConeGeometry(1.05, 3.2, 7);
+const trunkInst = new THREE.InstancedMesh(trunkGeo, trunkMat, treeCount);
+const leafInst = new THREE.InstancedMesh(leafGeo, leafMat, treeCount);
+trunkInst.castShadow = true; leafInst.castShadow = true;
+{
+  const dummy = new THREE.Object3D();
+  let placed = 0, tries = 0;
+  while(placed < treeCount && tries < 6000){
+    tries++;
+    const a = rand()*Math.PI*2;
+    const r = 44 + Math.pow(rand(),0.7)*95;
+    const x = Math.cos(a)*r, z = Math.sin(a)*r;
+    if(Math.hypot(x,z) < 42) continue;
+    // keep a clearer meadow in front of cliff
+    if(z > 28 && Math.abs(x) < 38 && rand() < 0.65) continue;
+    const y = groundH(x,z);
+    const s = 0.55 + rand()*1.05;
+    dummy.position.set(x, y + 0.45*s, z);
+    dummy.rotation.set(0, rand()*Math.PI*2, 0);
+    dummy.scale.setScalar(s); dummy.updateMatrix();
+    trunkInst.setMatrixAt(placed, dummy.matrix);
+    dummy.position.y = y + (0.9 + 1.6)*s;
+    dummy.updateMatrix();
+    leafInst.setMatrixAt(placed, dummy.matrix);
+    placed++;
+  }
+  trunkInst.count = placed; leafInst.count = placed;
+}
+scene.add(trunkInst); scene.add(leafInst);
+
+// a few trees on / near lower shoulder scrims
+for(let i=0;i<28;i++){
+  const a = Math.PI + (rand()-0.5)*1.6; // back side
+  const r = 40 + rand()*6;
+  const x = Math.sin(a)*r*0.9, z = -Math.abs(Math.cos(a))*r*0.6 - 4;
+  const s = 0.5 + rand()*0.7;
+  const t = new THREE.Group();
+  const tr = new THREE.Mesh(trunkGeo, trunkMat); tr.position.y = 0.45*s;
+  const lf = new THREE.Mesh(leafGeo, leafMat); lf.position.y = 2.5*s;
+  t.add(tr, lf); t.scale.setScalar(s);
+  t.position.set(x, groundH(x,z)+1.5, z);
+  t.castShadow = true;
+  scene.add(t);
+}
+
+// scattered boulders
+const boulderGeo = new THREE.IcosahedronGeometry(1, 0);
+const boulderInst = new THREE.InstancedMesh(boulderGeo, graniteDark, 90);
+boulderInst.castShadow = true; boulderInst.receiveShadow = true;
+{
+  const dummy = new THREE.Object3D();
+  for(let i=0;i<90;i++){
+    const a = rand()*Math.PI*2, r = 40 + rand()*90;
+    const x = Math.cos(a)*r, z = Math.sin(a)*r;
+    const s = 0.5 + rand()*2.2;
+    dummy.position.set(x, groundH(x,z)+s*0.3, z);
+    dummy.rotation.set(rand()*3, rand()*3, rand()*3);
+    dummy.scale.set(s, s*0.7, s*(0.7+rand()*0.5)); dummy.updateMatrix();
+    boulderInst.setMatrixAt(i, dummy.matrix);
+  }
+}
+scene.add(boulderInst);
+
+// ---------- interaction: native pointer drag orbit + wheel zoom ----------
+let dragging = false, lastX = 0, lastY = 0;
+const el = renderer.domElement;
+el.addEventListener('pointerdown', e=>{ dragging = true; lastX = e.clientX; lastY = e.clientY; el.setPointerCapture(e.pointerId); });
+el.addEventListener('pointermove', e=>{
+  if(!dragging) return;
+  azimuth -= (e.clientX - lastX)*0.005;
+  polar -= (e.clientY - lastY)*0.004;
+  polar = THREE.MathUtils.clamp(polar, 0.35, 1.45);
+  lastX = e.clientX; lastY = e.clientY;
+  updateCamera(); renderer.render(scene, camera);
+});
+el.addEventListener('pointerup', ()=>{ dragging = false; });
+el.addEventListener('pointercancel', ()=>{ dragging = false; });
+el.addEventListener('wheel', e=>{
+  e.preventDefault();
+  distance = THREE.MathUtils.clamp(distance + e.deltaY*0.12, 55, 210);
+  updateCamera(); renderer.render(scene, camera);
+}, {passive:false});
+
+// touch pinch basic (two-pointer handled via pointer events cache would be extra; wheel/drag covers requirement)
+function onResize(){
+  const w = window.innerWidth, h = window.innerHeight;
+  camera.aspect = w/h; camera.updateProjectionMatrix();
+  renderer.setSize(w, h, false);
+  renderer.render(scene, camera);
+}
+window.addEventListener('resize', onResize);
+
+// initial framing
+updateCamera();
+renderer.render(scene, camera);
+window.sceneReady = true;
+</script>
+</body>
+</html>

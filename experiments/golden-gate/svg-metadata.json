@@ -1,0 +1,32 @@
+{
+  "format": "svg",
+  "model": "meta/muse-ember",
+  "provider": "Meta",
+  "elapsed_seconds": 12.29,
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 164,
+    "completion_tokens": 7045,
+    "total_tokens": 7209,
+    "cost": 0.0035389,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0035389,
+      "upstream_inference_prompt_cost": 1.64e-05,
+      "upstream_inference_completions_cost": 0.0035225
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 2123,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "prompt": "Draw the Golden Gate Bridge in San Francisco at golden hour, viewed from Battery Spencer in the Marin Headlands. Include recognizable International Orange towers with openings and cross-bracing, sweeping suspension cables and many vertical hangers, a road deck spanning the water, blue-green ocean, layered distant hills, warm sunset sky, and subtle low fog. Compose a beautiful detailed landscape at 1200 by 800. Prioritize recognizable bridge geometry, depth and polished visual composition. Do not include text labels. Use no external images, fonts, data, or assets.\n\nReturn only a complete standalone SVG, no markdown fences. Set width=\"1200\" height=\"800\" viewBox=\"0 0 1200 800\". Use SVG shapes, paths, gradients and filters. No scripts.",
+  "file": "bridge.svg"
+}

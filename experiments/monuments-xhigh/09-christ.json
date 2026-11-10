@@ -1,0 +1,37 @@
+{
+  "slug": "09-christ",
+  "name": "Christ the Redeemer",
+  "approach": "Clay maquette",
+  "prompt": "Sculpt Christ the Redeemer as a sophisticated monochrome clay architectural maquette on Corcovado mountain. A readable robed human figure stands upright with both arms fully outstretched horizontally, a small defined head, hands and flowing vertical robe folds, on its pedestal. Use soft off-white clay for statue, muted green-gray mountain layers, museum lighting and a clear frontal three-quarter camera.\n\nReturn only a complete HTML document, without Markdown fences. Build actual 3D geometry with Three.js 0.180.0. Import * as THREE from './three.module.js'; use no other imports, external assets, images, fonts, network calls or textures. Use procedural geometry and materials. Render into a responsive full-window canvas, initially 1200x800. Set renderer pixel ratio to at most 1.5. Build native pointer drag orbit and wheel zoom controls. On resize update renderer size, camera projection and rerender. Use a carefully framed default camera with the whole monument and its top and base visible, at least 10% margin around it. Avoid obstructing the landmark with foreground objects. Use deterministic geometry. Render the finished scene immediately, then set window.sceneReady=true. No text overlays. Prioritize the visual result and working code. Keep geometry efficient. Use no animation loop unless needed for a specific effect. Avoid transparent flat fog planes. Use no more than 9000 output tokens including reasoning.",
+  "requested_effort": "xhigh",
+  "max_tokens": 32000,
+  "model": "meta/muse-ember",
+  "provider": "Meta",
+  "usage": {
+    "prompt_tokens": 295,
+    "completion_tokens": 11421,
+    "total_tokens": 11716,
+    "cost": 0.00574,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.00574,
+      "upstream_inference_prompt_cost": 2.95e-05,
+      "upstream_inference_completions_cost": 0.0057105
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 7797,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "bytes": 10163,
+  "generation_id": "gen-1794279963-f210LKd98VUX5QabBjNA",
+  "elapsed_seconds": 21.273
+}

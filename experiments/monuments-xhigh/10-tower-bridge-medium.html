@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tower Bridge</title>
+<style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#cfe6ee}canvas{display:block;width:100%;height:100%}</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.setSize(1200,800);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.setClearColor(0xcfe6ee);
+document.body.appendChild(renderer.domElement);
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xcfe6ee);
+const camera=new THREE.OrthographicCamera(-112,112,75,-75,0.1,600);
+let target=new THREE.Vector3(0,13,0);
+let theta=Math.PI/4, phi=0.92, dist=190;
+function placeCamera(){
+  const x=target.x+dist*Math.sin(phi)*Math.sin(theta);
+  const y=target.y+dist*Math.cos(phi);
+  const z=target.z+dist*Math.sin(phi)*Math.cos(theta);
+  camera.position.set(x,y,z);
+  camera.lookAt(target);
+  camera.updateProjectionMatrix();
+}
+placeCamera();
+
+scene.add(new THREE.HemisphereLight(0xeaf6ff,0x8a7a5f,1.15));
+const sun=new THREE.DirectionalLight(0xfff2d8,2.0);
+sun.position.set(55,90,40); sun.castShadow=true;
+sun.shadow.camera.left=-110; sun.shadow.camera.right=110;
+sun.shadow.camera.top=90; sun.shadow.camera.bottom=-90;
+sun.shadow.camera.far=300; sun.shadow.mapSize.set(2048,2048);
+scene.add(sun);
+const fill=new THREE.DirectionalLight(0xbcd9ff,0.55); fill.position.set(-60,40,-50); scene.add(fill);
+
+const M={
+ stone:new THREE.MeshStandardMaterial({color:0xcbb58f,roughness:0.9}),
+ stone2:new THREE.MeshStandardMaterial({color:0xbfa77e,roughness:0.95}),
+ stoneDark:new THREE.MeshStandardMaterial({color:0x9d8d6d,roughness:0.95}),
+ blue:new THREE.MeshStandardMaterial({color:0x2f6f9f,roughness:0.55,metalness:0.25}),
+ blueDark:new THREE.MeshStandardMaterial({color:0x25597f,roughness:0.6,metalness:0.2}),
+ roof:new THREE.MeshStandardMaterial({color:0x5d7f92,roughness:0.5,metalness:0.15,flatShading:true}),
+ road:new THREE.MeshStandardMaterial({color:0x3c4147,roughness:0.9}),
+ white:new THREE.MeshStandardMaterial({color:0xf2f0e6,roughness:0.8}),
+ dark:new THREE.MeshStandardMaterial({color:0x2a3440,roughness:0.7}),
+ water:new THREE.MeshStandardMaterial({color:0x5f9eb0,roughness:0.35,metalness:0.1}),
+ bank:new THREE.MeshStandardMaterial({color:0xa8a58e,roughness:1}),
+ green:new THREE.MeshStandardMaterial({color:0x5e8c5a,roughness:1}),
+ gold:new THREE.MeshStandardMaterial({color:0xc9a84c,roughness:0.4,metalness:0.6}),
+ glass:new THREE.MeshStandardMaterial({color:0x28485e,roughness:0.3,metalness:0.4})
+};
+function box(w,h,d,x,y,z,mat,shadow=true){
+ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+ m.position.set(x,y,z); m.castShadow=shadow; m.receiveShadow=true; scene.add(m); return m;
+}
+function cyl(r1,r2,h,x,y,z,mat,seg=10){
+ const m=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg),mat);
+ m.position.set(x,y,z); m.castShadow=true; m.receiveShadow=true; scene.add(m); return m;
+}
+// Water and banks
+const water=new THREE.Mesh(new THREE.PlaneGeometry(92,240),M.water);
+water.rotation.x=-Math.PI/2; water.position.y=0; water.receiveShadow=true; scene.add(water);
+box(85,5,240,-88,2.5,0,M.bank); box(85,5,240,88,2.5,0,M.bank);
+box(6,7,240,-48,3.5,0,M.stoneDark); box(6,7,240,48,3.5,0,M.stoneDark);
+// calm ripples
+for(let i=0;i<14;i++){
+ const z=-100+i*15, x=(i%3-1)*18;
+ const r=box(18+(i%4)*4,0.08,0.5,x,0.12,z, new THREE.MeshStandardMaterial({color:0x8ec3d1,roughness:0.4}),false);
+ r.castShadow=false;
+}
+// deck / approaches
+box(230,2.2,13,0,8.2,0,M.stoneDark);
+box(230,0.5,10.5,0,9.55,0,M.road);
+for(let i=0;i<34;i++){ const x=-102+i*6.2; box(3.2,0.08,0.35,x,9.85,0,M.white,false); }
+box(230,0.9,0.35,0,10.4,5.2,M.blue,false); box(230,0.9,0.35,0,10.4,-5.2,M.blue,false);
+// bascule leaves closed
+box(23,1.3,11.5,-11.5,10.1,0,M.blue); box(23,1.3,11.5,11.5,10.1,0,M.blue);
+box(0.5,1.4,11.6,0,10.1,0,M.blueDark,false);
+// approach piers under deck
+for(const sx of [-1,1]) for(let i=0;i<4;i++){ const x=sx*(42+i*18); box(5,7,11,x,4,0,M.stoneDark); }
+
+// arch panel helper
+function archPanel(w,h,depth,mat){
+ const s=new THREE.Shape();
+ const hw=w/2, rh=h-w/2;
+ s.moveTo(-hw,0); s.lineTo(hw,0); s.lineTo(hw,rh);
+ s.absarc(0,rh,hw,0,Math.PI,false); s.lineTo(-hw,0);
+ const g=new THREE.ExtrudeGeometry(s,{depth:depth,bevelEnabled:false});
+ return new THREE.Mesh(g,mat);
+}
+function tower(side){
+ const cx=side*28;
+ box(16,5,18,cx,2.5,0,M.stoneDark);
+ box(13,2,15,cx,6,0,M.stone2);
+ box(11,20,13,cx,16,0,M.stone);
+ box(11.4,0.7,13.4,cx,10.5,0,M.stone2,false); box(11.4,0.7,13.4,cx,18.5,0,M.stone2,false);
+ box(12,3,14,cx,27.5,0,M.stone2);
+ box(13,1.1,15,cx,29.5,0,M.stoneDark);
+ // arches front/back
+ for(const sz of [-1,1]){
+   const a=archPanel(5.2,11,0.4,M.glass); a.position.set(cx-0,7.5,sz>0?6.5:-6.9); if(sz<0)a.rotation.y=Math.PI; scene.add(a);
+   const a2=archPanel(3.4,6,0.35,M.dark); a2.position.set(cx,20,sz>0?6.5:-6.85); if(sz<0)a2.rotation.y=Math.PI; scene.add(a2);
+ }
+ // side arches (inner)
+ for(const sx of [-1,1]){
+   const a=archPanel(4.5,9,0.35,M.glass); a.position.set(cx+sx*5.5,8,0); a.rotation.y=sx>0?Math.PI/2:-Math.PI/2; scene.add(a);
+ }
+ // windows
+ for(const sz of [-1,1]) for(let i=-1;i<=1;i++) box(1.1,2,0.2,cx+i*3,23,sz*6.6,M.dark,false);
+ // pointed roof
+ const roof=new THREE.Mesh(new THREE.ConeGeometry(9.2,9.5,4),M.roof);
+ roof.rotation.y=Math.PI/4; roof.scale.set(0.88,1,1.02); roof.position.set(cx,34.7,0); roof.castShadow=true; scene.add(roof);
+ cyl(0.35,0.35,2.2,cx,40.5,0,M.gold,8);
+ const orb=new THREE.Mesh(new THREE.SphereGeometry(0.8,10,8),M.gold); orb.position.set(cx,41.8,0); scene.add(orb);
+ const tip=new THREE.Mesh(new THREE.ConeGeometry(0.5,2,8),M.gold); tip.position.set(cx,43.3,0); scene.add(tip);
+ // corner pinnacles
+ for(const ox of [-5,5]) for(const oz of [-6,6]){
+   cyl(0.65,0.8,6,cx+ox,32.5,oz,M.stone,8);
+   const c=new THREE.Mesh(new THREE.ConeGeometry(1,3.2,8),M.roof); c.position.set(cx+ox,37.2,oz); c.castShadow=true; scene.add(c);
+ }
+}
+tower(-1); tower(1);
+
+// high-level walkways
+function walkway(z){
+ box(46,3.2,2.4,0,27.5,z,M.blueDark);
+ box(46,1.2,1.8,0,27.8,z+ (z>0?1.25:-1.25),M.glass,false);
+ // prism roof via extrude triangle
+ const shape=new THREE.Shape(); shape.moveTo(-1.7,0); shape.lineTo(1.7,0); shape.lineTo(0,1.3); shape.lineTo(-1.7,0);
+ const geo=new THREE.ExtrudeGeometry(shape,{depth:46,bevelEnabled:false});
+ const roof=new THREE.Mesh(geo,M.roof); roof.rotation.y=Math.PI/2; roof.position.set(-23,29.1,z); roof.castShadow=true; scene.add(roof);
+ for(let i=0;i<9;i++) box(0.4,2.2,0.3,-20+i*5,27.5,z+(z>0?1.3:-1.3),M.white,false);
+}
+walkway(4.6); walkway(-4.6);
+
+// suspension elements to both shores
+function tube(points,r,mat){
+ const curve=new THREE.QuadraticBezierCurve3(points[0],points[1],points[2]);
+ const m=new THREE.Mesh(new THREE.TubeGeometry(curve,20,r,6,false),mat);
+ m.castShadow=true; scene.add(m); return curve;
+}
+for(const side of [-1,1]){
+ box(11,9,13,side*68,7.5,0,M.stone2); box(12,1.2,14,side*68,12.5,0,M.stoneDark);
+ for(const z of [-4.6,4.6]){
+   const curve=tube([new THREE.Vector3(side*28,34.5,z),new THREE.Vector3(side*49,17,z),new THREE.Vector3(side*68,13,z)],0.32,M.blue);
+   tube([new THREE.Vector3(side*28,33,z),new THREE.Vector3(side*35,19,z),new THREE.Vector3(side*40,10.5,z)],0.22,M.blue);
+   for(const t of [0.25,0.45,0.65,0.85]){
+     const p=curve.getPoint(t); const h=Math.max(0.5,p.y-10.2);
+     cyl(0.09,0.09,h,p.x,p.y-h/2,z,M.blueDark,6);
+   }
+ }
+}
+// distant bank trees and buildings (behind, not obstructing)
+for(let i=0;i<10;i++){
+ const x=(i%2?1:-1)*(58+(i*7)%35), z=-80+i*16;
+ cyl(0.3,0.4,3,x,6.5,z,M.stoneDark,6);
+ const s=new THREE.Mesh(new THREE.SphereGeometry(2.2,8,6),M.green); s.position.set(x,9.5,z); s.castShadow=true; scene.add(s);
+}
+for(let i=0;i<6;i++){ const x=(i%2?1:-1)*(72+(i*11)%28), z=-60+i*24; box(14,10+(i%3)*4,12,x,10,z,M.stone2); box(15,1,13,x,15+(i%3)*4,z,M.roof); }
+// small boat off to side
+box(8,1.2,3,12,0.8,-32,M.white,false); box(3,1.2,2,12,1.8,-32,M.blue,false);
+
+function render(){ renderer.render(scene,camera); }
+function resize(){
+ const w=window.innerWidth,h=window.innerHeight;
+ renderer.setSize(w,h);
+ const a=w/h, halfH=75;
+ camera.left=-halfH*a; camera.right=halfH*a; camera.top=halfH; camera.bottom=-halfH;
+ camera.updateProjectionMatrix(); render();
+}
+window.addEventListener('resize',resize);
+let dragging=false,lx=0,ly=0;
+renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;lx=e.clientX;ly=e.clientY;renderer.domElement.setPointerCapture(e.pointerId);});
+renderer.domElement.addEventListener('pointermove',e=>{
+ if(!dragging)return;
+ theta-=(e.clientX-lx)*0.005; phi-=(e.clientY-ly)*0.005;
+ phi=Math.max(0.25,Math.min(1.35,phi)); lx=e.clientX; ly=e.clientY; placeCamera(); render();
+});
+renderer.domElement.addEventListener('pointerup',()=>dragging=false);
+renderer.domElement.addEventListener('wheel',e=>{
+ e.preventDefault();
+ camera.zoom=Math.max(0.5,Math.min(3,camera.zoom*(e.deltaY<0?1.1:0.9)));
+ camera.updateProjectionMatrix(); render();
+},{passive:false});
+resize();
+render();
+window.sceneReady=true;
+</script>
+</body>
+</html>

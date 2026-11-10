@@ -1,0 +1,41 @@
+{
+  "slug": "03-taj-mahal",
+  "name": "Taj Mahal",
+  "approach": "Symmetry and reflection",
+  "format": "svg",
+  "prompt": "Render the Taj Mahal as a serene architectural scene: central ivory onion dome with finial above a symmetrical building with a tall central pointed portal, smaller domed kiosks and four slender corner minarets. A long foreground reflecting pool and flanking formal gardens guide the eye to the facade. Symmetry, soft dawn light, pale pink sky, polished proportions.\n\nReturn only one complete standalone SVG document without Markdown fences. Use xmlns=\"http://www.w3.org/2000/svg\", width=\"1200\", height=\"800\", viewBox=\"0 0 1200 800\". Build the entire artwork with native SVG paths, shapes, gradients, masks and filters. No scripts or embedded HTML. Use only native 2D drawing primitives. No WebGL, Three.js, 3D engine, external assets, images, fonts, imports or network calls. Depict the requested perspective using 2D shapes, paths and gradients. Create polished lighting, shadows and material variation with gradients and layered shapes. Frame the complete monument with its top and base visible and at least 10% margin. Do not obstruct it with foreground objects. No text overlays. Deterministic artwork, 1200x800 composition. Prioritize the visual result and working code. Use no more than 32000 output tokens including reasoning.",
+  "scene_brief": "Render the Taj Mahal as a serene architectural scene: central ivory onion dome with finial above a symmetrical building with a tall central pointed portal, smaller domed kiosks and four slender corner minarets. A long foreground reflecting pool and flanking formal gardens guide the eye to the facade. Symmetry, soft dawn light, pale pink sky, polished proportions.",
+  "requested_model": "meta/muse-ember",
+  "requested_effort": "xhigh",
+  "max_tokens": 32000,
+  "model": "meta/muse-ember",
+  "provider": "Meta",
+  "usage": {
+    "prompt_tokens": 275,
+    "completion_tokens": 14786,
+    "total_tokens": 15061,
+    "cost": 0.0074205,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0074205,
+      "upstream_inference_prompt_cost": 2.75e-05,
+      "upstream_inference_completions_cost": 0.007393
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 8999,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "finish_reason": "stop",
+  "bytes": 13856,
+  "generation_id": "gen-1794280424-y5ZEhEy5UNgAENESHTw6",
+  "file": "03-taj-mahal-svg.svg",
+  "elapsed_seconds": 26.348
+}

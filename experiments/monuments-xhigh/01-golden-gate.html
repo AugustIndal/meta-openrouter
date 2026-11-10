@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#9fc2d6}canvas{display:block;width:100%;height:100%}</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x9fc2d6);
+scene.fog = new THREE.Fog(0x9fc2d6, 430, 980);
+
+const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 2500);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.06;
+document.body.appendChild(renderer.domElement);
+
+const sun = new THREE.DirectionalLight(0xffd2a0, 2.4);
+sun.position.set(120, 170, 95);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -180; sun.shadow.camera.right = 180;
+sun.shadow.camera.top = 160; sun.shadow.camera.bottom = -160;
+sun.shadow.camera.near = 20; sun.shadow.camera.far = 520;
+sun.shadow.bias = -0.0004;
+scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xcfe8ff, 0x8a7a5a, 0.95));
+const fill = new THREE.DirectionalLight(0xb9d7e8, 0.45);
+fill.position.set(-130, 80, -70);
+scene.add(fill);
+
+const orange = new THREE.MeshStandardMaterial({ color: 0xc84a24, roughness: 0.55, metalness: 0.15 });
+const steel = new THREE.MeshStandardMaterial({ color: 0x353a3e, roughness: 0.42, metalness: 0.68 });
+const concrete = new THREE.MeshStandardMaterial({ color: 0x9b9b93, roughness: 0.95, metalness: 0.0 });
+const asphalt = new THREE.MeshStandardMaterial({ color: 0x2e3236, roughness: 0.95, metalness: 0.0 });
+const whiteMat = new THREE.MeshStandardMaterial({ color: 0xe8e5da, roughness: 0.8 });
+const yellowMat = new THREE.MeshStandardMaterial({ color: 0xe3b93d, roughness: 0.8 });
+
+function box(w, h, d, mat, x, y, z, cast=true, receive=true) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.position.set(x, y, z);
+  m.castShadow = cast; m.receiveShadow = receive;
+  scene.add(m); return m;
+}
+
+// Cool ocean
+const ocean = new THREE.Mesh(
+  new THREE.PlaneGeometry(1700, 1700),
+  new THREE.MeshStandardMaterial({ color: 0x2f6f80, roughness: 0.62, metalness: 0.12 })
+);
+ocean.rotation.x = -Math.PI / 2;
+ocean.receiveShadow = true;
+scene.add(ocean);
+
+// Distant deterministic hills and headlands
+function hill(x, z, sx, sy, sz, color) {
+  const m = new THREE.Mesh(
+    new THREE.SphereGeometry(1, 28, 18),
+    new THREE.MeshStandardMaterial({ color, roughness: 1, metalness: 0, flatShading: true })
+  );
+  m.scale.set(sx, sy, sz);
+  m.position.set(x, 0, z);
+  m.receiveShadow = true;
+  scene.add(m);
+}
+hill(-250, -155, 175, 40, 105, 0x688273);
+hill(-70, -200, 210, 58, 125, 0x5a7263);
+hill(95, -210, 230, 64, 130, 0x658073);
+hill(245, -155, 180, 44, 105, 0x5d7568);
+hill(-165, -35, 115, 28, 75, 0x5d7568);
+hill(175, -45, 115, 27, 75, 0x688273);
+hill(-158, 8, 82, 21, 62, 0x6a8374);
+hill(158, 8, 82, 21, 62, 0x6a8374);
+
+// Continuous road deck and under-deck structure
+box(246, 1.6, 18, asphalt, 0, 10.2, 0);
+box(246, 1.8, 2.2, orange, 0, 9.3, 11.5);
+box(246, 1.8, 2.2, orange, 0, 9.3, -11.5);
+box(246, 0.95, 0.45, orange, 0, 11.85, 9.1);
+box(246, 0.95, 0.45, orange, 0, 11.85, -9.1);
+box(246, 0.06, 0.35, yellowMat, 0, 11.05, 0, false);
+box(246, 0.05, 0.22, whiteMat, 0, 11.04, 7, false);
+box(246, 0.05, 0.22, whiteMat, 0, 11.04, -7, false);
+for (let x = -120; x <= 120; x += 12) box(1.1, 2.0, 23, orange, x, 8.55, 0);
+
+// Two International Orange open-frame towers
+for (const tx of [-70, 70]) {
+  box(13, 5, 34, concrete, tx, 2.2, 0);
+  for (const lz of [-11.5, 11.5]) {
+    box(6.0, 36, 4.0, orange, tx, 18, lz);
+    box(4.6, 34, 3.4, orange, tx, 51, lz);
+    box(5.6, 2.6, 4.2, orange, tx, 69.3, lz);
+  }
+  for (const y of [20, 38, 56]) box(4.3, 4.0, 27, orange, tx, y, 0);
+}
+
+// Anchorages
+for (const ax of [-118, 118]) {
+  box(22, 15, 32, concrete, ax, 7.5, 0);
+  box(15, 3, 20, concrete, ax, 16.2, 0);
+}
+
+// Paired sagging main cables
+function cableY(x) {
+  const ax = Math.abs(x);
+  if (ax <= 70) return 22 + (66 - 22) * Math.pow(ax / 70, 2);
+  const t = (ax - 70) / 50;
+  return 66 + (14 - 66) * Math.pow(Math.min(t, 1), 1.35);
+}
+for (const side of [-1, 1]) {
+  const pts = [];
+  for (let x = -120; x <= 120; x += 5) pts.push(new THREE.Vector3(x, cableY(x), side * 11.5));
+  const curve = new THREE.CatmullRomCurve3(pts);
+  const cable = new THREE.Mesh(new THREE.TubeGeometry(curve, 110, 0.85, 10, false), steel);
+  cable.castShadow = true; cable.receiveShadow = true;
+  scene.add(cable);
+}
+
+// Evenly spaced vertical hangers, attached to cable above and deck girder below
+const hangerGeo = new THREE.CylinderGeometry(0.16, 0.16, 1, 6);
+for (let x = -112; x <= 112; x += 8) {
+  const top = cableY(x);
+  const bottom = 9.8;
+  const h = top - bottom;
+  if (h < 3) continue;
+  for (const side of [-1, 1]) {
+    const hanger = new THREE.Mesh(hangerGeo, steel);
+    hanger.scale.y = h;
+    hanger.position.set(x, bottom + h / 2, side * 11.5);
+    hanger.castShadow = true;
+    scene.add(hanger);
+  }
+}
+
+// Native drag orbit and wheel zoom
+const target = new THREE.Vector3(0, 28, 0);
+const spherical = new THREE.Spherical(305, 1.31, 0.69);
+function updateCamera() {
+  spherical.phi = THREE.MathUtils.clamp(spherical.phi, 0.25, 1.50);
+  spherical.radius = THREE.MathUtils.clamp(spherical.radius, 140, 650);
+  const offset = new THREE.Vector3().setFromSpherical(spherical);
+  camera.position.copy(target).add(offset);
+  camera.lookAt(target);
+}
+let dragging = false, lastX = 0, lastY = 0;
+const el = renderer.domElement;
+el.style.touchAction = 'none';
+el.addEventListener('pointerdown', e => {
+  dragging = true; lastX = e.clientX; lastY = e.clientY;
+  el.setPointerCapture(e.pointerId);
+});
+el.addEventListener('pointermove', e => {
+  if (!dragging) return;
+  const dx = e.clientX - lastX, dy = e.clientY - lastY;
+  lastX = e.clientX; lastY = e.clientY;
+  spherical.theta -= dx * 0.005;
+  spherical.phi -= dy * 0.005;
+  updateCamera(); renderer.render(scene, camera);
+});
+el.addEventListener('pointerup', () => dragging = false);
+el.addEventListener('pointercancel', () => dragging = false);
+el.addEventListener('wheel', e => {
+  e.preventDefault();
+  spherical.radius *= Math.exp(e.deltaY * 0.001);
+  updateCamera(); renderer.render(scene, camera);
+}, { passive: false });
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.render(scene, camera);
+});
+
+updateCamera();
+renderer.render(scene, camera);
+window.sceneReady = true;
+</script>
+</body>
+</html>

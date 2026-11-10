@@ -1,0 +1,7 @@
+Pass the Ember. A human and AI guessing game powered by Muse Ember.
+One player describes a secret place, without saying its name. Muse checks the prompt and turns the description into a three dimensional drawing.
+We begin in San Francisco. The models only receive the picture. Each locks a guess, then explains the visual clues behind it.
+Next, Norway. The places get harder. The same picture can lead different models to very different answers.
+Finally, Nepal. More intricate architecture, fewer familiar landmarks. Luna, Terra, Sonnet and Haiku take turns describing and guessing.
+People can join too. You have one minute to write, draw and refine. Then the answer is revealed and the points are shared.
+Pass the Ember. What can you make them see?

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Statue of Liberty</title>
+<style>
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#9fc8e8}
+canvas{display:block;width:100vw;height:100vh;touch-action:none;cursor:grab}
+canvas:active{cursor:grabbing}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const canvas=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.12;
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x9fc8e8);
+scene.fog=new THREE.Fog(0x9fc8e8,90,180);
+
+const camera=new THREE.PerspectiveCamera(40,window.innerWidth/window.innerHeight,0.1,400);
+
+// Strong side lighting
+const hemi=new THREE.HemisphereLight(0xd8ecff,0x5f7a66,0.75);
+scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xfff0c8,3.4);
+sun.position.set(-22,30,14);
+sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-24;sun.shadow.camera.right=24;
+sun.shadow.camera.top=28;sun.shadow.camera.bottom=-24;
+sun.shadow.camera.near=1;sun.shadow.camera.far=90;
+sun.shadow.bias=-0.0004;
+scene.add(sun);
+const fill=new THREE.DirectionalLight(0x9fd4ff,0.65);
+fill.position.set(20,14,-10);
+scene.add(fill);
+const rim=new THREE.DirectionalLight(0xffffff,0.5);
+rim.position.set(4,18,-24);
+scene.add(rim);
+
+// Materials - flat shaded, oxidized copper and stone
+function mat(color,rough=0.85,metal=0.05){
+  return new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal,flatShading:true});
+}
+const copper=mat(0x3f9d8b,0.62,0.28);
+const copperDark=mat(0x2f7f70,0.7,0.25);
+const copperLight=mat(0x57b5a1,0.55,0.3);
+const stone=mat(0x9a9486,0.95,0.0);
+const stoneDark=mat(0x7e786c,0.95,0.0);
+const stoneLight=mat(0xb0a99a,0.92,0.0);
+const gold=mat(0xffc24b,0.28,0.85);
+const goldLight=mat(0xffe08a,0.22,0.9);
+const water=mat(0x2a6aa8,0.45,0.1);
+const grassStone=mat(0x6f8f63,0.95,0.0);
+const rock=mat(0x6e6a60,1.0,0.0);
+
+function mesh(geo,material,x=0,y=0,z=0,parent=scene){
+  const m=new THREE.Mesh(geo,material);
+  m.position.set(x,y,z);
+  m.castShadow=true;m.receiveShadow=true;
+  parent.add(m);return m;
+}
+function box(w,h,d,material,x,y,z,parent=scene){
+  return mesh(new THREE.BoxGeometry(w,h,d),material,x,y,z,parent);
+}
+function cyl(rt,rb,h,seg,material,x,y,z,parent=scene){
+  return mesh(new THREE.CylinderGeometry(rt,rb,h,seg),material,x,y,z,parent);
+}
+function limb(ax,ay,az,bx,by,bz,r,material,parent){
+  const a=new THREE.Vector3(ax,ay,az),b=new THREE.Vector3(bx,by,bz);
+  const d=new THREE.Vector3().subVectors(b,a),len=d.length();
+  const m=mesh(new THREE.CylinderGeometry(r*0.82,r,len,7),material,0,0,0,parent);
+  m.position.copy(a).addScaledVector(d,0.5);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());
+  return m;
+}
+
+// Blue harbor
+const harbor=cyl(38,38,0.8,40,water,0,-0.4,0);
+harbor.castShadow=false;
+const harborRing=cyl(38.4,38.4,0.35,40,rock,0,-0.15,0);
+harborRing.castShadow=false;
+
+// Star-shaped island foundation (Fort Wood style)
+function starGeometry(outer,inner,points,depth){
+  const shape=new THREE.Shape();
+  for(let i=0;i<points*2;i++){
+    const r=i%2===0?outer:inner;
+    const a=(i/(points*2))*Math.PI*2-Math.PI/2;
+    const x=Math.cos(a)*r,y=Math.sin(a)*r;
+    if(i===0)shape.moveTo(x,y);else shape.lineTo(x,y);
+  }
+  shape.closePath();
+  const geo=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:false});
+  geo.rotateX(Math.PI/2);
+  return geo;
+}
+const island=mesh(starGeometry(17,12.5,11,1.0),grassStone,0,1.0,0);
+island.castShadow=false;
+// Stone edging on star points
+for(let i=0;i<11;i++){
+  const a=(i/11)*Math.PI*2-Math.PI/2;
+  const r=mesh(new THREE.DodecahedronGeometry(0.55,0),rock,Math.cos(a)*16.2,0.85,Math.sin(a)*16.2);
+  r.scale.y=0.6;
+}
+
+// Stepped stone pedestal
+box(11,0.7,11,stoneDark,0,1.35,0);
+box(9.2,0.7,9.2,stone,0,2.05,0);
+box(7.6,0.7,7.6,stoneLight,0,2.75,0);
+box(5.8,2.2,5.8,stone,0,4.2,0);
+box(6.6,0.42,6.6,stoneDark,0,5.48,0);
+box(4.6,0.55,4.6,stoneLight,0,5.95,0);
+// Pedestal window slits / panel lines
+for(let i=-1;i<=1;i++){
+  box(0.55,1.15,0.08,stoneDark,i*1.4,4.25,2.93);
+  box(0.08,1.15,0.55,stoneDark,2.93,4.25,i*1.4);
+}
+
+// Statue group
+const statue=new THREE.Group();
+statue.position.set(0,6.2,0);
+scene.add(statue);
+
+// Robe - tapered low-poly body
+cyl(1.85,2.18,0.85,8,copperDark,0,0.42,0,statue);
+cyl(0.98,1.85,3.3,8,copper,0,2.35,0,statue);
+cyl(0.78,0.98,1.25,8,copperLight,0,4.25,0,statue);
+// Shoulder mass
+const shoulders=mesh(new THREE.SphereGeometry(0.92,8,6),copper,0,4.55,0,statue);
+shoulders.scale.set(1.15,0.65,0.9);
+// Vertical robe folds
+for(let i=0;i<8;i++){
+  const a=(i/8)*Math.PI*2+0.35;
+  const f=cyl(0.09,0.15,3.15,5,copperDark,Math.cos(a)*1.48,2.15,Math.sin(a)*1.48,statue);
+  f.rotation.z=Math.cos(a)*0.07;f.rotation.x=-Math.sin(a)*0.07;
+}
+// Diagonal sash / drape across front
+const sash=box(0.55,3.0,0.14,copperLight,0.15,2.75,1.18,statue);
+sash.rotation.z=0.55;sash.rotation.x=-0.18;
+// Feet under hem
+const footL=box(0.45,0.22,0.85,copperDark,-0.55,0.18,1.75,statue);
+const footR=box(0.45,0.22,0.85,copperDark,0.55,0.18,1.75,statue);
+footL.rotation.y=0.12;footR.rotation.y=-0.12;
+// Broken chains at feet
+for(let i=0;i<3;i++){
+  const ch=mesh(new THREE.TorusGeometry(0.22,0.06,5,8,Math.PI*1.4),copperDark,-0.3+i*0.32,0.12,2.25,statue);
+  ch.rotation.x=Math.PI/2;ch.rotation.z=i*0.7;
+}
+
+// Neck and head
+cyl(0.28,0.34,0.55,7,copper,0,5.0,0,statue);
+const head=mesh(new THREE.SphereGeometry(0.62,9,7),copperLight,0,5.5,0,statue);
+head.scale.set(0.92,1.15,0.95);
+// Nose, chin, hair bun
+const nose=mesh(new THREE.ConeGeometry(0.09,0.32,5),copper,0,5.5,0.62,statue);
+nose.rotation.x=Math.PI/2;
+const bun=mesh(new THREE.SphereGeometry(0.28,7,6),copperDark,0,5.95,-0.42,statue);
+// Crown band
+cyl(0.56,0.62,0.32,10,copperDark,0,5.98,0,statue);
+// Seven-point crown spikes
+for(let i=0;i<7;i++){
+  const a=(i/7)*Math.PI*2-Math.PI/2;
+  const dir=new THREE.Vector3(Math.cos(a)*0.55,1,Math.sin(a)*0.55).normalize();
+  const spike=mesh(new THREE.ConeGeometry(0.09,0.9,5),copperLight,Math.cos(a)*0.48,6.35,Math.sin(a)*0.48,statue);
+  spike.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir);
+}
+
+// Right arm raised with torch (viewer's left)
+limb(-0.75,4.55,0,-1.95,5.7,0.15,0.24,copper,statue);
+limb(-1.95,5.7,0.15,-2.25,7.15,0.3,0.20,copperLight,statue);
+mesh(new THREE.SphereGeometry(0.24,7,6),copperLight,-2.25,7.35,0.3,statue);
+// Torch handle and gold flame
+limb(-2.25,7.3,0.3,-2.25,8.85,0.3,0.11,gold,statue);
+cyl(0.16,0.20,0.35,7,gold,-2.25,8.9,0.3,statue);
+const flame=mesh(new THREE.ConeGeometry(0.48,1.15,7),goldLight,-2.25,9.6,0.3,statue);
+const flameCore=mesh(new THREE.IcosahedronGeometry(0.28,0),mat(0xfff3b0,0.2,0.6),-2.25,9.35,0.3,statue);
+flameCore.scale.set(0.8,1.25,0.8);
+const flameLight=new THREE.PointLight(0xffc95e,6,10,2);
+flameLight.position.set(-2.25,9.5,0.3);
+statue.add(flameLight);
+
+// Left arm holding tablet (viewer's right)
+limb(0.75,4.55,0,1.65,3.15,0.55,0.24,copper,statue);
+limb(1.65,3.15,0.55,1.05,3.55,1.25,0.20,copperLight,statue);
+mesh(new THREE.SphereGeometry(0.23,7,6),copperLight,1.0,3.65,1.35,statue);
+// Tablet
+const tablet=box(1.15,1.5,0.18,copperDark,1.0,3.85,1.45,statue);
+tablet.rotation.set(-0.12,-0.22,0.06);
+// Tablet inscription lines
+for(let i=0;i<4;i++){
+  const line=box(0.78,0.09,0.05,copperLight,1.0,4.28-i*0.28,1.56,statue);
+  line.rotation.y=-0.22;
+}
+// Drape over left forearm
+const drape=box(0.5,1.7,0.14,copperLight,1.35,3.35,0.95,statue);
+drape.rotation.set(0.4,0.3,-0.5);
+
+// Small rocks / shrubs on island (outside pedestal, not obstructing)
+for(let i=0;i<8;i++){
+  const a=(i/8)*Math.PI*2+0.4;
+  const bush=mesh(new THREE.IcosahedronGeometry(0.45,0),mat(0x4f7d4a,1.0),Math.cos(a)*8.5,0.95,Math.sin(a)*8.5);
+  bush.scale.y=0.55;
+}
+
+// Orbit controls (native pointer + wheel)
+const target=new THREE.Vector3(0,7.2,0);
+let theta=0.62,phi=1.12,radius=42;
+const pointers=new Map();
+let lastPinch=0;
+function updateCamera(){
+  const sp=Math.sin(phi),cp=Math.cos(phi);
+  camera.position.set(
+    target.x+radius*sp*Math.sin(theta),
+    target.y+radius*cp,
+    target.z+radius*sp*Math.cos(theta)
+  );
+  camera.lookAt(target);
+}
+canvas.addEventListener('pointerdown',e=>{
+  canvas.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+});
+canvas.addEventListener('pointermove',e=>{
+  if(!pointers.has(e.pointerId))return;
+  const p=pointers.get(e.pointerId);
+  const dx=e.clientX-p.x,dy=e.clientY-p.y;
+  p.x=e.clientX;p.y=e.clientY;
+  if(pointers.size===2){
+    const pts=[...pointers.values()];
+    const d=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y);
+    if(lastPinch>0&&d>0)radius=THREE.MathUtils.clamp(radius*lastPinch/d,22,72);
+    lastPinch=d;
+  }else{
+    theta-=dx*0.005;
+    phi=THREE.MathUtils.clamp(phi-dy*0.005,0.28,1.48);
+  }
+  updateCamera();renderer.render(scene,camera);
+});
+function endPointer(e){pointers.delete(e.pointerId);if(pointers.size<2)lastPinch=0;}
+canvas.addEventListener('pointerup',endPointer);
+canvas.addEventListener('pointercancel',endPointer);
+canvas.addEventListener('wheel',e=>{
+  e.preventDefault();
+  radius=THREE.MathUtils.clamp(radius*(1+e.deltaY*0.001),22,72);
+  updateCamera();renderer.render(scene,camera);
+},{passive:false});
+
+function onResize(){
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  renderer.render(scene,camera);
+}
+window.addEventListener('resize',onResize);
+
+updateCamera();
+renderer.render(scene,camera);
+window.sceneReady=true;
+</script>
+</body>
+</html>

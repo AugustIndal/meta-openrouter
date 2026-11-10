@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Granite Dome Mountain</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#2f6fc2;}
+  canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab;}
+  canvas:active{cursor:grabbing;}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function smoothstep(a,b,x){const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);}
+
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.06;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+
+const scene=new THREE.Scene();
+scene.fog=new THREE.Fog(0xd9ecf8,330,880);
+
+const camera=new THREE.PerspectiveCamera(40,window.innerWidth/window.innerHeight,0.5,2000);
+const target=new THREE.Vector3(0,24,-4);
+let orbitRadius=198, orbitTheta=0.62, orbitPhi=1.38;
+function updateCamera(){
+  const sp=Math.sin(orbitPhi), cp=Math.cos(orbitPhi);
+  camera.position.set(
+    target.x+orbitRadius*sp*Math.sin(orbitTheta),
+    target.y+orbitRadius*cp,
+    target.z+orbitRadius*sp*Math.cos(orbitTheta)
+  );
+  camera.lookAt(target);
+}
+function renderOnce(){
+  updateCamera();
+  renderer.render(scene,camera);
+  window.sceneReady=true;
+}
+
+/* Sky */
+const skyGeo=new THREE.SphereGeometry(920,32,16);
+const skyMat=new THREE.ShaderMaterial({
+  side:THREE.BackSide, depthWrite:false, fog:false,
+  vertexShader:`varying vec3 vP; void main(){ vP=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+  fragmentShader:`varying vec3 vP;
+    void main(){
+      vec3 d=normalize(vP);
+      float h=max(d.y,0.0);
+      vec3 col=mix(vec3(0.86,0.93,0.99), vec3(0.16,0.41,0.78), pow(h,0.62));
+      col=mix(vec3(0.78,0.86,0.94), col, smoothstep(-0.08,0.04,d.y));
+      vec3 sun=normalize(vec3(0.52,0.62,0.42));
+      float s=pow(max(dot(d,sun),0.0),20.0);
+      col+=vec3(0.28,0.22,0.10)*s;
+      gl_FragColor=vec4(col,1.0);
+    }`
+});
+scene.add(new THREE.Mesh(skyGeo,skyMat));
+
+/* Lights */
+scene.add(new THREE.HemisphereLight(0xcfe4ff,0xd9cba8,0.95));
+const sun=new THREE.DirectionalLight(0xfff0d6,1.85);
+sun.position.set(95,125,75);
+sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-150; sun.shadow.camera.right=150;
+sun.shadow.camera.top=150; sun.shadow.camera.bottom=-150;
+sun.shadow.camera.near=10; sun.shadow.camera.far=420;
+sun.shadow.bias=-0.00045;
+scene.add(sun);
+const fill=new THREE.DirectionalLight(0xbcd6ff,0.35);
+fill.position.set(-80,50,-60);
+scene.add(fill);
+
+/* Terrain height */
+function terrainHeight(x,z){
+  const d=Math.hypot(x,z+8);
+  const f=smoothstep(62,175,d);
+  let h=f*(2.1*Math.sin(x*0.035+1.7)*Math.cos(z*0.042)+1.5*Math.sin(x*0.016-0.6)*Math.sin(z*0.023+2.1)+1.1*Math.cos((x+z)*0.028));
+  h+=smoothstep(185,350,d)*(10+3*Math.sin(Math.atan2(z,x)*2.0+1.0));
+  return h;
+}
+
+/* Ground */
+{
+  const g=new THREE.PlaneGeometry(680,680,72,72);
+  g.rotateX(-Math.PI/2);
+  const p=g.attributes.position;
+  const colors=new Float32Array(p.count*3);
+  const cTan=new THREE.Color(0xb3a37d), cSage=new THREE.Color(0x6f8052), cGrey=new THREE.Color(0x8f8b7a), cTmp=new THREE.Color();
+  for(let i=0;i<p.count;i++){
+    const x=p.getX(i), z=p.getZ(i), y=terrainHeight(x,z);
+    p.setY(i,y);
+    const n=0.5+0.5*Math.sin(x*0.11+Math.sin(z*0.07)*2.0)*Math.cos(z*0.09-x*0.03);
+    cTmp.copy(cTan).lerp(cSage,Math.min(1,Math.max(0,n*0.85)));
+    if(y>5) cTmp.lerp(cGrey,smoothstep(5,16,y)*0.55);
+    const v=0.94+0.06*Math.sin(x*0.7+z*0.53);
+    colors[i*3]=cTmp.r*v; colors[i*3+1]=cTmp.g*v; colors[i*3+2]=cTmp.b*v;
+  }
+  g.setAttribute('color',new THREE.BufferAttribute(colors,3));
+  g.computeVertexNormals();
+  const m=new THREE.MeshStandardMaterial({vertexColors:true,roughness:1.0,metalness:0.0});
+  const ground=new THREE.Mesh(g,m);
+  ground.receiveShadow=true;
+  scene.add(ground);
+}
+
+/* Procedural granite texture with vertical weathering streaks */
+function makeGraniteTexture(){
+  const c=document.createElement('canvas'); c.width=1024; c.height=512;
+  const ctx=c.getContext('2d');
+  const rng=mulberry32(20240607);
+  ctx.fillStyle='#e7dfcf'; ctx.fillRect(0,0,1024,512);
+  for(let i=0;i<900;i++){
+    const x=rng()*1024,y=rng()*512,r=12+rng()*68;
+    const dark=rng()>0.5;
+    ctx.fillStyle=dark?`rgba(178,168,150,${0.04+rng()*0.06})`:`rgba(255,252,240,${0.04+rng()*0.06})`;
+    ctx.beginPath(); ctx.ellipse(x,y,r,r*(0.5+rng()*0.7),rng()*Math.PI,0,Math.PI*2); ctx.fill();
+  }
+  for(let i=0;i<7000;i++){
+    const x=rng()*1024,y=rng()*512;
+    ctx.fillStyle=rng()>0.55?`rgba(60,55,45,${0.03+rng()*0.07})`:`rgba(255,255,255,${0.04+rng()*0.06})`;
+    ctx.fillRect(x,y,1+rng()*1.6,1+rng()*1.6);
+  }
+  for(let y=0;y<512;y+=34+rng()*30){
+    ctx.fillStyle=`rgba(120,112,95,${0.03+rng()*0.04})`;
+    ctx.fillRect(0,y,1024,3+rng()*5);
+  }
+  /* dark vertical streaks */
+  for(let i=0;i<210;i++){
+    const x=rng()*1024;
+    const w=1.5+rng()*11;
+    const start=rng()*120;
+    const len=70+rng()*400;
+    const a=0.09+rng()*0.30;
+    const gr=ctx.createLinearGradient(0,start,0,start+len);
+    gr.addColorStop(0,`rgba(48,44,40,${a})`);
+    gr.addColorStop(0.65,`rgba(48,44,40,${a*0.55})`);
+    gr.addColorStop(1,'rgba(48,44,40,0)');
+    ctx.fillStyle=gr;
+    ctx.fillRect(x,start,w,len);
+  }
+  for(let i=0;i<70;i++){
+    const x=rng()*1024,w=6+rng()*22,start=rng()*60,len=90+rng()*300,a=0.05+rng()*0.12;
+    const gr=ctx.createLinearGradient(0,start,0,start+len);
+    gr.addColorStop(0,`rgba(70,66,58,${a})`); gr.addColorStop(1,'rgba(70,66,58,0)');
+    ctx.fillStyle=gr; ctx.fillRect(x,start,w,len);
+  }
+  const tex=new THREE.CanvasTexture(c);
+  tex.colorSpace=THREE.SRGBColorSpace;
+  tex.anisotropy=4;
+  tex.wrapS=THREE.RepeatWrapping;
+  return tex;
+}
+const graniteTex=makeGraniteTexture();
+const graniteMat=new THREE.MeshStandardMaterial({map:graniteTex,bumpMap:graniteTex,bumpScale:0.55,roughness:0.94,metalness:0.0});
+
+/* Main half-dome mountain: curved shoulder + sheer vertical face */
+const Rx=54, Ry=70, Rz=48;
+const mountain=new THREE.Group();
+mountain.position.set(0,0,-8);
+scene.add(mountain);
+
+function buildDome(){
+  const NI=30, NJ=38;
+  const pos=[], uv=[], idx=[];
+  for(let i=0;i<=NI;i++){
+    const a=i/NI*Math.PI/2, sa=Math.sin(a), ca=Math.cos(a);
+    for(let j=0;j<=NJ;j++){
+      const b=j/NJ*Math.PI;
+      pos.push(Rx*sa*Math.cos(b), Ry*ca, -Rz*sa*Math.sin(b));
+      uv.push(j/NJ, 1-i/NI);
+    }
+  }
+  for(let i=0;i<NI;i++) for(let j=0;j<NJ;j++){
+    const a=i*(NJ+1)+j, b=a+NJ+1;
+    idx.push(a,b,a+1, b,b+1,a+1);
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+  g.setIndex(idx); g.computeVertexNormals();
+  return g;
+}
+function buildCliff(){
+  const NR=15, NT=60;
+  const pos=[], uv=[], idx=[];
+  for(let k=0;k<=NR;k++){
+    const r=k/NR;
+    for(let j=0;j<=NT;j++){
+      const th=j/NT*Math.PI;
+      const x=Rx*r*Math.cos(th), y=Ry*r*Math.sin(th);
+      pos.push(x,y,0.04);
+      uv.push((x/Rx+1)/2, y/Ry);
+    }
+  }
+  for(let k=0;k<NR;k++) for(let j=0;j<NT;j++){
+    const a=k*(NT+1)+j, b=a+NT+1;
+    idx.push(a,b,a+1, b,b+1,a+1);
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+  g.setIndex(idx); g.computeVertexNormals();
+  return g;
+}
+const domeMesh=new THREE.Mesh(buildDome(),graniteMat);
+domeMesh.castShadow=true; domeMesh.receiveShadow=true;
+mountain.add(domeMesh);
+const cliffMesh=new THREE.Mesh(buildCliff(),graniteMat);
+cliffMesh.castShadow=true; cliffMesh.receiveShadow=true;
+mountain.add(cliffMesh);
+
+/* Scree base and talus apron at cliff foot */
+{
+  const screeMat=new THREE.MeshStandardMaterial({color:0xcabfa8,roughness:1.0});
+  const base=new THREE.Mesh(new THREE.SphereGeometry(1,36,18),screeMat);
+  base.scale.set(Rx+12,7,Rz+12); base.position.set(0,-2.5,0);
+  base.castShadow=true; base.receiveShadow=true; mountain.add(base);
+  const talus=new THREE.Mesh(new THREE.SphereGeometry(1,28,16),screeMat);
+  talus.scale.set(Rx*0.92,8.5,17); talus.position.set(0,0.5,10);
+  talus.castShadow=true; talus.receiveShadow=true; mountain.add(talus);
+}
+
+/* Smaller granite ridges */
+function deformedSphere(rngSeed){
+  const g=new THREE.SphereGeometry(1,18,12);
+  const p=g.attributes.position, rng=mulberry32(rngSeed);
+  const off=rng()*10;
+  for(let i=0;i<p.count;i++){
+    const x=p.getX(i),y=p.getY(i),z=p.getZ(i);
+    const n=1+0.16*Math.sin(x*4.1+off)*Math.sin(y*3.7+z*2.3+off)+0.08*Math.cos(z*6.0+x*2.0);
+    p.setXYZ(i,x*n,y*n,z*n);
+  }
+  g.computeVertexNormals();
+  return g;
+}
+const ridgeSpots=[
+  [-80,30,28,10,17], [84,20,25,11,16], [-94,-50,32,13,19],
+  [90,-60,30,12,18], [0,-98,40,14,21], [-42,-80,21,9,14],
+  [50,-82,24,10,15], [-72,72,19,7,13], [78,68,21,8,14],
+  [-108,8,26,10,16], [110,-8,27,11,17]
+];
+const ridgeMats=[
+  new THREE.MeshStandardMaterial({color:0xd3cbba,roughness:1.0,flatShading:true}),
+  new THREE.MeshStandardMaterial({color:0xc4bbab,roughness:1.0,flatShading:true}),
+  new THREE.MeshStandardMaterial({color:0xdfd8c8,roughness:1.0,flatShading:true})
+];
+ridgeSpots.forEach((s,i)=>{
+  const mesh=new THREE.Mesh(deformedSphere(100+i*37),ridgeMats[i%3]);
+  mesh.scale.set(s[2],s[3],s[4]);
+  mesh.position.set(s[0],terrainHeight(s[0],s[1])-1.2,s[1]);
+  mesh.rotation.y=i*0.63+0.2;
+  mesh.castShadow=true; mesh.receiveShadow=true;
+  scene.add(mesh);
+});
+
+/* Tiny evergreen forest */
+{
+  const rng=mulberry32(987654);
+  const COUNT=820;
+  const trunkGeo=new THREE.CylinderGeometry(0.13,0.20,0.9,5); trunkGeo.translate(0,0.45,0);
+  const lowGeo=new THREE.ConeGeometry(1.35,4.3,7); lowGeo.translate(0,3.0,0);
+  const topGeo=new THREE.ConeGeometry(0.85,2.8,7); topGeo.translate(0,4.6,0);
+  const trunkMat=new THREE.MeshStandardMaterial({color:0x5d4632,roughness:1.0});
+  const leafMat=new THREE.MeshStandardMaterial({color:0x2e4e34,roughness:1.0,flatShading:true});
+  const leafMat2=new THREE.MeshStandardMaterial({color:0x3a5f3e,roughness:1.0,flatShading:true});
+  const trunks=new THREE.InstancedMesh(trunkGeo,trunkMat,COUNT);
+  const lows=new THREE.InstancedMesh(lowGeo,leafMat,COUNT);
+  const tops=new THREE.InstancedMesh(topGeo,leafMat2,COUNT);
+  trunks.castShadow=lows.castShadow=tops.castShadow=true;
+  trunks.receiveShadow=lows.receiveShadow=tops.receiveShadow=true;
+  const dummy=new THREE.Object3D();
+  let placed=0, attempts=0;
+  while(placed<COUNT && attempts<8000){
+    attempts++;
+    const ang=rng()*Math.PI*2;
+    const rad=60+Math.pow(rng(),0.75)*145;
+    const x=Math.cos(ang)*rad, z=-8+Math.sin(ang)*rad;
+    if(Math.abs(x)>300||Math.abs(z)>300) continue;
+    if(z>48 && Math.abs(x)<34) continue; /* foreground meadow clearing */
+    let nearRidge=false;
+    for(const s of ridgeSpots){ if(Math.hypot(x-s[0],z-s[1])<s[2]*0.75){nearRidge=true;break;} }
+    if(nearRidge) continue;
+    const y=terrainHeight(x,z);
+    const sc=0.85+rng()*1.7;
+    dummy.position.set(x,y-0.1,z);
+    dummy.rotation.set(0,rng()*Math.PI*2,0);
+    dummy.scale.set(sc,sc*(0.9+rng()*0.35),sc);
+    dummy.updateMatrix();
+    trunks.setMatrixAt(placed,dummy.matrix);
+    lows.setMatrixAt(placed,dummy.matrix);
+    tops.setMatrixAt(placed,dummy.matrix);
+    placed++;
+  }
+  trunks.count=lows.count=tops.count=placed;
+  trunks.instanceMatrix.needsUpdate=lows.instanceMatrix.needsUpdate=tops.instanceMatrix.needsUpdate=true;
+  scene.add(trunks,lows,tops);
+}
+
+/* Scattered boulders */
+{
+  const rng=mulberry32(555111);
+  const COUNT=70;
+  const geo=deformedSphere(777);
+  const mat=new THREE.MeshStandardMaterial({color:0xcac2b2,roughness:1.0,flatShading:true});
+  const inst=new THREE.InstancedMesh(geo,mat,COUNT);
+  inst.castShadow=true; inst.receiveShadow=true;
+  const dummy=new THREE.Object3D();
+  for(let i=0;i<COUNT;i++){
+    const ang=rng()*Math.PI*2, rad=58+rng()*85;
+    const x=Math.cos(ang)*rad, z=-8+Math.sin(ang)*rad;
+    const sc=0.6+rng()*2.1;
+    dummy.position.set(x,terrainHeight(x,z)+sc*0.25,z);
+    dummy.rotation.set(rng()*0.6,rng()*Math.PI*2,rng()*0.6);
+    dummy.scale.set(sc,sc*0.7,sc);
+    dummy.updateMatrix(); inst.setMatrixAt(i,dummy.matrix);
+  }
+  inst.instanceMatrix.needsUpdate=true;
+  scene.add(inst);
+}
+
+/* Orbit interaction */
+let dragging=false,lastX=0,lastY=0;
+const el=renderer.domElement;
+el.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;el.setPointerCapture(e.pointerId);});
+el.addEventListener('pointermove',e=>{
+  if(!dragging) return;
+  const dx=e.clientX-lastX, dy=e.clientY-lastY;
+  lastX=e.clientX; lastY=e.clientY;
+  orbitTheta-=dx*0.0052;
+  orbitPhi=Math.min(1.52,Math.max(0.42,orbitPhi-dy*0.0052));
+  renderOnce();
+});
+el.addEventListener('pointerup',()=>{dragging=false;});
+el.addEventListener('pointercancel',()=>{dragging=false;});
+el.addEventListener('wheel',e=>{
+  e.preventDefault();
+  orbitRadius=Math.min(330,Math.max(88,orbitRadius*Math.exp(e.deltaY*0.0011)));
+  renderOnce();
+},{passive:false});
+
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+  renderOnce();
+});
+
+renderOnce();
+</script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Christ the Redeemer Clay Maquette</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#e9e6dd}
+  canvas{display:block;width:100vw;height:100vh;touch-action:none;cursor:grab}
+  canvas:active{cursor:grabbing}
+</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xe9e6dd);
+
+const camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 0.1, 300);
+
+const clay = new THREE.MeshStandardMaterial({color:0xf3eee2, roughness:0.82, metalness:0.02});
+const clayDark = new THREE.MeshStandardMaterial({color:0xe8dfcc, roughness:0.88, metalness:0.02});
+const stone = new THREE.MeshStandardMaterial({color:0xdfd9cb, roughness:0.94, metalness:0.0});
+const mountA = new THREE.MeshStandardMaterial({color:0x8d978b, roughness:1.0, metalness:0.0});
+const mountB = new THREE.MeshStandardMaterial({color:0x7f8c7d, roughness:1.0, metalness:0.0});
+const mountC = new THREE.MeshStandardMaterial({color:0x99a295, roughness:1.0, metalness:0.0});
+const floorMat = new THREE.MeshStandardMaterial({color:0xd8d3c6, roughness:1.0, metalness:0.0});
+
+const hemi = new THREE.HemisphereLight(0xfff6e6, 0x8b9084, 0.95);
+scene.add(hemi);
+
+const key = new THREE.DirectionalLight(0xfff1d6, 2.4);
+key.position.set(20, 34, 22);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.left = -28; key.shadow.camera.right = 28;
+key.shadow.camera.top = 30; key.shadow.camera.bottom = -20;
+key.shadow.camera.near = 1; key.shadow.camera.far = 90;
+key.shadow.bias = -0.0004;
+scene.add(key);
+
+const fill = new THREE.DirectionalLight(0xdfe8ff, 0.65);
+fill.position.set(-22, 14, 12);
+scene.add(fill);
+
+const rim = new THREE.DirectionalLight(0xffffff, 0.55);
+rim.position.set(-8, 20, -24);
+scene.add(rim);
+
+const spot = new THREE.SpotLight(0xfff6e0, 180, 80, 0.5, 0.55, 1.4);
+spot.position.set(6, 36, 10);
+spot.target.position.set(0, 12, 0);
+scene.add(spot); scene.add(spot.target);
+
+function mesh(geo, mat, x=0,y=0,z=0){
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(x,y,z);
+  m.castShadow = true; m.receiveShadow = true;
+  return m;
+}
+
+// Museum floor and maquette base
+const floor = mesh(new THREE.PlaneGeometry(140,140), floorMat, 0,0,0);
+floor.rotation.x = -Math.PI/2; floor.castShadow = false; scene.add(floor);
+scene.add(mesh(new THREE.CylinderGeometry(19.8,20.4,1.0,64), stone, 0,0.5,0));
+scene.add(mesh(new THREE.CylinderGeometry(18.6,19.2,0.55,64), mountC, 0,1.25,0));
+
+// Corcovado mountain: deterministic layered rock
+function rockLayer(rBot,rTop,h,y,mat,seed){
+  const geo = new THREE.CylinderGeometry(rTop,rBot,h,56,3,false);
+  const p = geo.attributes.position;
+  for(let i=0;i<p.count;i++){
+    const x=p.getX(i), yy=p.getY(i), z=p.getZ(i);
+    const r=Math.hypot(x,z); if(r<0.02) continue;
+    const a=Math.atan2(z,x);
+    const f=1 + 0.055*Math.sin(a*5+seed) + 0.035*Math.sin(a*11+seed*1.7) + 0.025*Math.sin(a*3-seed+yy*0.8);
+    p.setX(i,x*f); p.setZ(i,z*f);
+  }
+  geo.computeVertexNormals();
+  return mesh(geo,mat,0,y,0);
+}
+scene.add(rockLayer(16.5,12.5,4.2,3.4,mountA,1.3));
+scene.add(rockLayer(12.6,9.4,3.6,6.2,mountB,4.1));
+scene.add(rockLayer(9.5,7.0,2.6,8.4,mountA,7.7));
+scene.add(mesh(new THREE.CylinderGeometry(6.9,7.3,0.9,56), mountC, 0,9.55,0));
+
+// Pedestal
+scene.add(mesh(new THREE.BoxGeometry(7.6,0.7,5.6), stone, 0,10.35,0));
+scene.add(mesh(new THREE.BoxGeometry(6.0,1.9,4.6), stone, 0,11.6,0));
+scene.add(mesh(new THREE.BoxGeometry(5.1,0.6,3.9), stone, 0,12.8,0));
+
+// Statue group
+const statue = new THREE.Group();
+statue.position.set(0,13.1,0);
+scene.add(statue);
+
+// Robe with flowing vertical folds via lathe + radial displacement
+const profile = [
+  new THREE.Vector2(0.02,0.0), new THREE.Vector2(1.88,0.0), new THREE.Vector2(1.80,0.35),
+  new THREE.Vector2(1.62,2.2), new THREE.Vector2(1.38,4.2), new THREE.Vector2(1.14,5.9),
+  new THREE.Vector2(1.00,6.9), new THREE.Vector2(0.92,7.35), new THREE.Vector2(0.58,7.85),
+  new THREE.Vector2(0.42,8.05)
+];
+const robeGeo = new THREE.LatheGeometry(profile,56);
+{
+  const p=robeGeo.attributes.position;
+  for(let i=0;i<p.count;i++){
+    const x=p.getX(i), y=p.getY(i), z=p.getZ(i);
+    const r=Math.hypot(x,z); if(r<0.05) continue;
+    const a=Math.atan2(z,x);
+    const strength = THREE.MathUtils.clamp(1.25 - y*0.11, 0.25, 1.2);
+    const f = 1 + strength*(0.075*Math.sin(a*9+y*0.35) + 0.045*Math.sin(a*17-y*0.2));
+    p.setX(i,x*f); p.setZ(i,z*f);
+  }
+  robeGeo.computeVertexNormals();
+}
+statue.add(mesh(robeGeo, clay, 0,0,0));
+statue.add(mesh(new THREE.CylinderGeometry(1.92,2.05,0.42,48), clayDark, 0,0.18,0));
+
+// Vertical robe fold ridges
+for(let i=0;i<11;i++){
+  const a = -1.25 + i*0.25;
+  const r = 1.28;
+  const fold = mesh(new THREE.CylinderGeometry(0.085,0.11,5.6,8), clay, Math.sin(a)*r, 3.15, Math.cos(a)*r);
+  fold.rotation.z = -Math.sin(a)*0.16;
+  fold.rotation.x = Math.cos(a)*0.16;
+  statue.add(fold);
+}
+
+// Torso / shoulders / neck
+statue.add(mesh(new THREE.SphereGeometry(0.98,32,20), clay, 0,7.15,0)).children.at(-1).scale.set(1.15,0.82,0.92);
+statue.add(mesh(new THREE.CylinderGeometry(0.34,0.42,0.7,20), clay, 0,7.85,0));
+
+// Head: small, defined
+const headY = 8.85;
+const head = mesh(new THREE.SphereGeometry(0.62,32,22), clay, 0,headY,0);
+head.scale.set(0.92,1.08,0.96); statue.add(head);
+const hair = mesh(new THREE.SphereGeometry(0.66,32,16,0,Math.PI*2,0,Math.PI*0.52), clayDark, 0,headY+0.13,-0.07);
+hair.scale.set(0.98,1.0,1.0); statue.add(hair);
+const nose = mesh(new THREE.ConeGeometry(0.09,0.34,10), clay, 0,headY-0.04,0.60);
+nose.rotation.x = Math.PI/2 - 0.15; statue.add(nose);
+const brow = mesh(new THREE.BoxGeometry(0.52,0.07,0.07), clayDark, 0,headY+0.18,0.55);
+statue.add(brow);
+const chin = mesh(new THREE.SphereGeometry(0.20,14,10), clay, 0,headY-0.48,0.38);
+chin.scale.set(1.1,0.8,0.8); statue.add(chin);
+
+// Arms fully outstretched horizontally
+function makeArm(sign){
+  const g = new THREE.Group();
+  g.position.set(sign*0.82, 7.25, 0);
+  g.rotation.z = -sign*0.06;
+  // upper arm / sleeve
+  const upper = mesh(new THREE.CylinderGeometry(0.40,0.52,1.7,20), clay, sign*0.82,0,0);
+  upper.rotation.z = sign*Math.PI/2; g.add(upper);
+  // hanging drape under inner arm
+  const drape = mesh(new THREE.CylinderGeometry(0.18,0.44,1.15,14), clayDark, sign*0.95,-0.62,0.05);
+  drape.scale.z = 0.45; g.add(drape);
+  // sleeve cuff
+  const cuff = mesh(new THREE.CylinderGeometry(0.30,0.44,0.55,20), clay, sign*1.78,0,0);
+  cuff.rotation.z = sign*Math.PI/2; g.add(cuff);
+  // forearm
+  const fore = mesh(new THREE.CylinderGeometry(0.26,0.32,1.55,20), clay, sign*2.85,0,0);
+  fore.rotation.z = sign*Math.PI/2; g.add(fore);
+  // hand
+  const handX = sign*3.95;
+  const palm = mesh(new THREE.BoxGeometry(0.62,0.17,0.40), clay, handX,0,0);
+  g.add(palm);
+  for(let i=0;i<4;i++){
+    const f = mesh(new THREE.BoxGeometry(0.38,0.06,0.075), clay, handX+sign*0.46,0,-0.16+i*0.105);
+    f.rotation.y = sign*(-0.08 + i*0.05);
+    g.add(f);
+  }
+  const thumb = mesh(new THREE.BoxGeometry(0.30,0.06,0.07), clay, handX+sign*0.10,-0.02,sign*0.26);
+  thumb.rotation.y = sign*0.65; g.add(thumb);
+  return g;
+}
+statue.add(makeArm(1));
+statue.add(makeArm(-1));
+
+// Small feet indication at robe base front
+statue.add(mesh(new THREE.BoxGeometry(0.34,0.16,0.5), clayDark, -0.45,0.10,1.55));
+statue.add(mesh(new THREE.BoxGeometry(0.34,0.16,0.5), clayDark, 0.45,0.10,1.55));
+
+// Orbit controls (native pointer + wheel)
+const target = new THREE.Vector3(0,10.6,0);
+let radius = 49, theta = 0.42, phi = 1.36;
+function updateCamera(){
+  const x = target.x + radius*Math.sin(phi)*Math.sin(theta);
+  const y = target.y + radius*Math.cos(phi);
+  const z = target.z + radius*Math.sin(phi)*Math.cos(theta);
+  camera.position.set(x,y,z);
+  camera.lookAt(target);
+}
+function render(){ updateCamera(); renderer.render(scene,camera); }
+
+let dragging=false, lx=0, ly=0;
+renderer.domElement.addEventListener('pointerdown', e=>{
+  dragging=true; lx=e.clientX; ly=e.clientY;
+  renderer.domElement.setPointerCapture(e.pointerId);
+});
+renderer.domElement.addEventListener('pointermove', e=>{
+  if(!dragging) return;
+  const dx=e.clientX-lx, dy=e.clientY-ly; lx=e.clientX; ly=e.clientY;
+  theta -= dx*0.006;
+  phi = THREE.MathUtils.clamp(phi - dy*0.005, 0.55, 1.52);
+  render();
+});
+renderer.domElement.addEventListener('pointerup', ()=>{ dragging=false; });
+renderer.domElement.addEventListener('pointercancel', ()=>{ dragging=false; });
+renderer.domElement.addEventListener('wheel', e=>{
+  e.preventDefault();
+  radius = THREE.MathUtils.clamp(radius*Math.exp(e.deltaY*0.0011), 22, 85);
+  render();
+}, {passive:false});
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  render();
+});
+
+render();
+window.sceneReady = true;
+</script>
+</body>
+</html>

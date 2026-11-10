@@ -1,0 +1,78 @@
+{
+  "levels": [
+    {
+      "effort": "minimal",
+      "renders": 6,
+      "mean_score": 4.58,
+      "median_seconds": 6.23,
+      "total_cost": 0.0112461,
+      "mean_cost": 0.0018744,
+      "reasoning_tokens": 1390,
+      "clue_matches": 12,
+      "clue_median_seconds": 1.44,
+      "clue_cost": 0.0009262
+    },
+    {
+      "effort": "low",
+      "renders": 6,
+      "mean_score": 6.08,
+      "median_seconds": 11.85,
+      "total_cost": 0.0188346,
+      "mean_cost": 0.0031391,
+      "reasoning_tokens": 9767,
+      "clue_matches": 12,
+      "clue_median_seconds": 1.46,
+      "clue_cost": 0.0018182
+    },
+    {
+      "effort": "medium",
+      "renders": 6,
+      "mean_score": 6.58,
+      "median_seconds": 12.69,
+      "total_cost": 0.0270336,
+      "mean_cost": 0.0045056,
+      "reasoning_tokens": 27460,
+      "clue_matches": 12,
+      "clue_median_seconds": 1.72,
+      "clue_cost": 0.0026797
+    },
+    {
+      "effort": "high",
+      "renders": 6,
+      "mean_score": 7.58,
+      "median_seconds": 18.66,
+      "total_cost": 0.0337106,
+      "mean_cost": 0.0056184,
+      "reasoning_tokens": 37333,
+      "clue_matches": 12,
+      "clue_median_seconds": 1.92,
+      "clue_cost": 0.0033792
+    },
+    {
+      "effort": "xhigh",
+      "renders": 6,
+      "mean_score": 7.83,
+      "median_seconds": 32.3,
+      "total_cost": 0.0527511,
+      "mean_cost": 0.0087919,
+      "reasoning_tokens": 71311,
+      "clue_matches": 12,
+      "clue_median_seconds": 1.83,
+      "clue_cost": 0.0042957
+    },
+    {
+      "effort": "max",
+      "renders": 4,
+      "mean_score": 5.0,
+      "median_seconds": 50.49,
+      "total_cost": 0.0825036,
+      "mean_cost": 0.0137506,
+      "reasoning_tokens": 136761,
+      "clue_matches": 12,
+      "clue_median_seconds": 1.91,
+      "clue_cost": 0.0041687
+    }
+  ],
+  "generation_wall_seconds": 118.432,
+  "clue_wall_seconds": 34.042
+}

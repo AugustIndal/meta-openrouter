@@ -1,0 +1,84 @@
+{
+  "results": [
+    {
+      "id": "painted-ladies",
+      "name": "Painted Ladies",
+      "region": "San Francisco",
+      "description": "A row of seven narrow ornate Victorian houses on a sloping city street. Each house has a different pastel color, steep gabled roof, tall bay windows, front steps and elaborate white wood trim. A grassy hillside is in the foreground. A distant cluster of modern high-rise buildings rises behind the rooftops.",
+      "slug": "painted-ladies-max-expanded",
+      "effort": "max",
+      "prompt": "A row of seven narrow ornate Victorian houses on a sloping city street. Each house has a different pastel color, steep gabled roof, tall bay windows, front steps and elaborate white wood trim. A grassy hillside is in the foreground. A distant cluster of modern high-rise buildings rises behind the rooftops.\n\nCreate a polished 3D illustration solely from this visual description. The private location name is deliberately withheld. Return only a complete HTML document without Markdown fences. Use real procedural Three.js geometry, import * as THREE from './three.module.js', and use no other imports or external assets, images, fonts, network calls or text labels. Do not put any landmark name or place name in the HTML title or visible scene. Use deterministic geometry. Render initially at 1200x800, responsive to window resizing, with device pixel ratio at most 1.5. Include native pointer drag orbit and wheel zoom; update projection, size and rendered frame on resize. Frame the whole subject with generous margins around top, sides and base. Use attractive coherent lighting and clear recognizable silhouettes. Render immediately and set window.sceneReady=true after the first rendered frame. Keep geometry efficient; avoid a continuous animation loop. No transparent flat fog planes.",
+      "max_tokens": 128000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 260,
+        "completion_tokens": 30790,
+        "total_tokens": 31050,
+        "cost": 0.015421,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.015421,
+          "upstream_inference_prompt_cost": 2.6e-05,
+          "upstream_inference_completions_cost": 0.015395
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 23569,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 17231,
+      "generation_id": "gen-1794280612-WAa0Xz3MbxoB7HDsjdg0",
+      "elapsed_seconds": 53.793,
+      "attempt": "expanded-cap"
+    },
+    {
+      "id": "griffith",
+      "name": "Griffith Observatory",
+      "region": "Los Angeles",
+      "description": "A symmetrical pale cream observatory on a green-brown hill above a city. It has one large central dark copper dome and two smaller matching domes on the left and right wings. A broad terrace, balustrades and wide steps face the viewer. The building has low geometric walls and a small obelisk-like monument on the front lawn.",
+      "slug": "griffith-max-expanded",
+      "effort": "max",
+      "prompt": "A symmetrical pale cream observatory on a green-brown hill above a city. It has one large central dark copper dome and two smaller matching domes on the left and right wings. A broad terrace, balustrades and wide steps face the viewer. The building has low geometric walls and a small obelisk-like monument on the front lawn.\n\nCreate a polished 3D illustration solely from this visual description. The private location name is deliberately withheld. Return only a complete HTML document without Markdown fences. Use real procedural Three.js geometry, import * as THREE from './three.module.js', and use no other imports or external assets, images, fonts, network calls or text labels. Do not put any landmark name or place name in the HTML title or visible scene. Use deterministic geometry. Render initially at 1200x800, responsive to window resizing, with device pixel ratio at most 1.5. Include native pointer drag orbit and wheel zoom; update projection, size and rendered frame on resize. Frame the whole subject with generous margins around top, sides and base. Use attractive coherent lighting and clear recognizable silhouettes. Render immediately and set window.sceneReady=true after the first rendered frame. Keep geometry efficient; avoid a continuous animation loop. No transparent flat fog planes.",
+      "max_tokens": 128000,
+      "model": "meta/muse-ember",
+      "provider": "Meta",
+      "usage": {
+        "prompt_tokens": 265,
+        "completion_tokens": 29695,
+        "total_tokens": 29960,
+        "cost": 0.014874,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.014874,
+          "upstream_inference_prompt_cost": 2.65e-05,
+          "upstream_inference_completions_cost": 0.0148475
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 22744,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "finish_reason": "stop",
+      "bytes": 17944,
+      "generation_id": "gen-1794280612-1Igf964AeDWROTxd5ddC",
+      "elapsed_seconds": 50.981,
+      "attempt": "expanded-cap"
+    }
+  ]
+}

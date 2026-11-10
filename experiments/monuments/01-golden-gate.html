@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Golden Gate Bridge</title>
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#bfdfe8}
+  canvas{display:block;touch-action:none}
+</style>
+<script type="importmap">
+{"imports":{"three":"./three.module.js"}}
+</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.setSize(window.innerWidth||1200, window.innerHeight||800);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.12;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xbfdfe8);
+
+const camera = new THREE.PerspectiveCamera(38, (window.innerWidth||1200)/(window.innerHeight||800), 0.1, 2500);
+
+const target = new THREE.Vector3(0,17,0);
+let radius = 292, theta = 0.61, phi = 1.42;
+// initial position derived from orbit: approx (165,62,235)
+{
+  const p = new THREE.Vector3(165,62,235);
+  const d = p.clone().sub(target);
+  radius = d.length();
+  theta = Math.atan2(d.x,d.z);
+  phi = Math.acos(THREE.MathUtils.clamp(d.y/radius,-1,1));
+}
+function updateCamera(){
+  const x = target.x + radius*Math.sin(phi)*Math.sin(theta);
+  const y = target.y + radius*Math.cos(phi);
+  const z = target.z + radius*Math.sin(phi)*Math.cos(theta);
+  camera.position.set(x,y,z);
+  camera.lookAt(target);
+}
+updateCamera();
+
+const hemi = new THREE.HemisphereLight(0xd6ecff,0x5f705f,0.95);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xffe2b0,2.4);
+sun.position.set(190,230,130);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.left=-210; sun.shadow.camera.right=210;
+sun.shadow.camera.top=180; sun.shadow.camera.bottom=-120;
+sun.shadow.camera.near=20; sun.shadow.camera.far=700;
+sun.shadow.bias=-0.0004;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xbcd8e8,0.5);
+fill.position.set(-160,90,-140);
+scene.add(fill);
+
+// materials
+const orange = new THREE.MeshStandardMaterial({color:0xc13a27,roughness:0.55,metalness:0.18});
+const orangeDark = new THREE.MeshStandardMaterial({color:0xa93322,roughness:0.6,metalness:0.22});
+const steel = new THREE.MeshStandardMaterial({color:0x9e3221,roughness:0.5,metalness:0.35});
+const concrete = new THREE.MeshStandardMaterial({color:0x9aa3a2,roughness:0.9,metalness:0.02});
+const asphalt = new THREE.MeshStandardMaterial({color:0x3b4043,roughness:0.95,metalness:0.0});
+const waterMat = new THREE.MeshStandardMaterial({color:0x2f6f83,roughness:0.35,metalness:0.08});
+const hillMat = new THREE.MeshStandardMaterial({color:0x6d8069,roughness:1,metalness:0,flatShading:true});
+const hillMat2 = new THREE.MeshStandardMaterial({color:0x7e8d7a,roughness:1,metalness:0,flatShading:true});
+const landMat = new THREE.MeshStandardMaterial({color:0x6f7f66,roughness:1,metalness:0});
+
+// constants - structural proportions
+const halfSpan = 100;          // tower centres at +-100
+const anchorX = 155;
+const deckTopY = 10.5;
+const towerTopY = 36;
+const midCableY = 14.6;
+const cableZ = 3.3;
+const deckLength = 322;
+
+function cableY(x){
+  const ax = Math.abs(x);
+  if(ax <= halfSpan){
+    const t = x/halfSpan;
+    return midCableY + (towerTopY-midCableY)*(t*t);
+  } else {
+    const t = (ax-halfSpan)/(anchorX-halfSpan);
+    return (1-t)*towerTopY + t*13.0 - 1.2*Math.sin(t*Math.PI);
+  }
+}
+
+// tapered box geometry for tower legs
+function taperedBoxGeometry(wb,db,wt,dt,h){
+  const a=[-wb/2,0,-db/2], b=[wb/2,0,-db/2], c=[wb/2,0,db/2], d=[-wb/2,0,db/2];
+  const e=[-wt/2,h,-dt/2], f=[wt/2,h,-dt/2], g=[wt/2,h,dt/2], hh=[-wt/2,h,dt/2];
+  const pos=[];
+  function tri(p,q,r){pos.push(...p,...q,...r);}
+  function quad(p,q,r,s){tri(p,q,r);tri(p,r,s);}
+  quad(d,c,g,hh); // +z
+  quad(b,a,e,f); // -z
+  quad(c,b,f,g); // +x
+  quad(a,d,hh,e); // -x
+  quad(e,f,g,hh); // top
+  quad(a,b,c,d); // bottom
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  geo.computeVertexNormals();
+  return geo;
+}
+
+// Ocean
+const ocean = new THREE.Mesh(new THREE.PlaneGeometry(1100,750), waterMat);
+ocean.rotation.x = -Math.PI/2;
+ocean.position.y = 0;
+ocean.receiveShadow = true;
+scene.add(ocean);
+
+// Distant hills (behind and at ends, not obstructing)
+function hill(x,y,z,sx,sy,sz,mat){
+  const m = new THREE.Mesh(new THREE.SphereGeometry(1,10,7), mat||hillMat);
+  m.position.set(x,y,z); m.scale.set(sx,sy,sz);
+  scene.add(m); return m;
+}
+hill(0,-2,-210,260,34,70,hillMat2);
+hill(-260,-2,-120,110,42,60,hillMat);
+hill(260,-2,-110,120,38,65,hillMat);
+hill(-230,-2,90,90,26,55,hillMat2);
+hill(240,-2,95,95,24,55,hillMat);
+hill(-90,-2,-170,90,22,50,hillMat2);
+hill(110,-2,-165,85,20,48,hillMat);
+
+// Land masses at bridge ends
+for(const s of [-1,1]){
+  const land = new THREE.Mesh(new THREE.BoxGeometry(150,3,95), landMat);
+  land.position.set(s*235,1,0);
+  land.receiveShadow=true; land.castShadow=true;
+  scene.add(land);
+  const mound = new THREE.Mesh(new THREE.ConeGeometry(42,22,8), hillMat);
+  mound.position.set(s*260,11,-28); mound.castShadow=true;
+  scene.add(mound);
+}
+
+// Anchor blocks
+for(const s of [-1,1]){
+  const block = new THREE.Mesh(new THREE.BoxGeometry(12,15,10), concrete);
+  block.position.set(s*anchorX,7.5,0);
+  block.castShadow=true; block.receiveShadow=true;
+  scene.add(block);
+  const cap = new THREE.Mesh(new THREE.BoxGeometry(13,1.2,11), concrete);
+  cap.position.set(s*anchorX,15.4,0);
+  cap.castShadow=true;
+  scene.add(cap);
+}
+
+// Towers
+const legGeo = taperedBoxGeometry(3.9,2.4,2.3,1.5,towerTopY);
+for(const tx of [-halfSpan,halfSpan]){
+  // pier bases
+  for(const lz of [-cableZ,cableZ]){
+    const pier = new THREE.Mesh(new THREE.BoxGeometry(5.2,3.5,3.4), concrete);
+    pier.position.set(tx,1.4,lz);
+    pier.castShadow=true; pier.receiveShadow=true;
+    scene.add(pier);
+  }
+  for(const lz of [-cableZ,cableZ]){
+    const leg = new THREE.Mesh(legGeo, orange);
+    leg.position.set(tx,0,lz);
+    leg.castShadow=true; leg.receiveShadow=true;
+    scene.add(leg);
+  }
+  // portal struts between legs
+  const strutHeights=[13.2,19.5,25.8,33.6];
+  for(const sy of strutHeights){
+    const t = sy/towerTopY;
+    const w = 3.9 + (2.3-3.9)*t;
+    const strut = new THREE.Mesh(new THREE.BoxGeometry(w,1.7,4.7), orange);
+    strut.position.set(tx,sy,0);
+    strut.castShadow=true; strut.receiveShadow=true;
+    scene.add(strut);
+    // thin dark slit detail on strut
+    const slit = new THREE.Mesh(new THREE.BoxGeometry(w+0.06,0.22,4.72), orangeDark);
+    slit.position.set(tx,sy+0.45,0);
+    scene.add(slit);
+  }
+  // tower top cap
+  const topCap = new THREE.Mesh(new THREE.BoxGeometry(2.6,0.9,5.2), orange);
+  topCap.position.set(tx,towerTopY+0.35,0);
+  topCap.castShadow=true;
+  scene.add(topCap);
+}
+
+// Road deck - continuous
+const deck = new THREE.Mesh(new THREE.BoxGeometry(deckLength,1.0,7.6), orangeDark);
+deck.position.set(0,deckTopY-0.5,0);
+deck.castShadow=true; deck.receiveShadow=true;
+scene.add(deck);
+
+const road = new THREE.Mesh(new THREE.BoxGeometry(deckLength,0.16,6.7), asphalt);
+road.position.set(0,deckTopY+0.05,0);
+road.receiveShadow=true;
+scene.add(road);
+
+const centre = new THREE.Mesh(new THREE.BoxGeometry(deckLength,0.03,0.2),
+  new THREE.MeshStandardMaterial({color:0xe8e0b0,roughness:0.8}));
+centre.position.set(0,deckTopY+0.14,0);
+scene.add(centre);
+
+// Side trusses under deck (likely the main structural truss)
+for(const tz of [-3.45,3.45]){
+  const topChord = new THREE.Mesh(new THREE.BoxGeometry(deckLength,0.7,0.45), orange);
+  topChord.position.set(0,9.3,tz); topChord.castShadow=true; scene.add(topChord);
+  const botChord = new THREE.Mesh(new THREE.BoxGeometry(deckLength,0.55,0.45), orange);
+  botChord.position.set(0,6.9,tz); botChord.castShadow=true; scene.add(botChord);
+  const rail = new THREE.Mesh(new THREE.BoxGeometry(deckLength,0.32,0.28), orange);
+  rail.position.set(0,deckTopY+0.75,tz>0?3.55:-3.55); rail.castShadow=true; scene.add(rail);
+  const railPost = new THREE.Mesh(new THREE.BoxGeometry(deckLength,0.5,0.18), orangeDark);
+  railPost.position.set(0,deckTopY+0.32,tz>0?3.55:-3.55); scene.add(railPost);
+}
+
+// Under-deck truss verticals (instanced)
+{
+  const xs=[];
+  for(let x=-160;x<=160;x+=8) xs.push(x);
+  const geo = new THREE.BoxGeometry(0.35,2.2,0.35);
+  const inst = new THREE.InstancedMesh(geo, orange, xs.length*2);
+  const m4=new THREE.Matrix4(); let i=0;
+  for(const x of xs) for(const tz of [-3.45,3.45]){
+    m4.makeTranslation(x,8.1,tz); inst.setMatrixAt(i++,m4);
+  }
+  inst.castShadow=true;
+  scene.add(inst);
+}
+
+// Main cables - paired, continuous from anchor to anchor over towers
+for(const cz of [-cableZ,cableZ]){
+  const pts=[];
+  const N=180;
+  for(let i=0;i<=N;i++){
+    const x = -anchorX + (2*anchorX)*(i/N);
+    pts.push(new THREE.Vector3(x,cableY(x),cz));
+  }
+  const curve = new THREE.CatmullRomCurve3(pts);
+  const geo = new THREE.TubeGeometry(curve,240,0.34,8,false);
+  const cable = new THREE.Mesh(geo, steel);
+  cable.castShadow=true;
+  scene.add(cable);
+}
+
+// Vertical hangers - evenly spaced, attached at both ends (cable to deck)
+{
+  const hangers=[];
+  for(let x=-152;x<=152;x+=8){
+    const yTop=cableY(x);
+    const yBot=deckTopY+0.1;
+    if(yTop-yBot>0.6) hangers.push({x,yTop,yBot});
+  }
+  const geo=new THREE.CylinderGeometry(0.1,0.1,1,6);
+  const inst=new THREE.InstancedMesh(geo, steel, hangers.length*2);
+  const m4=new THREE.Matrix4(); const q=new THREE.Quaternion(); const sc=new THREE.Vector3(); const pv=new THREE.Vector3(); const up=new THREE.Vector3(0,1,0);
+  let i=0;
+  for(const h of hangers){
+    const len=h.yTop-h.yBot;
+    sc.set(1,len,1);
+    for(const cz of [-cableZ,cableZ]){
+      pv.set(h.x,(h.yTop+h.yBot)/2,cz);
+      m4.compose(pv,q,sc);
+      inst.setMatrixAt(i++,m4);
+    }
+  }
+  inst.castShadow=true;
+  scene.add(inst);
+}
+
+// Small hanger collars where hangers meet cable
+// (covered by cable tube; no extra geometry needed for efficiency)
+
+// Orbit controls - native pointer drag + wheel zoom
+let dragging=false, lastX=0, lastY=0;
+const el=renderer.domElement;
+el.addEventListener('pointerdown',(e)=>{dragging=true;lastX=e.clientX;lastY=e.clientY;el.setPointerCapture(e.pointerId);});
+el.addEventListener('pointermove',(e)=>{
+  if(!dragging) return;
+  const dx=e.clientX-lastX, dy=e.clientY-lastY;
+  lastX=e.clientX; lastY=e.clientY;
+  theta -= dx*0.005;
+  phi -= dy*0.005;
+  phi = THREE.MathUtils.clamp(phi,0.18,1.52);
+  updateCamera(); renderer.render(scene,camera);
+});
+el.addEventListener('pointerup',()=>{dragging=false;});
+el.addEventListener('pointercancel',()=>{dragging=false;});
+el.addEventListener('wheel',(e)=>{
+  e.preventDefault();
+  radius *= (e.deltaY>0?1.12:0.89);
+  radius = THREE.MathUtils.clamp(radius,90,650);
+  updateCamera(); renderer.render(scene,camera);
+},{passive:false});
+
+window.addEventListener('resize',()=>{
+  const w=window.innerWidth||1200, h=window.innerHeight||800;
+  camera.aspect=w/h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w,h);
+  renderer.render(scene,camera);
+});
+
+// Initial render
+updateCamera();
+renderer.render(scene,camera);
+window.sceneReady=true;
+</script>
+</body>
+</html>

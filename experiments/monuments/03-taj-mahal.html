@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Taj Mahal</title>
+<style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#f9dbd6}canvas{display:block;width:100%;height:100%}</style>
+</head>
+<body>
+<script type="module">
+import * as THREE from './three.module.js';
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth||1200,window.innerHeight||800);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.05;
+document.body.appendChild(renderer.domElement);
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xf9dbd6);
+scene.fog=new THREE.Fog(0xf9dbd6,140,280);
+
+const camera=new THREE.PerspectiveCamera(38, (window.innerWidth||1200)/(window.innerHeight||800),0.1,500);
+const target=new THREE.Vector3(0,16,0);
+let sph=new THREE.Spherical(105,1.18,0.32);
+function updateCamera(){camera.position.copy(target).add(new THREE.Vector3().setFromSpherical(sph));camera.lookAt(target);}
+updateCamera();
+
+const hemi=new THREE.HemisphereLight(0xfff2e6,0xd8c2b0,1.35); scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xffe6c4,2.4); sun.position.set(-38,52,48); sun.castShadow=true;
+sun.shadow.mapSize.set(2048,2048); sun.shadow.camera.left=-70; sun.shadow.camera.right=70; sun.shadow.camera.top=70; sun.shadow.camera.bottom=-70; sun.shadow.camera.far=180; sun.shadow.bias=-0.0004; scene.add(sun);
+const fill=new THREE.DirectionalLight(0xf8cfd8,0.6); fill.position.set(35,22,-30); scene.add(fill);
+
+const matIvory=new THREE.MeshStandardMaterial({color:0xf6f0df,roughness:0.55,metalness:0.02});
+const matIvory2=new THREE.MeshStandardMaterial({color:0xede3cf,roughness:0.65});
+const matStone=new THREE.MeshStandardMaterial({color:0xe4d8bf,roughness:0.8});
+const matDark=new THREE.MeshStandardMaterial({color:0x4a3f3a,roughness:0.9});
+const matGold=new THREE.MeshStandardMaterial({color:0xd4a94a,roughness:0.3,metalness:0.7});
+const matWater=new THREE.MeshStandardMaterial({color:0x9ec9d4,roughness:0.12,metalness:0.35});
+const matGreen=new THREE.MeshStandardMaterial({color:0x7ea263,roughness:0.9});
+const matGreen2=new THREE.MeshStandardMaterial({color:0x5f8a4d,roughness:0.9});
+const matCypress=new THREE.MeshStandardMaterial({color:0x3f6b3a,roughness:0.9});
+const matPath=new THREE.MeshStandardMaterial({color:0xdccdb1,roughness:0.85});
+
+function box(w,h,d,mat,x,y,z,shadow=true){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);m.castShadow=shadow;m.receiveShadow=true;scene.add(m);return m;}
+function cyl(rt,rb,h,mat,x,y,z,seg=20){const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;scene.add(m);return m;}
+
+function archShape(w,h){const s=new THREE.Shape();const hw=w/2;s.moveTo(-hw,0);s.lineTo(-hw,h*0.52);s.quadraticCurveTo(-hw,h*0.86,0,h);s.quadraticCurveTo(hw,h*0.86,hw,h*0.52);s.lineTo(hw,0);s.closePath();return s;}
+function archMesh(w,h,mat,depth=0.3){const g=new THREE.ExtrudeGeometry(archShape(w,h),{depth,bevelEnabled:false});const m=new THREE.Mesh(g,mat);m.castShadow=true;m.receiveShadow=true;return m;}
+function archFlat(w,h,mat){const m=new THREE.Mesh(new THREE.ShapeGeometry(archShape(w,h)),mat);m.receiveShadow=true;return m;}
+
+// ground and foreground
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(400,400),new THREE.MeshStandardMaterial({color:0xc9b99a,roughness:1})); ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+box(160,0.4,130,matGreen,0,0.2,5,false);
+// reflecting pool
+box(11,0.5,58,matWater,0,0.35,42,false);
+box(13,0.25,60,matStone,0,0.18,42,false);
+box(11.4,0.55,58,matWater,0,0.42,42,false);
+// pool rims and fountain bases
+for(let i=0;i<6;i++){const z=20+i*9; cyl(0.5,0.6,0.7,matStone,-4.8,0.6,z,12); cyl(0.5,0.6,0.7,matStone,4.8,0.6,z,12); const f=new THREE.Mesh(new THREE.SphereGeometry(0.35,10,8),matWater);f.position.set(0,0.7,z);scene.add(f);}
+// gardens
+box(28,0.5,58,matGreen,-21,0.3,42,false); box(28,0.5,58,matGreen,21,0.3,42,false);
+box(56,0.32,2.2,matPath,0,0.36,28,false); box(56,0.32,2.2,matPath,0,0.36,56,false);
+box(2.2,0.32,58,matPath,-21,0.36,42,false); box(2.2,0.32,58,matPath,21,0.36,42,false);
+box(2.2,0.32,58,matPath,-9,0.36,42,false); box(2.2,0.32,58,matPath,9,0.36,42,false);
+// hedges pattern
+for(const sx of[-1,1]){for(let i=0;i<5;i++){box(18,0.9,0.7,matGreen2,sx*21,0.8,22+i*10,false);}for(let i=0;i<3;i++){box(0.7,0.9,40,matGreen2,sx*(13+i*7),0.8,42,false);}}
+// cypress trees deterministic
+for(const sx of[-1,1]){for(let r=0;r<4;r++){for(let c=0;c<4;c++){const x=sx*(12.5+c*5.5),z=22+r*13; cyl(0.18,0.22,1.2,matDark,x,1.0,z,8); const cone=new THREE.Mesh(new THREE.ConeGeometry(1.0,5.2,10),matCypress);cone.position.set(x,4.0,z);cone.castShadow=true;scene.add(cone);}}}
+for(let i=0;i<8;i++){const x=-38+i*11; if(Math.abs(x)<8) continue; cyl(0.25,0.3,2,matDark,x,1.2,68,8); const s=new THREE.Mesh(new THREE.SphereGeometry(2.2,12,10),matGreen2);s.position.set(x,4.2,68);s.castShadow=true;scene.add(s);}
+
+// plinth steps and platform
+box(76,1.2,54,matStone,0,0.6,-2,false); box(72,1.0,50,matStone,0,1.5,-2,false); box(68,2.0,46,matIvory2,0,2.8,-2,false);
+// main building
+box(46,17,30,matIvory,0,12.5,-4,false);
+// side annexes
+box(14,12,24,matIvory,-29,10,-4,false); box(14,12,24,matIvory,29,10,-4,false);
+box(47,1.2,31,matIvory2,0,21.4,-4,false); box(15,1,25,matIvory2,-29,16.4,-4,false); box(15,1,25,matIvory2,29,16.4,-4,false);
+// central portal frame
+const portal=archMesh(13,15,matIvory,1.4); portal.position.set(-6.5,3.8,11.1); scene.add(portal);
+const portalIn=archFlat(9.5,12.2,matDark); portalIn.position.set(-4.75,4.6,12.65); scene.add(portalIn);
+const portalIn2=archFlat(6.5,9.5,new THREE.MeshStandardMaterial({color:0x2e2723,roughness:1})); portalIn2.position.set(-3.25,4.6,12.75); scene.add(portalIn2);
+// side portals
+for(const sx of[-1,1]){const p=archMesh(8,10,matIvory,1); p.position.set(sx*29-4,4,8.2); scene.add(p); const pi=archFlat(5.5,7.5,matDark); pi.position.set(sx*29-2.75,4.6,9.35); scene.add(pi);}
+// facade small arches rows
+for(let level=0;level<2;level++){for(let i=-6;i<=6;i++){if(i===0)continue; const a=archFlat(2.2,3.2,matDark); a.position.set(i*3.4-1.1,6.5+level*6,11.05); scene.add(a); const tr=archMesh(2.6,3.6,matIvory2,0.18); tr.position.set(i*3.4-1.3,6.5+level*6,10.95); scene.add(tr);}}
+for(const sx of[-1,1]){for(let i=0;i<3;i++){const a=archFlat(2,3,matDark); a.position.set(sx*29-1+i*2.2-2,6,8.25); scene.add(a);}}
+// drums and onion dome
+cyl(8.2,8.6,3.5,matIvory,0,23.6,-4,28);
+const domePts=[[0,0],[5.2,0],[6.2,0.7],[6.6,2.0],[6.3,3.8],[5.4,5.8],[4.0,7.8],[2.6,9.4],[1.4,10.8],[0.6,11.8],[0,12.6]].map(p=>new THREE.Vector2(p[0],p[1]));
+const dome=new THREE.Mesh(new THREE.LatheGeometry(domePts,36),matIvory); dome.position.set(0,25.3,-4); dome.castShadow=true; dome.receiveShadow=true; scene.add(dome);
+// finial
+cyl(0.22,0.22,2.2,matGold,0,38.2,-4,10); const fb=new THREE.Mesh(new THREE.SphereGeometry(0.75,14,10),matGold); fb.position.set(0,38.0,-4); fb.castShadow=true; scene.add(fb);
+const spike=new THREE.Mesh(new THREE.ConeGeometry(0.28,2.6,10),matGold); spike.position.set(0,40.2,-4); scene.add(spike);
+const cres=new THREE.Mesh(new THREE.TorusGeometry(0.65,0.14,8,20,Math.PI),matGold); cres.position.set(0,41.2,-4); cres.rotation.z=Math.PI; scene.add(cres);
+
+// chhatri kiosks
+function kiosk(x,z){const g=new THREE.Group(); g.position.set(x,21.8,z); scene.add(g);
+ for(const px of[-2.2,2.2]) for(const pz of[-2.2,2.2]){const p=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.28,3.2,8),matIvory);p.position.set(px,1.6,pz);p.castShadow=true;g.add(p);}
+ const slab=new THREE.Mesh(new THREE.BoxGeometry(5.6,0.6,5.6),matIvory2); slab.position.y=3.4; slab.castShadow=true; g.add(slab);
+ const pts=[[0,0],[1.8,0],[2.2,0.5],[2.0,1.4],[1.4,2.4],[0.7,3.2],[0,3.8]].map(p=>new THREE.Vector2(p[0],p[1])); const d=new THREE.Mesh(new THREE.LatheGeometry(pts,20),matIvory); d.position.y=3.7; d.castShadow=true; g.add(d);
+ const s=new THREE.Mesh(new THREE.ConeGeometry(0.18,1.4,8),matGold); s.position.y=8.0; g.add(s);}
+kiosk(-16,-14); kiosk(16,-14); kiosk(-16,6); kiosk(16,6); kiosk(0,-16);
+// minarets
+function minaret(x,z){const g=new THREE.Group(); g.position.set(x,3.8,z); scene.add(g);
+ const base=new THREE.Mesh(new THREE.CylinderGeometry(1.9,2.2,2,16),matIvory2); base.position.y=1; base.castShadow=true; g.add(base);
+ const shaft=new THREE.Mesh(new THREE.CylinderGeometry(0.95,1.35,30,18),matIvory); shaft.position.y=17; shaft.castShadow=true; g.add(shaft);
+ for(const y of[12,20,27]){const bal=new THREE.Mesh(new THREE.CylinderGeometry(1.65,1.65,0.7,18),matIvory2); bal.position.y=y; bal.castShadow=true; g.add(bal); const rail=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.35,0.8,18),matIvory); rail.position.y=y+0.7; g.add(rail);}
+ const capPts=[[0,0],[1.1,0],[1.3,0.6],[1.0,1.6],[0.4,2.6],[0,3.2]].map(p=>new THREE.Vector2(p[0],p[1])); const cap=new THREE.Mesh(new THREE.LatheGeometry(capPts,18),matIvory); cap.position.y=32.5; cap.castShadow=true; g.add(cap);
+ const fin=new THREE.Mesh(new THREE.ConeGeometry(0.16,1.6,8),matGold); fin.position.y=36.2; g.add(fin);
+ const sph2=new THREE.Mesh(new THREE.SphereGeometry(0.32,10,8),matGold); sph2.position.y=35.6; g.add(sph2);}
+minaret(-32,9); minaret(32,9); minaret(-32,-17); minaret(32,-17);
+// distant low trees edges
+for(let i=0;i<20;i++){const x=-70+i*7.4; const z=78; cyl(0.2,0.25,1.6,matDark,x,0.8,z,6); const s=new THREE.Mesh(new THREE.SphereGeometry(1.8,8,6),matGreen2); s.position.set(x,3.4,z); scene.add(s);}
+
+let dragging=false,lastX=0,lastY=0;
+renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;renderer.domElement.setPointerCapture(e.pointerId);});
+renderer.domElement.addEventListener('pointermove',e=>{if(!dragging)return; const dx=e.clientX-lastX, dy=e.clientY-lastY; lastX=e.clientX; lastY=e.clientY; sph.theta-=dx*0.005; sph.phi=THREE.MathUtils.clamp(sph.phi-dy*0.005,0.85,1.42); updateCamera(); renderer.render(scene,camera);});
+renderer.domElement.addEventListener('pointerup',()=>dragging=false);
+renderer.domElement.addEventListener('wheel',e=>{e.preventDefault(); sph.radius=THREE.MathUtils.clamp(sph.radius+e.deltaY*0.08,55,165); updateCamera(); renderer.render(scene,camera);},{passive:false});
+window.addEventListener('resize',()=>{const w=window.innerWidth,h=window.innerHeight; camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h); renderer.render(scene,camera);});
+
+renderer.render(scene,camera);
+window.sceneReady=true;
+</script>
+</body>
+</html>
